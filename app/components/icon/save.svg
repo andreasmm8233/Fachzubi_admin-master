@@ -1,0 +1,17 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="36" height="36" fill="#1E1E1E"/>
+<g id="Add Employer Page" clip-path="url(#clip0_0_1)">
+<rect width="1440" height="1455" transform="translate(-1183 -1299)" fill="#F1F1F1"/>
+<rect id="inner rectangle" x="-897" y="-1112" width="1122" height="1218" rx="10" fill="#FDFBFF"/>
+<rect id="Rectangle 525" x="-15.5" y="-11.5" width="189" height="58" rx="9.5" stroke="currentColor"/>
+<g id="Frame">
+<path id="Vector" d="M31.5 9V16.5C31.5 18.2728 31.1508 20.0283 30.4724 21.6662C29.7939 23.3041 28.7995 24.7923 27.5459 26.0459C26.2923 27.2995 24.8041 28.2939 23.1662 28.9724C21.5283 29.6508 19.7728 30 18 30C16.2272 30 14.4717 29.6508 12.8338 28.9724C11.1959 28.2939 9.70765 27.2995 8.45406 26.0459C7.20047 24.7923 6.20606 23.3041 5.52763 21.6662C4.84919 20.0283 4.5 18.2728 4.5 16.5V9C4.5 8.20435 4.81607 7.44129 5.37868 6.87868C5.94129 6.31607 6.70435 6 7.5 6H28.5C29.2956 6 30.0587 6.31607 30.6213 6.87868C31.1839 7.44129 31.5 8.20435 31.5 9Z" stroke="currentColor" stroke-width="1.69167" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M12 15L18 21L24 15" stroke="currentColor" stroke-width="1.69167" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_1">
+<rect width="1440" height="1455" fill="white" transform="translate(-1183 -1299)"/>
+</clipPath>
+</defs>
+</svg>
