@@ -17,6 +17,8 @@ export const transformCities = (cities: City[]): TransformCity[] => {
     address: city.address,
     zipCode: city.zipCode,
     directionLink: city.directionLink,
-    status:city.status,
+    status: city.status,
+    qrCode: city.qrCode,
+    qrTargetUrl: city.qrTargetUrl,
   }));
 };

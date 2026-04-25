@@ -86,3 +86,24 @@ export const deleteCity = async (
   });
   return response;
 };
+
+export const downloadCityQr = async (
+  id: string
+): Promise<SuccessResult<Blob> | ErrorResult> => {
+  const response = await request({
+    url: `/cities/${id}/download-qr`,
+    method: "get",
+    responseType: "blob",
+  });
+  if (response.remote === "success") {
+    return {
+      remote: "success",
+      data: {
+        data: response.data as unknown as Blob,
+        message: "",
+        status: 200,
+      },
+    };
+  }
+  return response;
+};

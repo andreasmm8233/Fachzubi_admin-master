@@ -27,6 +27,7 @@ import {
 import {
   addCity,
   deleteCity,
+  downloadCityQr,
   editCity,
   editCityStatus,
   getCitiesByFilter,
@@ -36,6 +37,8 @@ import ErrorAlert from "@/themes/overrides/errorAlert";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+
 const ManageCities = () => {
   const [isDeleteModal, setDeleteModal] = useState(false);
   const [isAddCity, setIsAddCity] = useState(false);
@@ -52,6 +55,7 @@ const ManageCities = () => {
   const [error, setError] = useState("");
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [isUpdateLoading, setIsUpdateLoading] = useState("");
+  const [qrDownloadLoadingId, setQrDownloadLoadingId] = useState("");
   const [saveModelLoading, setSaveModelLoading] = useState(false);
   const [dataForEdit, setDataForEdit] = useState<City>();
   const clearAllState = () => {
@@ -122,6 +126,34 @@ const ManageCities = () => {
       toast.info("status update successfully");
     }
   };
+
+  const handleDownloadQr = async (city: TransformCity) => {
+    if (!city.id || qrDownloadLoadingId) {
+      return;
+    }
+
+    setQrDownloadLoadingId(city.id);
+    const response = await downloadCityQr(city.id);
+    if (response.remote === "success") {
+      const qrBlob =
+        response.data.data instanceof Blob
+          ? response.data.data
+          : new Blob([response.data.data]);
+      const url = window.URL.createObjectURL(qrBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${city.name || "city"}-qr.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.info("QR downloaded successfully!");
+    } else {
+      toast.error(response.error.errors.message || "Error downloading QR");
+    }
+    setQrDownloadLoadingId("");
+  };
+
   const CityTableRow = (SingleRowData: TransformCity) => {
     return {
       id: SingleRowData.id,
@@ -142,6 +174,28 @@ const ManageCities = () => {
               : SingleRowData.directionLink}
           </Link>
         </Tooltip>
+      ),
+      qrCode: SingleRowData.qrCode ? (
+        <Tooltip title={SingleRowData.qrTargetUrl || ""}>
+          <Link
+            href={SingleRowData.qrTargetUrl || SingleRowData.qrCode}
+            target="blank"
+          >
+            <Box
+              component="img"
+              src={SingleRowData.qrCode}
+              alt={`${SingleRowData.name} QR code`}
+              sx={{
+                width: "52px",
+                height: "52px",
+                display: "block",
+                objectFit: "contain",
+              }}
+            />
+          </Link>
+        </Tooltip>
+      ) : (
+        ""
       ),
       status: (
         <div
@@ -182,6 +236,18 @@ const ManageCities = () => {
             }}
           >
             <SVG.Edit />
+          </IconButton>
+
+          <IconButton
+            onClick={() => {
+              handleDownloadQr(SingleRowData);
+            }}
+            disableRipple={true}
+            disabled={
+              !SingleRowData.qrCode || qrDownloadLoadingId === SingleRowData.id
+            }
+          >
+            <FileDownloadIcon />
           </IconButton>
 
           <IconButton

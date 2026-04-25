@@ -6,7 +6,9 @@ export interface City {
   address: string;
   zipCode: string;
   directionLink: string;
-  status:boolean;
+  status: boolean;
+  qrCode?: string;
+  qrTargetUrl?: string;
 }
 
 export interface TransformCity {
@@ -17,7 +19,9 @@ export interface TransformCity {
   address: string;
   zipCode: string;
   directionLink: string;
-  status:boolean;
+  status: boolean;
+  qrCode?: string;
+  qrTargetUrl?: string;
 }
 
 export interface TransformCityForFilters {
