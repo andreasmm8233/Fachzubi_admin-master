@@ -9,20 +9,50 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import dayjs from "dayjs";
 
+const DEFAULT_QR_TARGET_BASE = "https://webzlab.site/jobs/";
+
+const splitQrTargetUrl = (url?: string, fallbackName?: string) => {
+  if (!url) {
+    return {
+      base: DEFAULT_QR_TARGET_BASE,
+      cityName: fallbackName || "",
+    };
+  }
+
+  const lastSlashIndex = url.lastIndexOf("/");
+  if (lastSlashIndex === -1) {
+    return {
+      base: DEFAULT_QR_TARGET_BASE,
+      cityName: fallbackName || "",
+    };
+  }
+
+  return {
+    base: url.slice(0, lastSlashIndex + 1),
+    cityName: decodeURIComponent(url.slice(lastSlashIndex + 1)),
+  };
+};
+
 const AddCities = (props: any) => {
+  const qrTarget = splitQrTargetUrl(props.qrTargetUrl, props.name);
   const validationSchema = yup.object().shape({
     name: yup.string().required("City is required"),
     startTime: yup.date(),
     endTime: yup.date(),
     address: yup.string(),
     zipCode: yup.string(),
-    directionLink: yup.string()
+    directionLink: yup.string(),
+    qrTargetCityName: yup
+      .string()
+      .required("QR city URL name is required")
+      .matches(/^[a-zA-Z0-9-]+$/, "Use only letters, numbers, and hyphens"),
   });
   const convertToTimeDate = (timeString: string): Date | undefined => {
     const date = new Date(`2000-01-01 ${timeString}`);
     return isNaN(date.getTime()) ? undefined : date;
   };
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       name: props.name || "",
       startTime: convertToTimeDate(props.startTime) || undefined,
@@ -30,10 +60,18 @@ const AddCities = (props: any) => {
       address: props.address || "",
       zipCode: props.zipCode || "",
       directionLink: props.directionLink || "",
+      qrTargetBase: qrTarget.base,
+      qrTargetCityName: qrTarget.cityName,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      props.handleClose(values);
+      const { qrTargetBase, qrTargetCityName, ...cityValues } = values;
+      props.handleClose({
+        ...cityValues,
+        qrTargetUrl: `${qrTargetBase}${encodeURIComponent(
+          qrTargetCityName.trim()
+        )}`,
+      });
     },
   });
 
@@ -229,6 +267,54 @@ const AddCities = (props: any) => {
               {formik.errors.directionLink as string}
             </div>
           )}
+
+          <FormLabel>QR Target URL City Name</FormLabel>
+          <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
+            <TextField
+              value={formik.values.qrTargetBase}
+              disabled
+              sx={{
+                flex: 1,
+                "& .MuiInputBase-root": {
+                  border: "1px solid #646464 !important",
+                  fontSize: "16px !important",
+                  fontWeight: "500 !important",
+                  "& .MuiInputBase-input": {
+                    padding: "10px 12px ",
+                  },
+                },
+              }}
+              fullWidth
+            />
+            <TextField
+              {...formik.getFieldProps("qrTargetCityName")}
+              sx={{
+                flex: 1,
+                "& .MuiInputBase-root": {
+                  border: "1px solid #646464 !important",
+                  fontSize: "16px !important",
+                  fontWeight: "500 !important",
+                  "& .MuiInputBase-input": {
+                    padding: "10px 12px ",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  marginLeft: "5px",
+                  color: "#FFA500",
+                  fontWeight: "500",
+                },
+              }}
+              fullWidth
+              placeholder="city-name"
+              autoComplete="off"
+            />
+          </Stack>
+          {formik.touched.qrTargetCityName &&
+            formik.errors.qrTargetCityName && (
+              <div style={{ color: "red" }}>
+                {formik.errors.qrTargetCityName as string}
+              </div>
+            )}
 
           <Stack
             direction={"row"}

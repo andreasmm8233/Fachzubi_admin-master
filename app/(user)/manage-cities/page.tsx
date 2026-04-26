@@ -63,6 +63,7 @@ const ManageCities = () => {
     setDeleteModal(false);
     setId("");
     setName("");
+    setDataForEdit(undefined);
     setSaveModelLoading(false);
   };
   const handleAddCityModel = () => {
@@ -425,6 +426,7 @@ const ManageCities = () => {
           zipCode={dataForEdit?.zipCode}
           address={dataForEdit?.address}
           directionLink={dataForEdit?.directionLink}
+          qrTargetUrl={dataForEdit?.qrTargetUrl}
         />
       </IModal>
       <ToastContainer />
