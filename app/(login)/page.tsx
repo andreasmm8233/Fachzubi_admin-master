@@ -65,6 +65,11 @@ const Login = () => {
       if (result.remote === "success") {
         localStorage.setItem("x-access", result.data.data.accessToken);
         localStorage.setItem("x-refresh", result.data.data.refreshToken);
+        localStorage.setItem("x-role", result.data.data.role || "admin");
+        localStorage.setItem(
+          "x-permissions",
+          JSON.stringify(result.data.data.permissions || {})
+        );
 
         router.push("/dashboard");
       } else {

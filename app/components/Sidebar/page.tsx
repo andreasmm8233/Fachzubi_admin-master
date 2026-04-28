@@ -8,19 +8,49 @@ import {
   ListItemText,
 } from "@mui/material";
 
-import React, { useState } from "react";
-import { MENU_DATA } from "./helper";
+import React, { useState, useMemo } from "react";
+import { MENU_DATA, SidebarMenu } from "./helper";
 import Link from "next/link";
 
 import { usePathname } from "next/navigation";
 import { SVG } from "../icon";
-import { setIsLogin } from "@/app/redux/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { setIsLogin, setRole, setPermissions } from "@/app/redux/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
+import { EmployeePermissions } from "@/app/api/manageEmployee/helper";
 
-const SidebarMenu = () => {
+const SidebarMenu_Component = () => {
   const dispatch = useDispatch();
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<number | null>(null);
+
+  const role = useSelector((state: RootState) => state.auth.role);
+  const permissions = useSelector(
+    (state: RootState) => state.auth.permissions
+  );
+
+  const filteredMenuData = useMemo(() => {
+    // Admin sees everything
+    if (!role || role === "admin") {
+      return MENU_DATA;
+    }
+
+    // Employee — filter by permissions
+    return MENU_DATA.filter((item: SidebarMenu) => {
+      // Always show items with no permission restriction (Dashboard, Log Out)
+      if (!item.permissionKey && !item.adminOnly) return true;
+
+      // Hide admin-only items from employees
+      if (item.adminOnly) return false;
+
+      // Check permission key
+      if (item.permissionKey && permissions) {
+        return permissions[item.permissionKey as keyof EmployeePermissions] === true;
+      }
+
+      return false;
+    });
+  }, [role, permissions]);
 
   const handleMenu = (id: number) => {
     if (id === openMenu) {
@@ -32,7 +62,7 @@ const SidebarMenu = () => {
   return (
     <>
       <List>
-        {MENU_DATA.map((item, index) => (
+        {filteredMenuData.map((item, index) => (
           <React.Fragment key={`parent-${index}`}>
             <ListItem
               key={`parent-${index}`}
@@ -71,6 +101,8 @@ const SidebarMenu = () => {
                   if (item.label === "Log Out") {
                     localStorage.clear();
                     dispatch(setIsLogin(false));
+                    dispatch(setRole(null));
+                    dispatch(setPermissions(null));
                   }
                   if (item.children) {
                     handleMenu(item.id);
@@ -153,4 +185,4 @@ const SidebarMenu = () => {
     </>
   );
 };
-export default SidebarMenu;
+export default SidebarMenu_Component;

@@ -1,9 +1,11 @@
 import { SVG } from "../icon";
 export interface SidebarMenu {
   id: number;
-  icon?: React.ReactNode;
+  icon?: any;
   label: string;
   url?: string;
+  permissionKey?: string; // maps to EmployeePermissions key; undefined = always visible
+  adminOnly?: boolean; // if true, only visible to admin role
 
   children?: {
     id: number;
@@ -11,7 +13,7 @@ export interface SidebarMenu {
     url?: string;
   }[];
 }
-export const MENU_DATA = [
+export const MENU_DATA: SidebarMenu[] = [
   {
     id: 1,
     icon: SVG.DashboardIcon,
@@ -19,16 +21,25 @@ export const MENU_DATA = [
     url: "/dashboard",
   },
   {
+    id: 10,
+    icon: SVG.GroupUser,
+    label: "Manage Employee",
+    url: "/manage-employee",
+    adminOnly: true,
+  },
+  {
     id: 2,
     icon: SVG.GroupUser,
     label: "Manage Employers",
     url: "/manage-employers",
+    permissionKey: "manage_employers",
   },
   {
     id: 3,
     icon: SVG.JobsIcon,
     label: "Manage Jobs",
     url: "/manage-jobs",
+    permissionKey: "manage_jobs",
   },
 
   {
@@ -36,23 +47,27 @@ export const MENU_DATA = [
     icon: SVG.Industries,
     label: "Manage Industries",
     url: "/manage-industries",
+    permissionKey: "manage_industries",
   },
   {
     id: 5,
     icon: SVG.Industries,
     label: "Job Types",
     url: "/manage-type-of-job",
+    permissionKey: "job_types",
   },
   {
     id: 6,
     icon: SVG.CitiesIcon,
     label: "Manage Cities",
     url: "/manage-cities",
+    permissionKey: "manage_cities",
   },
   {
     id: 7,
     icon: SVG.ContentIcon,
     label: "Manage Content",
+    permissionKey: "manage_content",
     children: [
       {
         id: 1,
@@ -86,6 +101,7 @@ export const MENU_DATA = [
     icon: SVG.Setting,
     label: "Admin Settings",
     url: "/admin-setting",
+    adminOnly: true,
   },
   {
     id: 9,
