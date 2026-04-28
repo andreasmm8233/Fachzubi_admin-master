@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
+import InfoIcon from '@mui/icons-material/Info';
 
 interface RowData {
   id: string;
@@ -162,6 +163,11 @@ const ManageEmployeePage = () => {
             },
           }}
         >
+          <IconButton
+            onClick={() => window.open(`/manage-employee/log/${rowData.id}`, '_blank')}
+          >
+            <InfoIcon />
+          </IconButton>
           <IconButton
             onClick={() => {
               navigateToEdit(rowData.id);

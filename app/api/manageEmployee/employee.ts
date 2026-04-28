@@ -71,3 +71,26 @@ export const deleteEmployee = async (
 
   return response;
 };
+
+export const getEmployeeEmployers = async (
+  id: string
+): Promise<SuccessResult<any> | ErrorResult> => {
+  const response = await request({
+    url: `/employees/${id}/employers`,
+    method: "GET",
+  });
+
+  return response;
+};
+
+export const getEmployeeEmployerJobs = async (
+  employeeId: string,
+  employerId: string
+): Promise<SuccessResult<any> | ErrorResult> => {
+  const response = await request({
+    url: `/employees/${employeeId}/employers/${employerId}/jobs`,
+    method: "GET",
+  });
+
+  return response;
+};

@@ -16,7 +16,7 @@ const ROUTE_PERMISSION_MAP: Record<string, keyof EmployeePermissions> = {
 };
 
 // Routes that only admin can access (no permission key, admin-only)
-const ADMIN_ONLY_ROUTES = ["/manage-employee", "/admin-setting"];
+const ADMIN_ONLY_ROUTES = ["/manage-employee", "/admin-setting", "/dashboard"];
 
 function AuthChecker() {
   const isLogin = useSelector((state: RootState) => state.auth.isLogin);

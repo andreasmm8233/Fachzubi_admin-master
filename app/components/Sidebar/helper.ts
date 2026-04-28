@@ -19,6 +19,7 @@ export const MENU_DATA: SidebarMenu[] = [
     icon: SVG.DashboardIcon,
     label: "Dashboard",
     url: "/dashboard",
+    adminOnly: true,
   },
   {
     id: 10,

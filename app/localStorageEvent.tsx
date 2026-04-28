@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { setIsLogin, setRole, setPermissions } from "./redux/auth/authSlice";
+import { setIsLogin, setRole, setPermissions, setIsLoading } from "./redux/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { setCurrentRoute } from "./redux/protectRoute/previousRouteSlice";
 
@@ -27,6 +27,9 @@ function LocalStorageEvent() {
     } else {
       dispatch(setPermissions(null));
     }
+    
+    // Crucial: Clear global loading state so AuthChecker executes!
+    dispatch(setIsLoading(false));
   };
 
   useEffect(() => {

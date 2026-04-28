@@ -71,7 +71,20 @@ const Login = () => {
           JSON.stringify(result.data.data.permissions || {})
         );
 
-        router.push("/dashboard");
+        const assignedRole = result.data.data.role || "admin";
+        let redirectUrl = "/dashboard";
+        
+        if (assignedRole === "employee") {
+           const perms = result.data.data.permissions || {};
+           if (perms.manage_employers) redirectUrl = "/manage-employers";
+           else if (perms.manage_jobs) redirectUrl = "/manage-jobs";
+           else if (perms.manage_industries) redirectUrl = "/manage-industries";
+           else if (perms.job_types) redirectUrl = "/manage-type-of-job";
+           else if (perms.manage_cities) redirectUrl = "/manage-cities";
+           else if (perms.manage_content) redirectUrl = "/manage-content/terms-and-conditions";
+        }
+
+        router.push(redirectUrl);
       } else {
         console.error("Login failed:", result);
         setError(result.error.errors.message || "Login failed");

@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 import {
   AppBar,
@@ -27,6 +28,9 @@ export default function AdminLayout({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isToggle, setIsToggle] = useState(true);
   const loading = useSelector((state: RootState) => state.auth.loading);
+  const pathname = usePathname();
+  const isLogPage = pathname?.includes("/manage-employee/log/");
+
   const handleToggle = () => {
     setIsToggle(!isToggle);
   };
@@ -38,6 +42,15 @@ export default function AdminLayout({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  if (isLogPage) {
+    return (
+      <Box sx={{ background: "#F1F1F1", minHeight: "100vh" }}>
+        {!loading && <AuthChecker />}
+        {children}
+      </Box>
+    );
+  }
 
   return (
     <>
