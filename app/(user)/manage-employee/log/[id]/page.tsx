@@ -295,7 +295,18 @@ const EmployeeLogPage = () => {
                   <Grid container spacing={3}>
                     {jobsData[company._id].jobs.map((job) => (
                       <Grid item xs={12} md={6} xl={4} key={job._id}>
-                        <Card sx={{ height: "100%", boxShadow: "0 4px 12px rgba(0,0,0,0.03)", border: "1px solid #eaeaea", borderRadius: "12px", transition: "transform 0.2s", '&:hover': { transform: 'translateY(-4px)', boxShadow: "0 10px 20px rgba(0,150,164,0.08)", borderColor: "rgba(0,150,164,0.3)" } }}>
+                        <Card 
+                          onClick={() => window.open(`/manage-employee/log/job/${job._id}`, '_blank')}
+                          sx={{ 
+                            height: "100%", 
+                            cursor: "pointer",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.03)", 
+                            border: "1px solid #eaeaea", 
+                            borderRadius: "12px", 
+                            transition: "transform 0.2s", 
+                            '&:hover': { transform: 'translateY(-4px)', boxShadow: "0 10px 20px rgba(0,150,164,0.08)", borderColor: "rgba(0,150,164,0.3)" } 
+                          }}
+                        >
                           <CardContent sx={{ p: 3 }}>
                             <Stack direction="row" alignItems="flex-start" justifyContent="space-between" mb={1.5}>
                               <Typography variant="h6" fontSize="1.15rem" fontWeight="700" color="#222">
