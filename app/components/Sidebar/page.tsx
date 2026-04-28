@@ -99,7 +99,12 @@ const SidebarMenu_Component = () => {
                 }}
                 onClick={() => {
                   if (item.label === "Log Out") {
+                    const remEmail = localStorage.getItem("rememberedEmail");
+                    const remPass = localStorage.getItem("rememberedPassword");
                     localStorage.clear();
+                    if (remEmail) localStorage.setItem("rememberedEmail", remEmail);
+                    if (remPass) localStorage.setItem("rememberedPassword", remPass);
+
                     dispatch(setIsLogin(false));
                     dispatch(setRole(null));
                     dispatch(setPermissions(null));

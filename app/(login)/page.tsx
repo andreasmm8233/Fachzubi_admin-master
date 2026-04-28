@@ -11,9 +11,11 @@ import {
   Stack,
   TextField,
   Typography,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ForgotPassword from "./forgot-password";
@@ -33,6 +35,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoginLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [validationErrors, setValidationErrors] = useState({
     email: "",
     password: "",
@@ -56,6 +59,15 @@ const Login = () => {
     onSubmit: async (values) => {
       dispatch(setIsLoading(false));
       setLoginLoading(true);
+      
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", values.email);
+        localStorage.setItem("rememberedPassword", btoa(values.password));
+      } else {
+        localStorage.removeItem("rememberedEmail");
+        localStorage.removeItem("rememberedPassword");
+      }
+      
       const payload: LoginRequestDto = {
         email: values.email,
         password: values.password,
@@ -92,6 +104,21 @@ const Login = () => {
       setLoginLoading(false);
     },
   });
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedPass = localStorage.getItem("rememberedPassword");
+    
+    if (savedEmail) {
+      formik.setFieldValue("email", savedEmail);
+      setRememberMe(true);
+    }
+    if (savedPass) {
+      try {
+        formik.setFieldValue("password", atob(savedPass));
+      } catch (e) {}
+    }
+  }, []);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -175,14 +202,12 @@ const Login = () => {
                   sx={{
                     "& .MuiFormHelperText-root": {
                       marginLeft: "5px",
-                      color: "#FFA500",
                       fontWeight: "500",
                     },
                   }}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
                 />
-                {formik.touched.email && formik.errors.email && (
-                  <div style={{ color: "red" }}>{formik.errors.email}</div>
-                )}
                 <TextField
                   type={showPassword ? "text" : "password"}
                   InputProps={{
@@ -207,28 +232,27 @@ const Login = () => {
                   sx={{
                     "& .MuiFormHelperText-root": {
                       marginLeft: "5px",
-                      color: "#FFA500",
                       fontWeight: "500",
                     },
                   }}
+                  error={formik.touched.password && Boolean(formik.errors.password)}
+                  helperText={formik.touched.password && formik.errors.password}
                 />
-                {formik.touched.password && formik.errors.password && (
-                  <div style={{ color: "red" }}>{formik.errors.password}</div>
-                )}
 
-                {/* <Typography
-                  variant="body1"
-                  sx={{
-                    textAlign: "right",
-                    cursor: "pointer",
-                    fontWeight: "500",
-                    marginTop: "0px !important",
-                  }}
-                  color="primary.main"
-                  onClick={handleClickOpen}
-                >
-                  Forgot Password?
-                </Typography> */}
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <FormControlLabel 
+                    control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} sx={{ color: "#0096A4", '&.Mui-checked': { color: "#0096A4" } }} />} 
+                    label={<Typography variant="body2" fontWeight="500">Remember me</Typography>} 
+                  />
+                  <Typography
+                    variant="body2"
+                    sx={{ cursor: "pointer", fontWeight: "600" }}
+                    color="#0096A4"
+                    onClick={handleClickOpen}
+                  >
+                    Forgot Password?
+                  </Typography>
+                </Stack>
                 <Button
                   variant="contained"
                   sx={{ fontSize: "32px", fontWeight: 700 }}
