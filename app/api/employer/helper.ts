@@ -98,6 +98,6 @@ export function transFormSignalApiData(
     videoLink: apiData.videoLink,
     companyDescription: apiData.companyDescription || "",
     phoneNo: apiData.phoneNo,
-    companyLogo: apiData.companyLogo?._id || "",
+    companyLogo: apiData.companyLogo || "",
   };
 }

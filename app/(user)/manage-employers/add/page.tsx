@@ -228,7 +228,7 @@ const AddComponent = () => {
         "city",
         response.data.data.city ? response.data.data.city : ""
       );
-      formik.setFieldValue("companyLogo", response.data.data.companyLogo);
+      formik.setFieldValue("companyLogo", response.data.data.companyLogo?.filepath || null);
       formik.setFieldValue(
         "companyDescription",
         response.data.data.companyDescription
@@ -309,9 +309,9 @@ const AddComponent = () => {
                 lg={10}
                 sx={{
                   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input":
-                    {
-                      padding: "0px",
-                    },
+                  {
+                    padding: "0px",
+                  },
                 }}
               >
                 <Autocomplete
@@ -522,9 +522,9 @@ const AddComponent = () => {
                 lg={4.67}
                 sx={{
                   "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input":
-                    {
-                      padding: "0px",
-                    },
+                  {
+                    padding: "0px",
+                  },
                 }}
               >
                 <Autocomplete
@@ -570,6 +570,32 @@ const AddComponent = () => {
                 />
                 {formik.touched.companyLogo && formik.errors.companyLogo && (
                   <div style={{ color: "red" }}>CompanyLogo is Required</div>
+                )}
+
+                {formik.values.companyLogo && (
+                  <Box sx={{ mt: 2 }}>
+                    <div style={{ marginBottom: "8px", fontSize: "14px", color: "#646464" }}>
+                      Logo Preview
+                    </div>
+                    <img
+                      src={
+                        typeof formik.values.companyLogo === "string"
+                          ? `${process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL}${formik.values.companyLogo}`
+                          : formik.values.companyLogo instanceof File
+                            ? URL.createObjectURL(formik.values.companyLogo)
+                            : ""
+                      }
+                      alt="Company Logo Preview"
+                      style={{ 
+                        maxWidth: "100px", 
+                        maxHeight: "100px", 
+                        borderRadius: "8px", 
+                        objectFit: "contain",
+                        border: "1px solid #e0e0e0",
+                        padding: "4px"
+                      }}
+                    />
+                  </Box>
                 )}
               </Grid>
 
