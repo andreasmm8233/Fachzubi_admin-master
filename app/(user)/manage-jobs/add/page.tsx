@@ -110,6 +110,19 @@ const AddComponent: React.FC = () => {
   const [fileList, setFileList] = useState<FileState[]>([]);
   const [oldFile, setOldFile] = useState<string[]>([]);
   const [jobTypes, setJobTypes] = useState<TransformJobType[]>([]);
+
+  const getYouTubeEmbedUrl = (url: string) => {
+    if (!url) return url;
+    try {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      return match && match[2].length === 11
+        ? `https://www.youtube.com/embed/${match[2]}`
+        : url;
+    } catch (e) {
+      return url;
+    }
+  };
   const validationSchema = Yup.object({
     videoLink: Yup.array().of(Yup.string().matches(re, "URL is not valid")),
     company: Yup.object().test(
@@ -679,7 +692,7 @@ const AddComponent: React.FC = () => {
                         setAttachments(files);
                       }
                     }}
-                    inputProps={{ multiple: true }}
+                    inputProps={{ multiple: true, accept: ".pdf,.doc,.docx" }}
                   />
                   <List
                     component={"ul"}
@@ -760,7 +773,7 @@ const AddComponent: React.FC = () => {
                               title="Preview"
                               width="200"
                               height="110"
-                              src={link}
+                              src={getYouTubeEmbedUrl(link)}
                             ></iframe>
                           </Box>
                         ) : (

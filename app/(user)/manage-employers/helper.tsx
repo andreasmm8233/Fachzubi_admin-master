@@ -7,11 +7,11 @@ export const COLUMS_DATA = [
   //   name: "id",
   //   key: "id",
   // },
-  {
-    id: 2,
-    name: "Date",
-    key: "date",
-  },
+  // {
+  //   id: 2,
+  //   name: "Date",
+  //   key: "date",
+  // },
   {
     id: 3,
     name: "Company Name",

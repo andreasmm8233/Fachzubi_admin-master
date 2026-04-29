@@ -152,7 +152,6 @@ const ManageEmployee = () => {
   const handleTableRow = (rowData: any) => {
     return {
       id: rowData.id,
-      date: rowData.date === "Invalid Date" ? "" : rowData.date,
       companyName: rowData.companyName,
       email: rowData.email,
       contact: rowData.contact,

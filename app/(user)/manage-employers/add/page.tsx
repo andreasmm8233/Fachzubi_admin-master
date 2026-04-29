@@ -41,6 +41,19 @@ const AddComponent = () => {
   const [id, setId] = useState("");
   const [fileList, setFileList] = useState<FileState[]>([]);
   const [oldFile, setOldFile] = useState<string[]>([]);
+  const getYouTubeEmbedUrl = (url: string) => {
+    if (!url) return url;
+    try {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      return match && match[2].length === 11
+        ? `https://www.youtube.com/embed/${match[2]}`
+        : url;
+    } catch (e) {
+      return url;
+    }
+  };
+
   const validationSchema = Yup.object({
     industryName: Yup.object().test(
       "isImage",
@@ -72,16 +85,16 @@ const AddComponent = () => {
     //   }
     //   return false;
     // }),
-    // companyLogo: Yup.mixed().test("isImage", "Invalid image file", (value) => {
-    //   if (!value) {
-    //     return false;
-    //   }
-    //   return true;
-    // }),
+    companyLogo: Yup.mixed().test("isImage", "Company logo is required", (value) => {
+      if (!value) {
+        return false;
+      }
+      return true;
+    }),
     // companyDescription: Yup.string().required(
     //   "company Description is required"
     // ),
-    // videoLink: Yup.array().of(Yup.string().matches(re, "URL is not valid")),
+    videoLink: Yup.array().of(Yup.string().matches(re, "URL is not valid")),
   });
   const formik = useFormik<EmployerFormType>({
     initialValues: {
@@ -418,7 +431,7 @@ const AddComponent = () => {
               <Grid item xs={12} lg={2}>
                 <label>Website</label>
               </Grid>
-              <Grid item xs={10}>
+              <Grid item xs={12} lg={10}>
                 <TextField
                   placeholder="e.g, www.domain.com"
                   disabled={disable}
@@ -437,7 +450,7 @@ const AddComponent = () => {
               <Grid item xs={12} lg={2}>
                 <label>Phone No.</label>
               </Grid>
-              <Grid item xs={10}>
+              <Grid item xs={12} lg={10}>
                 <PhoneInput
                   regions={"europe"}
                   disabled={disable}
@@ -547,6 +560,7 @@ const AddComponent = () => {
                   fullWidth
                   helperText="recommend size 250x250px"
                   name="companyLogo"
+                  inputProps={{ accept: "image/*" }}
                   onChange={(e: any) => {
                     formik.setFieldValue(
                       "companyLogo",
@@ -559,10 +573,10 @@ const AddComponent = () => {
                 )}
               </Grid>
 
-              <Grid item xs={2} sx={{ minHeight: "160px" }}>
+              <Grid item xs={12} lg={2} sx={{ minHeight: "160px" }}>
                 <label>Company Description</label>
               </Grid>
-              <Grid item xs={10}>
+              <Grid item xs={12} lg={10}>
                 <Box
                   sx={{
                     "& textarea": {
@@ -597,10 +611,10 @@ const AddComponent = () => {
                     </div>
                   )}
               </Grid>
-              <Grid item xs={2} sx={{ minHeight: "160px" }}>
+              <Grid item xs={12} lg={2} sx={{ minHeight: "160px" }}>
                 <label>Company Images</label>
               </Grid>
-              <Grid item xs={10}>
+              <Grid item xs={12} lg={10}>
                 {" "}
                 <Box
                   sx={{
@@ -630,7 +644,7 @@ const AddComponent = () => {
               <Grid item xs={12} lg={2}>
                 <label>YouTube link</label>
               </Grid>
-              <Grid item xs={10}>
+              <Grid item xs={12} lg={10}>
                 {formik.values.videoLink.map((link, index) => (
                   <>
                     <TextField
@@ -654,7 +668,7 @@ const AddComponent = () => {
                           title="Preview"
                           width="200"
                           height="110"
-                          src={link}
+                          src={getYouTubeEmbedUrl(link)}
                         ></iframe>
                       </Box>
                     ) : (
