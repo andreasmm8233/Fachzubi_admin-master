@@ -27,7 +27,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { RotatingLines } from "react-loader-spinner";
 import { useDispatch } from "react-redux";
-import { setIsLoading } from "../redux/auth/authSlice";
+import { setIsLoading, setIsLogin, setRole, setPermissions } from "../redux/auth/authSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -82,6 +82,10 @@ const Login = () => {
           "x-permissions",
           JSON.stringify(result.data.data.permissions || {})
         );
+
+        dispatch(setIsLogin(true));
+        dispatch(setRole(result.data.data.role || "admin"));
+        dispatch(setPermissions(result.data.data.permissions || null));
 
         const assignedRole = result.data.data.role || "admin";
         let redirectUrl = "/dashboard";

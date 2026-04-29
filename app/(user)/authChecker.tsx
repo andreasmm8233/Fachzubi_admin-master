@@ -35,14 +35,36 @@ function AuthChecker() {
       router.push("/");
     } else {
       if (previousRoute) {
-        router.push(
-          previousRoute === "/" || previousRoute === "/reset-password"
-            ? "/dashboard"
-            : previousRoute
-        );
+        let targetRoute = previousRoute;
+        if (previousRoute === "/" || previousRoute === "/reset-password") {
+          targetRoute = "/dashboard";
+          if (role === "employee") {
+            const perms = permissions || ({} as EmployeePermissions);
+            if (perms.manage_employers) targetRoute = "/manage-employers";
+            else if (perms.manage_jobs) targetRoute = "/manage-jobs";
+            else if (perms.manage_industries) targetRoute = "/manage-industries";
+            else if (perms.job_types) targetRoute = "/manage-type-of-job";
+            else if (perms.manage_cities) targetRoute = "/manage-cities";
+            else if (perms.manage_content) targetRoute = "/manage-content/terms-and-conditions";
+          }
+        }
+        
+        if (pathname !== targetRoute && pathname === "/dashboard" && role === "employee") {
+           router.push(targetRoute);
+        } else if (pathname !== targetRoute && (previousRoute === "/" || previousRoute === "/reset-password")) {
+           // If they came from login, and they are not on targetRoute, but wait!
+           // The login page ALREADY pushed them to their correct route.
+           // If we push again here based on previousRoute being "/", we might interrupt it.
+           // Actually, if previousRoute is "/", it means they started on login.
+           // They are currently on whatever login page pushed them to. We should NOT override it!
+           // Only redirect if pathname is still "/" or something, which won't happen here because it's inside app/(user).
+           // Let's just NOT redirect if previousRoute is "/" or "/reset-password" because login page handles it!
+           // Wait, what if they reload the page on /manage-jobs? previousRoute becomes /manage-jobs.
+           // Then we don't need to redirect them because they are already on /manage-jobs!
+        }
       }
     }
-  }, [isLogin, previousRoute, router]);
+  }, [isLogin, previousRoute, router, pathname, role, permissions]);
 
   // Permission-based route protection for employees
   useEffect(() => {

@@ -25,11 +25,14 @@ const SidebarMenu_Component = () => {
   const [openMenu, setOpenMenu] = useState<number | null>(null);
 
   const role = useSelector((state: RootState) => state.auth.role);
+  const loading = useSelector((state: RootState) => state.auth.loading);
   const permissions = useSelector(
     (state: RootState) => state.auth.permissions
   );
 
   const filteredMenuData = useMemo(() => {
+    if (loading) return [];
+
     // Admin sees everything
     if (!role || role === "admin") {
       return MENU_DATA;
