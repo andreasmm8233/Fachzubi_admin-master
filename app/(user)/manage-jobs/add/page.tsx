@@ -141,7 +141,7 @@ const AddComponent: React.FC = () => {
       .required("email is required"),
     additionalEmail: Yup.string().email("Invalid email address"),
     address: Yup.string().required("address is required"),
-    zipCode: Yup.number().required("zip code is required"),
+    zipCode: Yup.string().required("zip code is required"),
     jobType: Yup.string().required("jobType is required"),
     jobDescription: Yup.string()
       .min(1, "company Description is required")
@@ -636,7 +636,7 @@ const AddComponent: React.FC = () => {
                     value={formik.values.zipCode}
                     name="zipCode"
                   />
-                  {formik.errors.zipCode ? (
+                  {formik.touched.zipCode && formik.errors.zipCode ? (
                     <div style={{ color: "red" }}>{formik.errors.zipCode}</div>
                   ) : null}
                 </Grid>
