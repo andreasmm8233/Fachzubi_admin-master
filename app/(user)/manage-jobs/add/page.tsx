@@ -269,7 +269,7 @@ const AddComponent: React.FC = () => {
 
       formik.setFieldValue("company", {
         id: response.data.data.company._id,
-        label: response.data.data.company.companyName,
+        label: response.data.data.company.companyName || "",
       });
       formik.setFieldValue("jobTitle", response.data.data.jobTitle);
       formik.setFieldValue("startDate", date);
@@ -283,7 +283,7 @@ const AddComponent: React.FC = () => {
       formik.setFieldValue("jobDescription", response.data.data.jobDescription);
       formik.setFieldValue("industryName", {
         id: industryValue._id,
-        label: industryValue.industryName,
+        label: industryValue.industryName || "",
       });
       setDocuments(response.data.data.attachments);
     }
@@ -422,8 +422,8 @@ const AddComponent: React.FC = () => {
                         return city.id === value;
                       });
                       return {
-                        label: newLocation?.name,
-                        id: newLocation?.id,
+                        label: newLocation?.name || "",
+                        id: newLocation?.id || value,
                       };
                     })}
                     onChange={(e, values) => {
