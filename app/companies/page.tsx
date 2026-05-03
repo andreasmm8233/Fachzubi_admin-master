@@ -34,10 +34,11 @@ export default function CompaniesPage() {
 
   const fetchCompanies = async () => {
     setLoading(true);
-    const payload = {
+    const payload: any = {
       searchValue: debouncedSearchTerm,
       pageNo: pageNo,
       recordPerPage: "12",
+      filter: "",
     };
 
     try {
