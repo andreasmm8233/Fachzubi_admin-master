@@ -159,6 +159,23 @@ const Login = () => {
           <ErrorAlert severity="error" message={error} />
         </div>
       )}
+
+      {/* Public Navigation */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: { xs: 2, md: 4 }, position: "absolute", top: 0, right: 0, width: "100%", zIndex: 10 }}>
+        <Button 
+          onClick={() => router.push("/companies")} 
+          sx={{ color: "#0096A4", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(0,150,164,0.1)" } }}
+        >
+          Companies
+        </Button>
+        <Button 
+          onClick={() => router.push("/jobs")} 
+          sx={{ color: "#0096A4", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(0,150,164,0.1)" } }}
+        >
+          Jobs
+        </Button>
+      </Box>
+
       <Box
         sx={{
           minHeight: "100vh",

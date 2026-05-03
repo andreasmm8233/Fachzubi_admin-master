@@ -12,20 +12,27 @@ import urlcat from "urlcat";
 export const getAllJobs = async (
   payload: getAllJobsType
 ): Promise<SuccessResult<JobWithCount> | ErrorResult> => {
-  const { searchValue, pageNo, filter, recordPerPage } = payload;
-  const url = urlcat("/job/", {
-    searchValue,
-    pageNo,
-    filter,
-    recordPerPage,
-  });
+  const { searchValue, pageNo, filter, recordPerPage, letter } = payload;
+  const queryParams: any = {};
+  if (searchValue) queryParams.searchValue = searchValue;
+  if (pageNo) queryParams.pageNo = pageNo;
+  if (filter) queryParams.filter = filter;
+  if (recordPerPage) queryParams.recordPerPage = recordPerPage;
+  if (letter) queryParams.letter = letter;
+
+  const url = urlcat("/job/", queryParams);
   const response = await request({
     url,
     method: "get",
   });
   if (response.remote === "success") {
-    response.data.data.data = transformJobsData(response.data.data.jobs);
-    response.data.data.data.count = response.data.data.count;
+    const rawJobsArray = response.data.data.jobs || response.data.data.data || [];
+    const transformed = transformJobsData(rawJobsArray);
+    
+    // Some responses use 'total', some use 'count'. Add it safely.
+    (transformed as any).count = response.data.data.count || response.data.data.total || 0;
+    
+    response.data.data.data = transformed;
     return response;
   }
   return response;

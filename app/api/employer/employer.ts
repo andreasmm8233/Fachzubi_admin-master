@@ -167,3 +167,33 @@ export const getCompaniesByCityIdApi = async (
   });
   return response;
 };
+
+export const getAllPublicEmployers = async (
+  payload: getAllEmployerType
+): Promise<SuccessResult<any> | ErrorResult> => {
+  const { searchValue, pageNo, filter, recordPerPage } = payload;
+  const queryParams: any = {};
+  if (searchValue) queryParams.searchValue = searchValue;
+  if (pageNo) queryParams.pageNo = pageNo;
+  if (filter) queryParams.filter = filter;
+  if (recordPerPage) queryParams.recordPerPage = recordPerPage;
+
+  const url = urlcat("/employer/get-all-emp-frontend", queryParams);
+
+  const response = await request({
+    url,
+    method: "GET",
+  });
+
+  return response;
+};
+
+export const getPublicCompanyDetail = async (
+  companyId: string
+): Promise<SuccessResult<any> | ErrorResult> => {
+  const response = await request({
+    url: `/employer/company-Detail/${companyId}`,
+    method: "GET",
+  });
+  return response;
+};

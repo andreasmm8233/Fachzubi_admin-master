@@ -20,6 +20,7 @@ export interface getAllJobsType {
   pageNo: number;
   filter: string;
   recordPerPage: string;
+  letter?: string;
 }
 export interface JobWithCount {
   data: Job[];

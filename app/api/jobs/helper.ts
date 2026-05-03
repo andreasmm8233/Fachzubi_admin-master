@@ -11,6 +11,8 @@ export const transformJobsData = (rawJobs: any): Job[] => {
     return {
       id: rawJob._id,
       company: rawJob.company,
+      companyLogo: rawJob.companyLogo,
+      companyId: rawJob.companyId,
       jobTitle: rawJob.jobTitle,
       startDate: isStartDate ? newStartingDate.toLocaleDateString() : "",
       email: rawJob.email,
