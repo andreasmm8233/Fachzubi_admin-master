@@ -30,6 +30,16 @@ export default function AdminLayout({
   const loading = useSelector((state: RootState) => state.auth.loading);
   const pathname = usePathname();
   const isLogPage = pathname?.includes("/manage-employee/log/");
+  const [hideLogo, setHideLogo] = useState(false);
+
+  useEffect(() => {
+    const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
+    if (typeof window !== "undefined" && hideLogoDomain) {
+      if (window.location.hostname === hideLogoDomain) {
+        setHideLogo(true);
+      }
+    }
+  }, []);
 
   const handleToggle = () => {
     setIsToggle(!isToggle);
@@ -76,12 +86,14 @@ export default function AdminLayout({
               alignItems: "center",
             }}
           >
-            <Image
-              src={isToggle ? "/logo.png" : "/fevicon.png"}
-              alt=""
-              width={isToggle ? 210 : 28}
-              height={isToggle ? 28 : 30.7}
-            />
+            {!hideLogo && (
+              <Image
+                src={isToggle ? "/logo.png" : "/fevicon.png"}
+                alt=""
+                width={isToggle ? 210 : 28}
+                height={isToggle ? 28 : 30.7}
+              />
+            )}
           </Typography>
           <Box sx={{ flexGrow: 1 }}>
             <IconButton

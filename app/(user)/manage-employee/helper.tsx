@@ -10,6 +10,11 @@ export const COLUMNS_DATA = [
     key: "email",
   },
   {
+    id: 25,
+    name: "Password",
+    key: "password",
+  },
+  {
     id: 3,
     name: "Status",
     key: "status",

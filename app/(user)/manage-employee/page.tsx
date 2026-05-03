@@ -29,6 +29,7 @@ interface RowData {
   id: string;
   name: string;
   email: string;
+  password?: string;
   status: string;
   permissions: string;
   createdAt: string;
@@ -118,10 +119,12 @@ const ManageEmployeePage = () => {
   };
 
   const handleTableRow = (rowData: any) => {
+    console.log("rowData", rowData);
     return {
       id: rowData.id,
       name: rowData.name,
       email: rowData.email,
+      password: rowData.password || "N/A",
       status: (
         <div
           style={{

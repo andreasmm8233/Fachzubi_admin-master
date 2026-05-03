@@ -17,6 +17,8 @@ import { COLUMS_DATA } from "./cityData";
 import DeleteModal from "@/app/components/delete.modal.components";
 import { useEffect, useState } from "react";
 import IModal from "@/app/components/modal.components";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
 import AddCities from "./add-cities";
 import { useDebounce } from "@uidotdev/usehooks";
 import {
@@ -40,6 +42,7 @@ import Link from "next/link";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 const ManageCities = () => {
+  const role = useSelector((state: RootState) => state.auth.role);
   const [isDeleteModal, setDeleteModal] = useState(false);
   const [isAddCity, setIsAddCity] = useState(false);
   const [pageCount, setPageCount] = useState<number>(0);
@@ -398,7 +401,7 @@ const ManageCities = () => {
       </Stack>
       <Box sx={{ overflow: "hidden", position: "relative" }}>
         <CustomTable
-          columns={COLUMS_DATA}
+          columns={COLUMS_DATA.filter((col) => role === "employee" ? col.key !== "qrCode" : true)}
           rows={rowData?.map((row) => CityTableRow(row)) || []}
           pageCount={pageCount}
           setRecordPerPage={setRecordPerPage}
@@ -415,7 +418,7 @@ const ManageCities = () => {
         loading={isDeleteLoading}
       />
       <IModal open={isAddCity} handleClose={clearAllState}>
-        <AddCities
+        <AddCities role={role}
           handleClose={handleClose}
           name={name}
           setName={setName}

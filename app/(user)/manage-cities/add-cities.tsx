@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Box, Button, Grid, Stack, TextField, FormLabel } from "@mui/material";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -35,6 +36,7 @@ const splitQrTargetUrl = (url?: string, fallbackName?: string) => {
 
 const AddCities = (props: any) => {
   const qrTarget = splitQrTargetUrl(props.qrTargetUrl, props.name);
+  const [randomDigits] = useState(() => Math.floor(1000 + Math.random() * 9000));
   const validationSchema = yup.object().shape({
     name: yup.string().required("City is required"),
     startTime: yup.date(),
@@ -82,6 +84,18 @@ const AddCities = (props: any) => {
           <FormLabel>Add City</FormLabel>
           <TextField
             {...formik.getFieldProps("name")}
+            onChange={(e) => {
+              const value = e.target.value;
+              formik.setFieldValue("name", value);
+              if (!props.name) {
+                const formattedName = value.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+                if (formattedName) {
+                  formik.setFieldValue("qrTargetCityName", `${formattedName}-${randomDigits}`);
+                } else {
+                  formik.setFieldValue("qrTargetCityName", "");
+                }
+              }
+            }}
             value={formik.values.name}
             sx={{
               "& .MuiInputBase-root": {
@@ -268,7 +282,9 @@ const AddCities = (props: any) => {
             </div>
           )}
 
-          <FormLabel>QR Target URL City Name</FormLabel>
+          {props.role !== "employee" && (
+            <>
+              <FormLabel>QR Target URL City Name</FormLabel>
           <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
             <TextField
               value={formik.values.qrTargetBase}
@@ -315,7 +331,8 @@ const AddCities = (props: any) => {
                 {formik.errors.qrTargetCityName as string}
               </div>
             )}
-
+            </>
+          )}
           <Stack
             direction={"row"}
             spacing={2}

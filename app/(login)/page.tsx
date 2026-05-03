@@ -41,6 +41,16 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
+  const [hideLogo, setHideLogo] = useState(false);
+
+  useEffect(() => {
+    const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
+    if (typeof window !== "undefined" && hideLogoDomain) {
+      if (window.location.hostname === hideLogoDomain) {
+        setHideLogo(true);
+      }
+    }
+  }, []);
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -173,13 +183,15 @@ const Login = () => {
                 component={"h1"}
                 sx={{ marginBottom: "25px", textAlign: "center" }}
               >
-                <Image
-                  // sizes="100vw"
-                  src="/logo.png"
-                  alt=""
-                  width={253}
-                  height={37}
-                />
+                {!hideLogo && (
+                  <Image
+                    // sizes="100vw"
+                    src="/logo.png"
+                    alt=""
+                    width={253}
+                    height={37}
+                  />
+                )}
               </Typography>
               <Typography variant="h2" sx={{ textAlign: "center" }}>
                 Welcome Back !

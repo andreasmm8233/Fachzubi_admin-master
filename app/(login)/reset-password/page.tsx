@@ -35,6 +35,16 @@ const ResetPassword = () => {
   const handleClickConfirmShowPassword = () => {
     setConfirmPassword((show) => !show);
   };
+  const [hideLogo, setHideLogo] = useState(false);
+
+  useEffect(() => {
+    const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
+    if (typeof window !== "undefined" && hideLogoDomain) {
+      if (window.location.hostname === hideLogoDomain) {
+        setHideLogo(true);
+      }
+    }
+  }, []);
   const notifyError = (message: string) => {
     return toast.error(message);
   };
@@ -89,7 +99,9 @@ const ResetPassword = () => {
             component={"h1"}
             sx={{ marginBottom: "25px", textAlign: "center" }}
           >
-            <Image src="/logo.png" alt="" width={253} height={37} />
+            {!hideLogo && (
+              <Image src="/logo.png" alt="" width={253} height={37} />
+            )}
           </Typography>
 
           <Typography
