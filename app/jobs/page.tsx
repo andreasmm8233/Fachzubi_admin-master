@@ -54,9 +54,10 @@ export default function JobsPage() {
     try {
       const response = await getAllJobs(payload);
       if (response.remote === "success") {
-        const jobsData = response.data.data.data || [];
-        const count = response.data.data.count || response.data.data.total || 0;
-        const apiTotalPages = response.data.data.totalPages;
+        const responseData = response.data.data as any;
+        const jobsData = responseData.data || [];
+        const count = responseData.count || responseData.total || 0;
+        const apiTotalPages = responseData.totalPages;
         setJobs(jobsData);
         setTotalPages(apiTotalPages || Math.ceil(count / 12) || 1);
       } else {

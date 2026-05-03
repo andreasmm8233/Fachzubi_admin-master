@@ -36,7 +36,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
         const response = await getJobDetailById(params.id);
         if (response.remote === "success") {
           const data = response.data?.data || response.data;
-          setJob(data.job || data);
+          setJob((data as any).job || data);
         } else {
           console.error("Failed to fetch job details", response.error);
         }
