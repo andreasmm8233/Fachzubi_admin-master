@@ -129,7 +129,7 @@ export default function CompaniesPage() {
         {!loading && companies.length === 0 && (
           <Box sx={{ textAlign: "center", mt: 8 }}>
             <Typography variant="h5" sx={{ color: "#718096" }}>
-              No companies found matching "{searchValue}".
+              No companies found matching &quot;{searchValue}&quot;.
             </Typography>
           </Box>
         )}
