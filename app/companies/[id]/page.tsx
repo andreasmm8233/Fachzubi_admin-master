@@ -204,7 +204,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                 )}
 
                 {/* Company Video */}
-                {videoLinks.length > 0 && videoLinks.map((link, idx) => {
+                {videoLinks.length > 0 && videoLinks.map((link: string, idx: number) => {
                   const embedUrl = getYoutubeEmbedUrl(link);
                   if (!embedUrl) return null;
                   return (
