@@ -177,7 +177,7 @@ export default function JobsPage() {
           <Box sx={{ textAlign: "center", py: 10, backgroundColor: "#fff", borderRadius: "16px", border: "1px dashed #cbd5e0" }}>
             <SearchIcon sx={{ fontSize: 60, color: "#e2e8f0", mb: 2 }} />
             <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>No jobs found</Typography>
-            <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you're looking for.</Typography>
+            <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you&apos;re looking for.</Typography>
             {(searchValue || selectedLetter) && (
               <Button 
                 variant="outlined" 
