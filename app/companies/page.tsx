@@ -13,6 +13,8 @@ import {
   CircularProgress,
   Pagination,
   Button,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDebounce } from "@uidotdev/usehooks";
@@ -22,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { Employer } from "@/app/api/employer/employer.types";
 
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL || "https://api.webzlab.site/";
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export default function CompaniesPage() {
   const router = useRouter();
@@ -30,6 +33,7 @@ export default function CompaniesPage() {
   const [searchValue, setSearchValue] = useState<string>("");
   const [pageNo, setPageNo] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const debouncedSearchTerm = useDebounce(searchValue, 500);
 
   const fetchCompanies = async () => {
@@ -40,6 +44,10 @@ export default function CompaniesPage() {
       recordPerPage: "12",
       filter: "",
     };
+
+    if (selectedLetter) {
+      payload.letter = selectedLetter;
+    }
 
     try {
       const response = await getAllPublicEmployers(payload);
@@ -70,11 +78,15 @@ export default function CompaniesPage() {
 
   useEffect(() => {
     setPageNo(1);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, selectedLetter]);
 
   useEffect(() => {
     fetchCompanies();
-  }, [debouncedSearchTerm, pageNo]);
+  }, [debouncedSearchTerm, pageNo, selectedLetter]);
+
+  const handleLetterChange = (event: React.MouseEvent<HTMLElement>, newLetter: string | null) => {
+    setSelectedLetter(newLetter);
+  };
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f7fa", pb: 10, position: "relative" }}>
@@ -118,6 +130,49 @@ export default function CompaniesPage() {
       </Box>
 
       <Container maxWidth="lg">
+        {/* Alphabet Filter */}
+        <Box sx={{ mb: 6 }}>
+          <Typography variant="subtitle2" sx={{ color: "#718096", mb: 2, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
+            Filter by Company Name
+          </Typography>
+          <ToggleButtonGroup
+            value={selectedLetter}
+            exclusive
+            onChange={handleLetterChange}
+            aria-label="letter filter"
+            sx={{ 
+              display: "flex", 
+              flexWrap: "wrap", 
+              gap: 1, 
+              "& .MuiToggleButtonGroup-grouped": {
+                border: "1px solid #e2e8f0 !important",
+                borderRadius: "8px !important",
+                m: "0 !important",
+                px: 2,
+                py: 1,
+                color: "#4a5568",
+                fontWeight: 600,
+                backgroundColor: "#fff",
+                transition: "all 0.2s ease",
+                "&.Mui-selected": {
+                  backgroundColor: "#0096A4 !important",
+                  color: "#fff !important",
+                  borderColor: "#0096A4 !important",
+                  boxShadow: "0 4px 10px rgba(0,150,164,0.3)"
+                },
+                "&:hover": {
+                  backgroundColor: "#edf2f7"
+                }
+              }
+            }}
+          >
+            {alphabet.map((letter) => (
+              <ToggleButton key={letter} value={letter}>
+                {letter}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        </Box>
 
         {/* Loading State */}
         {loading && (
@@ -128,10 +183,19 @@ export default function CompaniesPage() {
 
         {/* Empty State */}
         {!loading && companies.length === 0 && (
-          <Box sx={{ textAlign: "center", mt: 8 }}>
-            <Typography variant="h5" sx={{ color: "#718096" }}>
-              No companies found matching &quot;{searchValue}&quot;.
-            </Typography>
+          <Box sx={{ textAlign: "center", py: 10, backgroundColor: "#fff", borderRadius: "16px", border: "1px dashed #cbd5e0" }}>
+            <SearchIcon sx={{ fontSize: 60, color: "#e2e8f0", mb: 2 }} />
+            <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>No companies found</Typography>
+            <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you&apos;re looking for.</Typography>
+            {(searchValue || selectedLetter) && (
+              <Button 
+                variant="outlined" 
+                onClick={() => { setSearchValue(""); setSelectedLetter(null); }} 
+                sx={{ mt: 3, borderColor: "#0096A4", color: "#0096A4" }}
+              >
+                Clear Filters
+              </Button>
+            )}
           </Box>
         )}
 

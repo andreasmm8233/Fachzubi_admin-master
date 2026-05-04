@@ -9,6 +9,7 @@ export interface City {
   status: boolean;
   qrCode?: string;
   qrTargetUrl?: string;
+  createdBy?: any;
 }
 
 export interface TransformCity {
@@ -22,6 +23,7 @@ export interface TransformCity {
   status: boolean;
   qrCode?: string;
   qrTargetUrl?: string;
+  createdBy?: any;
 }
 
 export interface TransformCityForFilters {

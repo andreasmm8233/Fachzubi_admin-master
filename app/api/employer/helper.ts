@@ -4,6 +4,7 @@ export interface getAllEmployerType {
   pageNo: number;
   filter: string;
   recordPerPage: string;
+  letter?: string;
 }
 export interface TransformedRowData {
   id: string;
