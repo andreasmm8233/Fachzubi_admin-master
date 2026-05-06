@@ -30,14 +30,14 @@ export default function AdminLayout({
   const loading = useSelector((state: RootState) => state.auth.loading);
   const pathname = usePathname();
   const isLogPage = pathname?.includes("/manage-employee/log/");
-  const [hideLogo, setHideLogo] = useState(false);
+  const [hideLogo, setHideLogo] = useState(!!process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN);
 
   useEffect(() => {
     const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
     if (typeof window !== "undefined" && hideLogoDomain) {
-      if (window.location.hostname === hideLogoDomain) {
-        setHideLogo(true);
-      }
+      setHideLogo(window.location.hostname === hideLogoDomain);
+    } else {
+      setHideLogo(false);
     }
   }, []);
 

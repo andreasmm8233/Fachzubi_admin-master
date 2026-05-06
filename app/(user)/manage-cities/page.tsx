@@ -214,10 +214,16 @@ const ManageCities = () => {
           {SingleRowData.id === isUpdateLoading
             ? "Processing..."
             : SingleRowData.status
-            ? "active"
-            : "inactive"}
+              ? "active"
+              : "inactive"}
         </div>
       ),
+      createdBy: SingleRowData.createdBy
+        ? SingleRowData.createdBy.first_name
+          ? `${SingleRowData.createdBy.first_name || ""} ${SingleRowData.createdBy.last_name || ""
+            }`.trim()
+          : SingleRowData.createdBy.username || "N/A"
+        : "N/A",
       action: (
         <Stack
           direction="row"

@@ -45,6 +45,11 @@ export const COLUMS_DATA = [
   },
   {
     id: 8,
+    name: "Created By",
+    key: "createdBy",
+  },
+  {
+    id: 9,
     name: "Action",
     key: "action",
     width: "10%",

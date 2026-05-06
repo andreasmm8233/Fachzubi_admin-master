@@ -20,5 +20,6 @@ export const transformCities = (cities: City[]): TransformCity[] => {
     status: city.status,
     qrCode: city.qrCode,
     qrTargetUrl: city.qrTargetUrl,
+    createdBy: city.createdBy,
   }));
 };
