@@ -10,7 +10,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import dayjs from "dayjs";
 
-const DEFAULT_QR_TARGET_BASE = "https://webzlab.site/jobs/";
+const DEFAULT_QR_TARGET_BASE = "https://fachzubi-app.de//jobs/";
 
 const splitQrTargetUrl = (url?: string, fallbackName?: string) => {
   if (!url) {
