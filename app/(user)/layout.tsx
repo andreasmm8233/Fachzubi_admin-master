@@ -5,6 +5,7 @@ import {
   AppBar,
   Avatar,
   Box,
+  Button,
   IconButton,
   Menu,
   MenuItem,
@@ -106,6 +107,26 @@ export default function AdminLayout({
             >
               <SVG.Menu />
             </IconButton>
+          </Box>
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <Button
+              component="a"
+              href="/companies"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ color: "#0096A4", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(0,150,164,0.1)" } }}
+            >
+              Companies
+            </Button>
+            <Button
+              component="a"
+              href="/jobs"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ color: "#0096A4", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(0,150,164,0.1)" } }}
+            >
+              Jobs
+            </Button>
           </Box>
           {/* <div>
             <Stack
