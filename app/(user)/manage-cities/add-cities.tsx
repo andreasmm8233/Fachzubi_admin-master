@@ -9,8 +9,10 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
 
-const DEFAULT_QR_TARGET_BASE = "https://fachzubi-app.de//jobs/";
+const DEFAULT_QR_TARGET_BASE = process.env.DEFAULT_QR_TARGET_BASE || "https://fachzubi-app.de/jobs/";
 
 const splitQrTargetUrl = (url?: string, fallbackName?: string) => {
   if (!url) {
@@ -37,6 +39,7 @@ const splitQrTargetUrl = (url?: string, fallbackName?: string) => {
 const AddCities = (props: any) => {
   const qrTarget = splitQrTargetUrl(props.qrTargetUrl, props.name);
   const [randomDigits] = useState(() => Math.floor(10000000 + Math.random() * 90000000));
+  const suffix = randomDigits;
   const validationSchema = yup.object().shape({
     name: yup.string().required("City is required"),
     startTime: yup.date(),
@@ -90,7 +93,7 @@ const AddCities = (props: any) => {
             if (!props.name) {
               const formattedName = value.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
               if (formattedName) {
-                formik.setFieldValue("qrTargetCityName", `${formattedName}-${randomDigits}`);
+                formik.setFieldValue("qrTargetCityName", `${formattedName}-${suffix}`);
               } else {
                 formik.setFieldValue("qrTargetCityName", "");
               }
