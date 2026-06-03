@@ -12,6 +12,7 @@ import {
   Button,
   Chip,
   Divider,
+  Link as MuiLink,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -20,6 +21,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import EmailIcon from "@mui/icons-material/Email";
 import { useRouter } from "next/navigation";
 import { getJobDetailById } from "@/app/api/jobs/jobs";
 
@@ -116,7 +118,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
     });
   }
   
-  const allGalleryImages = [...jobImagesList, ...companyImagesList];
+  const allGalleryImages = jobImagesList;
   const videoLinks = Array.isArray(job.videoLink) ? job.videoLink.filter(Boolean) : [];
   const attachments = Array.isArray(job.attachments) ? job.attachments.map((a: any) => a?.document).filter(Boolean) : [];
 
@@ -342,26 +344,56 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                   </Typography>
                   
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                      <Typography variant="body2" sx={{ color: "#718096" }}>Posted</Typography>
-                      <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600 }}>{postedDate}</Typography>
-                    </Box>
                     {jobType && (
-                      <>
-                        <Divider sx={{ borderStyle: "dashed" }} />
-                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                          <Typography variant="body2" sx={{ color: "#718096" }}>Employment Type</Typography>
-                          <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600 }}>{jobType}</Typography>
-                        </Box>
-                      </>
+                      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography variant="body2" sx={{ color: "#718096" }}>Employment Type</Typography>
+                        <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600 }}>{jobType}</Typography>
+                      </Box>
                     )}
-                    <Divider sx={{ borderStyle: "dashed" }} />
+                    {jobType && <Divider sx={{ borderStyle: "dashed" }} />}
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                       <Typography variant="body2" sx={{ color: "#718096" }}>Industry</Typography>
                       <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600, textAlign: "right", maxWidth: "60%" }}>{industry}</Typography>
                     </Box>
                   </Box>
                 </Box>
+
+                {/* Contact Information */}
+                {(job.email || job.additionalEmail) && (
+                  <Box sx={{ p: 3, backgroundColor: "#f7fafc", borderRadius: "12px", border: "1px solid #edf2f7", display: "flex", flexDirection: "column", gap: 2.5 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#2d3748" }}>
+                      Contact Information
+                    </Typography>
+                    
+                    {job.email && (
+                      <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                        <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
+                          <EmailIcon fontSize="small" />
+                        </Box>
+                        <Box sx={{ overflow: "hidden" }}>
+                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Email</Typography>
+                          <MuiLink href={`mailto:${job.email}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
+                            {job.email}
+                          </MuiLink>
+                        </Box>
+                      </Box>
+                    )}
+
+                    {job.additionalEmail && (
+                      <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                        <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
+                          <EmailIcon fontSize="small" />
+                        </Box>
+                        <Box sx={{ overflow: "hidden" }}>
+                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Additional Email</Typography>
+                          <MuiLink href={`mailto:${job.additionalEmail}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
+                            {job.additionalEmail}
+                          </MuiLink>
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
+                )}
 
                 {/* Attachments */}
                 {attachments.length > 0 && (
