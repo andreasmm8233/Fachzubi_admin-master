@@ -43,11 +43,7 @@ export const COLUMS_DATA = [
     name: "Status",
     key: "status",
   },
-  {
-    id: 8,
-    name: "Created By",
-    key: "createdBy",
-  },
+
   {
     id: 9,
     name: "Action",

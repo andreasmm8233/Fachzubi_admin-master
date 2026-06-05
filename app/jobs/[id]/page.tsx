@@ -80,19 +80,19 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   }
   const jobType = job.jobTypeName || job.jobType?.name || (typeof job.jobType === "string" ? null : null);
   const industry = job.industryName?.industryName || job.industryName?.name || (typeof job.industryName === "string" ? job.industryName : "Various Industries");
-  
+
   // Clean up description and remove "What Clients Say" just in case it bled in from companies
   const description = (job.jobDescription || "")
     .replace(/<h2>What Clients Say<\/h2>/gi, '')
     .replace(/<p>What Clients Say<\/p>/gi, '')
     .replace(/What Clients Say/gi, '');
-  
+
   const address = job.address || "";
   const zipCode = job.zipCode || "";
-  const city = Array.isArray(job.city) 
-    ? job.city.map((c: any) => Array.isArray(c) ? c.join(", ") : c?.name || c).join(", ") 
+  const city = Array.isArray(job.city)
+    ? job.city.map((c: any) => Array.isArray(c) ? c.join(", ") : c?.name || c).join(", ")
     : (job.city?.name || job.city || job.location || "Various Locations");
-  
+
   const startDate = job.startDate ? new Date(job.startDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : "";
   const postedDate = job.createdAt ? new Date(job.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : "";
 
@@ -108,7 +108,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 
   // Media Extractions
   const jobImagesList = Array.isArray(job.jobImages) ? job.jobImages.map((img: any) => img.filepath).filter(Boolean) : [];
-  
+
   let companyImagesList: string[] = [];
   if (Array.isArray(job.companyImages)) {
     job.companyImages.flat(Infinity).forEach((item: any) => {
@@ -117,7 +117,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
       else if (typeof item === 'string') companyImagesList.push(item);
     });
   }
-  
+
   const allGalleryImages = jobImagesList;
   const videoLinks = Array.isArray(job.videoLink) ? job.videoLink.filter(Boolean) : [];
   const attachments = Array.isArray(job.attachments) ? job.attachments.map((a: any) => a?.document).filter(Boolean) : [];
@@ -132,20 +132,20 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f7fa", pb: 10 }}>
       {/* Banner Section */}
-      <Box 
-        sx={{ 
-          height: { xs: "120px", md: "160px" }, 
+      <Box
+        sx={{
+          height: { xs: "120px", md: "160px" },
           background: "linear-gradient(135deg, #0096A4 0%, #005c66 100%)",
           position: "relative",
         }}
       >
         <Container maxWidth="lg" sx={{ height: "100%", position: "relative", zIndex: 1 }}>
-          <Button 
-            startIcon={<ArrowBackIcon />} 
-            onClick={() => router.push("/jobs")} 
-            sx={{ 
-              mt: 3, 
-              color: "#fff", 
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => router.push("/jobs")}
+            sx={{
+              mt: 3,
+              color: "#fff",
               backgroundColor: "rgba(255,255,255,0.1)",
               backdropFilter: "blur(4px)",
               "&:hover": { backgroundColor: "rgba(255,255,255,0.2)" }
@@ -163,18 +163,18 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
             <Card sx={{ borderRadius: "16px", boxShadow: "0 10px 30px rgba(0,0,0,0.08)", mb: 4, overflow: "visible" }}>
               <CardContent sx={{ p: { xs: 3, md: 5 } }}>
                 <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 3, alignItems: { xs: "center", sm: "flex-end" } }}>
-                  <Box 
+                  <Box
                     onClick={() => {
                       const id = job.companyId || job.company?._id || job.company?.id;
                       if (id) {
                         router.push(`/companies/${id}`);
                       }
                     }}
-                    sx={{ 
-                      width: 100, 
-                      height: 100, 
-                      backgroundColor: "#fff", 
-                      borderRadius: "16px", 
+                    sx={{
+                      width: 100,
+                      height: 100,
+                      backgroundColor: "#fff",
+                      borderRadius: "16px",
                       boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
                       display: "flex",
                       justifyContent: "center",
@@ -195,7 +195,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                       sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "8px" }}
                     />
                   </Box>
-                  
+
                   <Box sx={{ flex: 1, textAlign: { xs: "center", sm: "left" }, pb: 1 }}>
                     {jobType && (
                       <Chip label={jobType} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, mb: 1.5, borderRadius: "6px" }} />
@@ -203,20 +203,20 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 800, color: "#1a202c", mb: 1 }}>
                       {jobTitle}
                     </Typography>
-                    
-                    <Typography 
-                      variant="subtitle1" 
+
+                    <Typography
+                      variant="subtitle1"
                       onClick={() => {
                         const id = job.companyId || job.company?._id || job.company?.id;
                         if (id) {
                           router.push(`/companies/${id}`);
                         }
                       }}
-                      sx={{ 
-                        color: "#0096A4", 
-                        fontWeight: 600, 
-                        display: "flex", 
-                        alignItems: "center", 
+                      sx={{
+                        color: "#0096A4",
+                        fontWeight: 600,
+                        display: "flex",
+                        alignItems: "center",
                         gap: 1,
                         cursor: "pointer",
                         justifyContent: { xs: "center", sm: "flex-start" },
@@ -235,10 +235,12 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                     </Box>
                     <Box>
                       <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, display: "block" }}>Location</Typography>
-                      <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600 }}>{city}</Typography>
+                      <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600 }}>
+                        {address ? `${address}, ` : ""}{zipCode ? `${zipCode}, ` : ""}{city}
+                      </Typography>
                     </Box>
                   </Box>
-                  
+
                   {startDate && (
                     <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
                       <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#f7fafc", color: "#4a5568", display: "flex" }}>
@@ -250,7 +252,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                       </Box>
                     </Box>
                   )}
-                  
+
                   {job.salary && (
                     <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
                       <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#f7fafc", color: "#4a5568", display: "flex" }}>
@@ -270,7 +272,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                     <Typography variant="h6" sx={{ fontWeight: 700, color: "#2d3748", mb: 2 }}>
                       Job Description
                     </Typography>
-                    <Box 
+                    <Box
                       className="job-description"
                       dangerouslySetInnerHTML={{ __html: description }}
                       sx={{
@@ -296,10 +298,10 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                         Job Video
                       </Typography>
                       <Box sx={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}>
-                        <iframe 
-                          src={embedUrl} 
-                          title="Job Video" 
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        <iframe
+                          src={embedUrl}
+                          title="Job Video"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
                           style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
                         />
@@ -317,7 +319,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                     <Grid container spacing={2}>
                       {allGalleryImages.map((imgPath: string, idx: number) => (
                         <Grid item xs={12} sm={6} md={4} key={`img-${idx}`}>
-                          <Box 
+                          <Box
                             component="img"
                             src={`${IMAGE_BASE_URL}${imgPath}`.replace(/([^:]\/)\/+/g, "$1")}
                             alt={`Gallery image ${idx + 1}`}
@@ -337,12 +339,12 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
           <Grid item xs={12} md={4}>
             <Card sx={{ borderRadius: "16px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)", position: "sticky", top: "20px" }}>
               <CardContent sx={{ p: 4, display: "flex", flexDirection: "column", gap: 3 }}>
-                
+
                 <Box sx={{ p: 3, backgroundColor: "#f7fafc", borderRadius: "12px", border: "1px solid #edf2f7" }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#2d3748", mb: 2 }}>
                     Job Overview
                   </Typography>
-                  
+
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     {jobType && (
                       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -364,7 +366,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                     <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#2d3748" }}>
                       Contact Information
                     </Typography>
-                    
+
                     {job.email && (
                       <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
                         <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
@@ -419,7 +421,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                     </Box>
                   </Box>
                 )}
-                
+
               </CardContent>
             </Card>
           </Grid>
