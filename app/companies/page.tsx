@@ -15,13 +15,17 @@ import {
   Button,
   ToggleButton,
   ToggleButtonGroup,
+  Autocomplete,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useDebounce } from "@uidotdev/usehooks";
 import { getAllPublicEmployers } from "@/app/api/employer/employer";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Employer } from "@/app/api/employer/employer.types";
+import { getRegions } from "@/app/api/regions/regions";
+import { TransformRegion } from "@/app/api/regions/regions.types";
 
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL || "https://api.webzlab.site/";
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -34,6 +38,9 @@ export default function CompaniesPage() {
   const [pageNo, setPageNo] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [regions, setRegions] = useState<TransformRegion[]>([]);
+  const [selectedRegion, setSelectedRegion] = useState<string>("");
+  const [regionObj, setRegionObj] = useState<TransformRegion | null>(null);
   const debouncedSearchTerm = useDebounce(searchValue, 500);
 
   const fetchCompanies = async () => {
@@ -47,6 +54,10 @@ export default function CompaniesPage() {
 
     if (selectedLetter) {
       payload.letter = selectedLetter;
+    }
+
+    if (selectedRegion) {
+      payload.selectedRegion = selectedRegion;
     }
 
     try {
@@ -77,12 +88,26 @@ export default function CompaniesPage() {
   };
 
   useEffect(() => {
+    const fetchRegions = async () => {
+      try {
+        const response = await getRegions();
+        if (response.remote === "success") {
+          setRegions(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch regions", error);
+      }
+    };
+    fetchRegions();
+  }, []);
+
+  useEffect(() => {
     setPageNo(1);
-  }, [debouncedSearchTerm, selectedLetter]);
+  }, [debouncedSearchTerm, selectedLetter, selectedRegion]);
 
   useEffect(() => {
     fetchCompanies();
-  }, [debouncedSearchTerm, pageNo, selectedLetter]);
+  }, [debouncedSearchTerm, pageNo, selectedLetter, selectedRegion]);
 
   const handleLetterChange = (event: React.MouseEvent<HTMLElement>, newLetter: string | null) => {
     setSelectedLetter(newLetter);
@@ -105,26 +130,73 @@ export default function CompaniesPage() {
             Search and explore a wide variety of employers offering great opportunities.
           </Typography>
           
-          <Box sx={{ backgroundColor: "#fff", borderRadius: "12px", p: 1, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search companies by name..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: "#0096A4" }} />
-                  </InputAdornment>
-                ),
-                sx: {
-                  "& fieldset": { border: "none" },
-                  "& input": { fontSize: "1.1rem", py: 1.5 },
-                },
-              }}
-            />
-          </Box>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            sx={{
+              backgroundColor: "#fff",
+              borderRadius: "12px",
+              p: 1,
+              boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Grid item xs={12} md={7}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search companies by name..."
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: "#0096A4" }} />
+                    </InputAdornment>
+                  ),
+                  sx: {
+                    "& fieldset": { border: "none" },
+                    "& input": { fontSize: "1.1rem", py: 1.5 },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={1} sx={{ display: { xs: "none", md: "flex" }, justifyContent: "center" }}>
+              <Box sx={{ width: "1px", height: "40px", backgroundColor: "#e2e8f0" }} />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Autocomplete
+                id="region-filter"
+                options={regions}
+                getOptionLabel={(option: any) => option.name || ""}
+                value={regionObj}
+                onChange={(event, newValue) => {
+                  setRegionObj(newValue);
+                  setSelectedRegion(newValue ? newValue.id : "");
+                }}
+                isOptionEqualToValue={(option: any, value: any) => option.id === value?.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Region auswählen"
+                    variant="outlined"
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LocationOnIcon sx={{ color: "#0096A4" }} />
+                        </InputAdornment>
+                      ),
+                      sx: {
+                        "& fieldset": { border: "none" },
+                        "& input": { fontSize: "1.1rem", py: 1.5 },
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
         </Container>
       </Box>
 
@@ -186,10 +258,15 @@ export default function CompaniesPage() {
             <SearchIcon sx={{ fontSize: 60, color: "#e2e8f0", mb: 2 }} />
             <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>No companies found</Typography>
             <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you&apos;re looking for.</Typography>
-            {(searchValue || selectedLetter) && (
+            {(searchValue || selectedLetter || selectedRegion) && (
               <Button 
                 variant="outlined" 
-                onClick={() => { setSearchValue(""); setSelectedLetter(null); }} 
+                onClick={() => {
+                  setSearchValue("");
+                  setSelectedLetter(null);
+                  setSelectedRegion("");
+                  setRegionObj(null);
+                }} 
                 sx={{ mt: 3, borderColor: "#0096A4", color: "#0096A4" }}
               >
                 Clear Filters

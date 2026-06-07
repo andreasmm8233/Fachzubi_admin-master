@@ -5,6 +5,8 @@ export interface getAllEmployerType {
   filter: string;
   recordPerPage: string;
   letter?: string;
+  region?: string;
+  selectedRegion?: string;
 }
 export interface TransformedRowData {
   id: string;
@@ -75,6 +77,7 @@ export type EmployerWithIndustriesResponse = {
   companyLogo: { _id: string } | any;
   companyImages?: any;
   removedFile?: any;
+  region?: { _id: string; regionName: string } | null;
 };
 export function transFormSignalApiData(
   apiData: EmployerWithIndustriesResponse
@@ -100,5 +103,8 @@ export function transFormSignalApiData(
     companyDescription: apiData.companyDescription || "",
     phoneNo: apiData.phoneNo,
     companyLogo: apiData.companyLogo || "",
+    region: apiData.region
+      ? { id: apiData.region._id, label: apiData.region.regionName }
+      : { id: "", label: "Select Region" },
   };
 }

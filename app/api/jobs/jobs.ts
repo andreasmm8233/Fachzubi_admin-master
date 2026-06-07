@@ -12,13 +12,14 @@ import urlcat from "urlcat";
 export const getAllJobs = async (
   payload: getAllJobsType
 ): Promise<SuccessResult<JobWithCount> | ErrorResult> => {
-  const { searchValue, pageNo, filter, recordPerPage, letter } = payload;
+  const { searchValue, pageNo, filter, recordPerPage, letter, region } = payload;
   const queryParams: any = {};
   if (searchValue) queryParams.searchValue = searchValue;
   if (pageNo) queryParams.pageNo = pageNo;
   if (filter) queryParams.filter = filter;
   if (recordPerPage) queryParams.recordPerPage = recordPerPage;
   if (letter) queryParams.letter = letter;
+  if (region) queryParams.region = region;
 
   const url = urlcat("/job/", queryParams);
   const response = await request({
@@ -45,6 +46,7 @@ export const updateJob = async (payload: UpdateJob | NewJob) => {
     company: payload.company?.id,
     industryName: payload.industryName?.id,
     city: payload.city?.id,
+    region: payload.region?.id || "",
   }).forEach(([key, value]) => {
     if (!value && value !== false && key !== "startDate") {
       return;
@@ -82,6 +84,7 @@ export const addJob = async (payload: NewJob) => {
     company: payload.company.id,
     industryName: payload.industryName.id,
     city: payload?.city?.id,
+    region: payload.region?.id || "",
   }).forEach(([key, value]) => {
     if (!value && key !== "startDate") {
       return;

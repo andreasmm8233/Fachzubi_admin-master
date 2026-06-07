@@ -44,6 +44,7 @@ export type EmployerWithIndustriesTypeAndId = {
   companyLogo: { _id: string } | any;
   companyImages?: any;
   removedFile?: any;
+  region?: { id: string; label: string };
 };
 export interface EmployerFormType {
   industryName: {id:string, label:string};
@@ -61,4 +62,5 @@ export interface EmployerFormType {
   companyDescription: string;
   companyImages?: any;
   removedFile?: any;
+  region?: { id: string; label: string };
 }

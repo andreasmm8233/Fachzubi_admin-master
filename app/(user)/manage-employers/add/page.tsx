@@ -33,6 +33,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import TextEditor from "../../manage-content/textEditor/textEditor";
 import Cropper, { FileState } from "@/app/ulits/cropper";
+import { getRegions } from "@/app/api/regions/regions";
+import { TransformRegion } from "@/app/api/regions/regions.types";
 const AddComponent = () => {
   const re =
     /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
@@ -111,6 +113,7 @@ const AddComponent = () => {
       companyLogo: null,
       companyDescription: "",
       videoLink: [""],
+      region: { id: "", label: "Select Region" },
     },
     validationSchema: validationSchema,
 
@@ -159,6 +162,7 @@ const AddComponent = () => {
   });
   const [city, setCity] = useState<TransformCity[]>([]);
   const [industries, setIndustries] = useState<TransformIndustry[]>([]);
+  const [regions, setRegions] = useState<TransformRegion[]>([]);
   const [loading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   function extractErrorMessage(errorArray: any) {
@@ -234,12 +238,20 @@ const AddComponent = () => {
         response.data.data.companyDescription
       );
       formik.setFieldValue("videoLink", response.data.data.videoLink);
+      formik.setFieldValue("region", response.data.data.region || { id: "", label: "Select Region" });
     }
     setIsLoading(false);
+  };
+  const getAllRegions = async () => {
+    const data = await getRegions();
+    if (data.remote === "success") {
+      setRegions(data.data.data);
+    }
   };
   useEffect(() => {
     getAllCity();
     getAllIndustries();
+    getAllRegions();
   }, []);
   useEffect(() => {
     // Get query parameters from the URL
@@ -547,6 +559,39 @@ const AddComponent = () => {
                 {formik.touched.city && formik.errors.city && (
                   <div style={{ color: "red" }}>city is required</div>
                 )}
+              </Grid>
+
+              <Grid item xs={12} lg={2}>
+                <label>Region</label>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                lg={10}
+                sx={{
+                  "& .MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input":
+                  {
+                    padding: "0px",
+                  },
+                }}
+              >
+                <Autocomplete
+                  disablePortal
+                  disableClearable={true}
+                  disabled={disable}
+                  fullWidth
+                  id="region-autocomplete"
+                  value={formik.values.region}
+                  options={regions?.map((item) => {
+                    return { id: item.id, label: item.name };
+                  })}
+                  onChange={(e, value: any) => {
+                    if (value) {
+                      formik.setFieldValue("region", value);
+                    }
+                  }}
+                  renderInput={(params) => <TextField {...params} label="" />}
+                />
               </Grid>
 
               <Grid item xs={12} lg={2}>

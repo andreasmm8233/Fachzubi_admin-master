@@ -36,6 +36,8 @@ import {
 import Cropper, { FileState } from "@/app/ulits/cropper";
 import { getJobTypes } from "@/app/api/jobTypes/jobType";
 import { TransformJobType } from "@/app/api/jobTypes/jobTypes.types";
+import { getRegions } from "@/app/api/regions/regions";
+import { TransformRegion } from "@/app/api/regions/regions.types";
 export interface NewJob {
   city?: { id: string; label: string };
   company: { id: string; label: string };
@@ -55,6 +57,7 @@ export interface NewJob {
   jobsImages?: any;
   removedFile?: any;
   jobType?: any;
+  region?: { id: string; label: string };
 }
 
 export interface NewJobResponse {
@@ -75,6 +78,7 @@ export interface NewJobResponse {
   videoLink?: string[];
   jobImages?: any;
   jobType?: string | any;
+  region?: { _id: string; regionName: string } | null;
 }
 
 export interface Companies {
@@ -110,6 +114,7 @@ const AddComponent: React.FC = () => {
   const [fileList, setFileList] = useState<FileState[]>([]);
   const [oldFile, setOldFile] = useState<string[]>([]);
   const [jobTypes, setJobTypes] = useState<TransformJobType[]>([]);
+  const [regions, setRegions] = useState<TransformRegion[]>([]);
 
   const getYouTubeEmbedUrl = (url: string) => {
     if (!url) return url;
@@ -177,6 +182,7 @@ const AddComponent: React.FC = () => {
       industryName: { id: "", label: "Select Industry" },
       videoLink: [],
       jobType: "",
+      region: { id: "", label: "Select Region" },
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -285,6 +291,14 @@ const AddComponent: React.FC = () => {
         id: industryValue._id,
         label: industryValue.industryName || "",
       });
+      if (response.data.data.region) {
+        formik.setFieldValue("region", {
+          id: response.data.data.region._id,
+          label: response.data.data.region.regionName || "",
+        });
+      } else {
+        formik.setFieldValue("region", { id: "", label: "Select Region" });
+      }
       setDocuments(response.data.data.attachments);
     }
     setIsLoading(false);
@@ -320,10 +334,17 @@ const AddComponent: React.FC = () => {
       setJobTypes(data.data.data);
     }
   };
+  const getAllRegions = async () => {
+    const data = await getRegions();
+    if (data.remote === "success") {
+      setRegions(data.data.data);
+    }
+  };
   useEffect(() => {
     getAllIndustries();
     getAllCity();
     getAllJobTypes();
+    getAllRegions();
   }, []);
 
   useEffect(() => {
@@ -459,6 +480,34 @@ const AddComponent: React.FC = () => {
                     </div>
                   )}
                   {/* end------ */}
+                </Grid>
+                <Grid item xs={12} lg={2}>
+                  <label>Region</label>
+                </Grid>
+                <Grid item xs={12} lg={10}>
+                  <Autocomplete
+                    disablePortal={true}
+                    disableClearable={true}
+                    fullWidth
+                    id="region-autocomplete"
+                    value={formik.values.region}
+                    options={regions?.map((item) => {
+                      return { id: item.id, label: item.name };
+                    })}
+                    onChange={(e, value: any) => {
+                      if (value) {
+                        formik.setFieldValue("region", value);
+                      }
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} placeholder="Select Region" />
+                    )}
+                  />
+                  {formik.touched.region && formik.errors.region && (
+                    <div style={{ color: "red" }}>
+                      {formik.errors.region as string}
+                    </div>
+                  )}
                 </Grid>
                 <Grid item xs={12} lg={2}>
                   <label>Company</label>
