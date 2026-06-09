@@ -203,3 +203,36 @@ export const getPublicCompanyDetail = async (
   });
   return response;
 };
+
+export const getAllDeletedEmployers = async (
+  payload: any
+): Promise<SuccessResult<any> | ErrorResult> => {
+  const { searchValue, pageNo, recordPerPage } = payload;
+  const queryParams: any = {};
+  if (searchValue) queryParams.searchValue = searchValue;
+  if (pageNo) queryParams.pageNo = pageNo;
+  if (recordPerPage) queryParams.recordPerPage = recordPerPage;
+
+  const url = urlcat("/employer/deleted/all", queryParams);
+  const response = await request({
+    url,
+    method: "get",
+  });
+  return response;
+};
+
+export const restoreEmployer = async (id: string) => {
+  const response = await request({
+    url: `/employer/restore/${id}`,
+    method: "post",
+  });
+  return response;
+};
+
+export const hardDeleteEmployer = async (id: string) => {
+  const response = await request({
+    url: `/employer/hard-delete/${id}`,
+    method: "delete",
+  });
+  return response;
+};

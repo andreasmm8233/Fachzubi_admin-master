@@ -105,6 +105,13 @@ export const MENU_DATA: SidebarMenu[] = [
     ],
   },
   {
+    id: 12,
+    icon: SVG.Delete,
+    label: "Manage Trash",
+    url: "/manage-trash",
+    permissionKey: "manage_trash",
+  },
+  {
     id: 8,
     icon: SVG.Setting,
     label: "Admin Settings",

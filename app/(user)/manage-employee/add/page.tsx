@@ -32,6 +32,7 @@ const PERMISSION_LABELS: Record<string, string> = {
   manage_industries: "Manage Industries",
   job_types: "Job Types",
   manage_content: "Manage Content",
+  manage_trash: "Manage Trash",
 };
 
 const validationSchema = yup.object().shape({

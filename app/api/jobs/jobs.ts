@@ -109,6 +109,39 @@ export const addJob = async (payload: NewJob) => {
   return response;
 };
 
+export const getAllDeletedJobs = async (
+  payload: getAllJobsType
+): Promise<SuccessResult<JobWithCount> | ErrorResult> => {
+  const { searchValue, pageNo, recordPerPage } = payload;
+  const queryParams: any = {};
+  if (searchValue) queryParams.searchValue = searchValue;
+  if (pageNo) queryParams.pageNo = pageNo;
+  if (recordPerPage) queryParams.recordPerPage = recordPerPage;
+
+  const url = urlcat("/job/deleted/all", queryParams);
+  const response = await request({
+    url,
+    method: "get",
+  });
+  return response;
+};
+
+export const restoreJob = async (id: string) => {
+  const response = await request({
+    url: `/job/restore/${id}`,
+    method: "post",
+  });
+  return response;
+};
+
+export const hardDeleteJob = async (id: string) => {
+  const response = await request({
+    url: `/job/hard-delete/${id}`,
+    method: "delete",
+  });
+  return response;
+};
+
 export const getJobDetailById = async (
   id: string
 ): Promise<SuccessResult<NewJobResponse> | ErrorResult> => {

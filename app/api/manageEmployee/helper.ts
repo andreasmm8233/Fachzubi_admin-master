@@ -5,6 +5,7 @@ export interface EmployeePermissions {
   manage_industries: boolean;
   job_types: boolean;
   manage_content: boolean;
+  manage_trash: boolean;
 }
 
 export interface Employee {
@@ -77,4 +78,5 @@ export const DEFAULT_PERMISSIONS: EmployeePermissions = {
   manage_industries: true,
   job_types: true,
   manage_content: true,
+  manage_trash: true,
 };
