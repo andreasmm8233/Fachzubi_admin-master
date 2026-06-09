@@ -33,11 +33,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import TextEditor from "../../manage-content/textEditor/textEditor";
 import Cropper, { FileState } from "@/app/ulits/cropper";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { getRegions } from "@/app/api/regions/regions";
 import { TransformRegion } from "@/app/api/regions/regions.types";
 const AddComponent = () => {
-  const re =
-    /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
+  const re = /^((ftp|http|https):\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
   const route = useRouter();
   const [disable, setIsDisable] = useState(false);
   const [id, setId] = useState("");
@@ -74,8 +75,8 @@ const AddComponent = () => {
       .email("Invalid email address")
       .required("Email is required"),
     website: Yup.string()
-      .matches(re, "URL is not valid")
-      .required("website  is required"),
+      .matches(re, "Invalid website URL")
+      .required("Website is required"),
     // phoneNo: Yup.string()
     //   .min(9, "Minimum 9 digit is required")
     //   .required("phone number  is required"),
@@ -135,7 +136,8 @@ const AddComponent = () => {
         if (id) {
           const data = await updateEmployerById(id, values);
           if (data.remote === "success") {
-            route.push("/manage-employers");
+            toast.info("Employer updated successfully!");
+            getEmployerDetailByID(id);
           } else {
             const backendError = Object.values(data.error.errors.data);
             setError(
@@ -145,7 +147,15 @@ const AddComponent = () => {
         } else {
           const response = await addEmployer(values);
           if (response.remote === "success") {
-            route.push("/manage-employers");
+            toast.info("Employer created successfully!");
+            const newEmployerId = (response.data?.data as any)?._id || (response.data?.data as any)?.id;
+            if (newEmployerId) {
+              setId(newEmployerId);
+              route.push(`/manage-employers/add?id=${newEmployerId}`);
+              getEmployerDetailByID(newEmployerId);
+            } else {
+              route.push("/manage-employers");
+            }
           } else {
             const backendError = Object.values(response.error.errors.data);
             setError(
@@ -445,10 +455,17 @@ const AddComponent = () => {
               </Grid>
               <Grid item xs={12} lg={10}>
                 <TextField
-                  placeholder="e.g, www.domain.com"
+                  placeholder="www.example.com"
                   disabled={disable}
                   type="text"
                   fullWidth
+                  sx={{
+                    "& .MuiFormHelperText-root": {
+                      marginLeft: "5px",
+                      color: "#FFA500",
+                      fontWeight: "500",
+                    },
+                  }}
                   name="website"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -513,7 +530,7 @@ const AddComponent = () => {
                 <TextField
                   placeholder="474010"
                   disabled={disable}
-                  type="number"
+                  type="text"
                   fullWidth
                   name="zipCode"
                   onChange={formik.handleChange}
@@ -787,6 +804,7 @@ const AddComponent = () => {
           </StyledManageForm>
         </CardContent>
       </Card>
+      <ToastContainer />
     </>
   );
 };

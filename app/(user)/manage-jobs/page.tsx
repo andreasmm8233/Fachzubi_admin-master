@@ -19,7 +19,7 @@ const ManageJobs = () => {
   const [rowData, setRowData] = useState<Job[]>([]);
   const [statusToggleId, setStatusToggleId] = useState<string>("");
   const [isDeleteModal, setDeleteModal] = useState(false);
-  const [recordPerPage, setRecordPerPage] = useState<string>("5");
+  const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [pageCount, setPageCount] = useState<number>(0);
   const [searchValue, setSearchValue] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchValue, 300);
@@ -125,10 +125,25 @@ const ManageJobs = () => {
     return {
       id: rowData.id,
       date: rowData.date,
-      company: rowData.company,
+      company: (
+        <span
+          style={{
+            cursor: "pointer",
+            color: "#0096A4",
+          }}
+          onClick={() => {
+            const compId = rowData.companyId || rowData.company?._id || rowData.company?.id;
+            if (compId) {
+              router.push(`/manage-employers/add?id=${compId}`);
+            }
+          }}
+        >
+          {rowData.company}
+        </span>
+      ),
       jobTitle: rowData.jobTitle,
       startDate: rowData.startDate,
-      industry: rowData.industryName,
+      industry: Array.isArray(rowData.industryName) ? rowData.industryName.join(", ") : rowData.industryName,
       city: `${rowData.city[0][0]}` + `  ${length ? length + "more" : ""}`,
       applications: rowData.count,
       status: (

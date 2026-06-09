@@ -83,8 +83,12 @@ const JobLogDetailsPage = () => {
     );
   }
 
-  const industryName = typeof job.industryName === 'object' ? job.industryName?.industryName : job.industryName;
-  const jobTypeName = job.jobTypeName || (typeof job.jobType === 'object' ? job.jobType?.jobTypeName : job.jobType);
+  const industryName = Array.isArray(job.industryName)
+    ? job.industryName.map((ind: any) => ind.industryName || ind.name).filter(Boolean).join(", ")
+    : (typeof job.industryName === 'object' ? job.industryName?.industryName : job.industryName);
+  const jobTypeName = Array.isArray(job.jobTypeName)
+    ? job.jobTypeName.join(", ")
+    : (job.jobTypeName || (typeof job.jobType === 'object' ? job.jobType?.jobTypeName : job.jobType));
   
   // Extract files gracefully
   const parsedJobImages = Array.isArray(job.jobImages) 

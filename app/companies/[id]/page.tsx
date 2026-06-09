@@ -39,7 +39,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
         const response = await getPublicCompanyDetail(params.id);
         if (response.remote === "success") {
           const data = response.data?.data || response.data;
-          
+
           if (data?.employer || data?.company) {
             setCompany(data.employer || data.company);
             setJobs(data.jobs || data.activeJobs || []);
@@ -80,7 +80,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
   }
 
   const companyName = company.companyName || "Unknown Company";
-  
+
   let logoPath = "";
   if (company.companyLogo && typeof company.companyLogo === "object") {
     logoPath = company.companyLogo.filepath;
@@ -88,18 +88,18 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
     logoPath = company.companyLogo;
   }
   const logoUrl = logoPath ? `${IMAGE_BASE_URL}${logoPath}`.replace(/([^:]\/)\/+/g, "$1") : "/placeholder-logo.png";
-  
+
   const industry = company.industryName || "Various Industries";
   const address = company.address || "";
   const zipCode = company.zipCode || "";
   const city = company.city?.name || company.cityName || "";
-  
+
   // Clean up description and remove the "What Clients Say" section heading
   const description = (company.companyDescription || "")
     .replace(/<h2>What Clients Say<\/h2>/gi, '')
     .replace(/<p>What Clients Say<\/p>/gi, '')
     .replace(/What Clients Say/gi, '');
-    
+
   const website = company.website || "";
   const email = company.email || "";
   const phoneNo = company.phoneNo || "";
@@ -117,20 +117,20 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f7fa", pb: 10 }}>
       {/* Sleek Gradient Banner */}
-      <Box 
-        sx={{ 
-          height: { xs: "120px", md: "160px" }, 
+      <Box
+        sx={{
+          height: { xs: "120px", md: "160px" },
           background: "linear-gradient(135deg, #0096A4 0%, #005c66 100%)",
           position: "relative",
         }}
       >
         <Container maxWidth="lg" sx={{ height: "100%", position: "relative", zIndex: 1 }}>
-          <Button 
-            startIcon={<ArrowBackIcon />} 
-            onClick={() => router.push("/companies")} 
-            sx={{ 
-              mt: 3, 
-              color: "#fff", 
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => router.push("/companies")}
+            sx={{
+              mt: 3,
+              color: "#fff",
               backgroundColor: "rgba(255,255,255,0.1)",
               backdropFilter: "blur(4px)",
               "&:hover": { backgroundColor: "rgba(255,255,255,0.2)" }
@@ -148,12 +148,12 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
             <Card sx={{ borderRadius: "16px", boxShadow: "0 10px 30px rgba(0,0,0,0.08)", mb: 4, overflow: "visible" }}>
               <CardContent sx={{ p: { xs: 3, md: 5 } }}>
                 <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 3, alignItems: { xs: "center", sm: "flex-end" } }}>
-                  <Box 
-                    sx={{ 
-                      width: 120, 
-                      height: 120, 
-                      backgroundColor: "#fff", 
-                      borderRadius: "16px", 
+                  <Box
+                    sx={{
+                      width: 120,
+                      height: 120,
+                      backgroundColor: "#fff",
+                      borderRadius: "16px",
                       boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
                       display: "flex",
                       justifyContent: "center",
@@ -171,20 +171,20 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                       sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "8px" }}
                     />
                   </Box>
-                  
+
                   <Box sx={{ flex: 1, textAlign: { xs: "center", sm: "left" }, pb: 1 }}>
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 800, color: "#1a202c", mb: 1 }}>
                       {companyName}
                     </Typography>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, justifyContent: { xs: "center", sm: "flex-start" }, mb: 2 }}>
-                      <Chip icon={<WorkIcon fontSize="small"/>} label={industry} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 600 }} />
+                      <Chip icon={<WorkIcon fontSize="small" />} label={industry} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 600 }} />
                       {(address || zipCode || city) && (
-                        <Chip 
-                          icon={<LocationOnIcon fontSize="small"/>} 
-                          label={`${address ? `${address}, ` : ""}${zipCode ? `${zipCode}, ` : ""}${city}`.replace(/,\s*$/, "")} 
-                          size="small" 
-                          variant="outlined" 
-                          sx={{ borderColor: "#e2e8f0" }} 
+                        <Chip
+                          icon={<LocationOnIcon fontSize="small" />}
+                          label={`${address ? `${address}, ` : ""}${zipCode ? `${zipCode}, ` : ""}${city}`.replace(/,\s*$/, "")}
+                          size="small"
+                          variant="outlined"
+                          sx={{ borderColor: "#e2e8f0" }}
                         />
                       )}
                     </Box>
@@ -195,9 +195,10 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                 {description && (
                   <Box sx={{ mt: 4 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700, color: "#2d3748", mb: 2 }}>
-                      About Us
+                      {/* About Us */}
+                      Über Uns
                     </Typography>
-                    <Box 
+                    <Box
                       className="company-description"
                       dangerouslySetInnerHTML={{ __html: description }}
                       sx={{
@@ -223,10 +224,10 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                         Company Video
                       </Typography>
                       <Box sx={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}>
-                        <iframe 
-                          src={embedUrl} 
-                          title="Company Video" 
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        <iframe
+                          src={embedUrl}
+                          title="Company Video"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
                           style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
                         />
@@ -244,7 +245,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                     <Grid container spacing={2}>
                       {companyImages.map((img: string, idx: number) => (
                         <Grid item xs={6} sm={4} key={idx}>
-                          <Box 
+                          <Box
                             sx={{
                               width: "100%",
                               paddingTop: "75%", // 4:3 aspect ratio
@@ -277,12 +278,16 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
 
             {/* Active Jobs */}
             <Typography variant="h5" component="h2" sx={{ fontWeight: 800, color: "#1a202c", mb: 3, mt: 5 }}>
-              Open Positions
+              {/* Open Positions */}
+              Offene Stellen
             </Typography>
 
             {jobs.length === 0 ? (
               <Box sx={{ textAlign: "center", py: 8, backgroundColor: "#fff", borderRadius: "16px", border: "1px dashed #cbd5e0" }}>
-                <Typography variant="h6" sx={{ color: "#718096" }}>No open positions at the moment.</Typography>
+                {/* <Typography variant="h6" sx={{ color: "#718096" }}>No open positions at the moment.</Typography> */}
+                <Typography variant="h6" sx={{ color: "#718096" }}>
+                  Im Moment sind keine offenen Stellen verfügbar.
+                </Typography>
               </Box>
             ) : (
               <Grid container spacing={3}>
@@ -291,24 +296,24 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                   const jobType = job.jobType || "Full-time";
                   const jobCity = Array.isArray(job.city) ? job.city.join(', ') : (job.city || "Various Locations");
                   const startDate = job.startDate ? new Date(job.startDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : "";
-                  
+
                   return (
                     <Grid item xs={12} key={job._id || index}>
-                      <Card 
+                      <Card
                         onClick={() => {
                           const id = job._id || job.id;
                           if (id) {
                             router.push(`/jobs/${id}`);
                           }
                         }}
-                        sx={{ 
-                          borderRadius: "12px", 
+                        sx={{
+                          borderRadius: "12px",
                           boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
                           transition: "all 0.2s ease",
                           border: "1px solid transparent",
                           cursor: "pointer",
-                          "&:hover": { 
-                            transform: "translateY(-2px)", 
+                          "&:hover": {
+                            transform: "translateY(-2px)",
                             boxShadow: "0 8px 20px rgba(0,96,164,0.12)",
                             borderColor: "rgba(0,150,164,0.3)"
                           }
@@ -319,7 +324,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                             <Typography variant="h5" sx={{ fontWeight: 700, color: "#1a202c", mb: 1 }}>
                               {jobTitle}
                             </Typography>
-                            
+
                             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
                               <Typography variant="body2" sx={{ color: "#718096", display: "flex", alignItems: "center", gap: 0.5 }}>
                                 <LocationOnIcon fontSize="small" sx={{ color: "#a0aec0" }} /> {jobCity}
@@ -334,9 +339,9 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
 
                           <Box sx={{ display: "flex", flexDirection: "column", alignItems: { xs: "flex-start", sm: "flex-end" }, gap: 1 }}>
                             <Chip label={jobType} size="medium" sx={{ backgroundColor: "#edf2f7", color: "#4a5568", fontWeight: 600, borderRadius: "8px" }} />
-                            <Button 
-                              variant="contained" 
-                              size="small" 
+                            <Button
+                              variant="contained"
+                              size="small"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 const id = job._id || job.id;
@@ -346,7 +351,8 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                               }}
                               sx={{ backgroundColor: "#0096A4", "&:hover": { backgroundColor: "#007a86" }, borderRadius: "8px", textTransform: "none", fontWeight: 600, px: 3 }}
                             >
-                              View Details
+                              {/* View Details */}
+                              Details Ansehen
                             </Button>
                           </Box>
                         </CardContent>
@@ -365,7 +371,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                 <Typography variant="h6" sx={{ fontWeight: 800, color: "#1a202c", mb: 3, borderBottom: "1px solid #edf2f7", pb: 1.5 }}>
                   Contact Information
                 </Typography>
-                
+
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                   {contactPerson && (
                     <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>

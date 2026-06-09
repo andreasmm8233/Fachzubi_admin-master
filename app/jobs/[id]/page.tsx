@@ -78,8 +78,10 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   } else if (job.company?.companyName || job.company?.name) {
     companyName = job.company.companyName || job.company.name;
   }
-  const jobType = job.jobTypeName || job.jobType?.name || (typeof job.jobType === "string" ? null : null);
-  const industry = job.industryName?.industryName || job.industryName?.name || (typeof job.industryName === "string" ? job.industryName : "Various Industries");
+  const jobType = Array.isArray(job.jobTypeName) ? job.jobTypeName.join(", ") : (job.jobTypeName || job.jobType?.name || (typeof job.jobType === "string" ? null : null));
+  const industry = Array.isArray(job.industryName)
+    ? job.industryName.map((ind: any) => ind.industryName || ind.name).filter(Boolean).join(", ")
+    : (job.industryName?.industryName || job.industryName?.name || (typeof job.industryName === "string" ? job.industryName : "Various Industries"));
 
   // Clean up description and remove "What Clients Say" just in case it bled in from companies
   const description = (job.jobDescription || "")
@@ -236,7 +238,8 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                     <Box>
                       <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, display: "block" }}>Location</Typography>
                       <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600 }}>
-                        {address ? `${address}, ` : ""}{zipCode ? `${zipCode}, ` : ""}{city}
+                        {/* {address ? `${address}, ` : ""}{zipCode ? `${zipCode}, ` : ""}{city} */}
+                        {address ? `${address} ` : ""}
                       </Typography>
                     </Box>
                   </Box>
@@ -270,7 +273,8 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                 {description && (
                   <Box sx={{ mt: 5 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700, color: "#2d3748", mb: 2 }}>
-                      Job Description
+                      {/* Job Description */}
+                      Beschreibung
                     </Typography>
                     <Box
                       className="job-description"

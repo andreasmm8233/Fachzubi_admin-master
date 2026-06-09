@@ -16,6 +16,8 @@ import {
 import { SVG } from "@/app/components/icon";
 import Title from "@/app/components/title.components";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { StyledManageForm } from "@/app/components/form.styled";
 import { getCity } from "@/app/api/city/city";
 import { getIndustries } from "@/app/api/industries/industries";
@@ -50,7 +52,7 @@ export interface NewJob {
   jobDescription: string;
   attachments?: any;
   status?: boolean;
-  industryName: { id: string; label: string };
+  industryName: any;
   id?: string;
   newCity?: string[];
   videoLink?: string[];
@@ -96,8 +98,7 @@ type Documents = {
   };
   __v: number;
 };
-const re =
-  /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
+const re = /^((ftp|http|https):\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
 const AddComponent: React.FC = () => {
   const route = useRouter();
   const [city, setCity] = useState<TransformCity[]>([]);
@@ -147,15 +148,20 @@ const AddComponent: React.FC = () => {
     additionalEmail: Yup.string().email("Invalid email address"),
     address: Yup.string().required("address is required"),
     zipCode: Yup.string().required("zip code is required"),
-    jobType: Yup.string().required("jobType is required"),
+    jobType: Yup.array().test("jobType", "jobType is required", (value: any) => {
+      if (value && value.length) {
+        return true;
+      }
+      return false;
+    }),
     jobDescription: Yup.string()
       .min(1, "company Description is required")
       .required("company Description is required"),
-    industryName: Yup.object().test(
+    industryName: Yup.array().test(
       "isIndustry",
       "industry name is required",
       (value: any) => {
-        if (value.id && value.label) {
+        if (value && value.length) {
           return true;
         }
         return false;
@@ -179,9 +185,9 @@ const AddComponent: React.FC = () => {
       address: "",
       zipCode: "",
       jobDescription: "",
-      industryName: { id: "", label: "Select Industry" },
+      industryName: [],
       videoLink: [],
-      jobType: "",
+      jobType: [],
       region: { id: "", label: "Select Region" },
     },
     validationSchema: validationSchema,
@@ -205,7 +211,8 @@ const AddComponent: React.FC = () => {
             deletedAttachment: deletedDocumentId,
           });
           if (response.remote === "success") {
-            route.push("/manage-jobs");
+            toast.info("Job updated successfully!");
+            getJobByIdHandler(jobId);
           } else {
             setError("Something went wrong");
           }
@@ -216,7 +223,15 @@ const AddComponent: React.FC = () => {
             attachments,
           });
           if (response.remote === "success") {
-            route.push("/manage-jobs");
+            toast.info("Job created successfully!");
+            const newJobId = response.data?.data?._id || response.data?.data?.id;
+            if (newJobId) {
+              setJobId(newJobId);
+              route.push(`/manage-jobs/add?id=${newJobId}`);
+              getJobByIdHandler(newJobId);
+            } else {
+              route.push("/manage-jobs");
+            }
           }
           setIsLoading(false);
         }
@@ -258,7 +273,10 @@ const AddComponent: React.FC = () => {
       );
       setFileList(newImage);
       if (response?.data?.data?.jobType) {
-        formik.setFieldValue("jobType", response?.data?.data?.jobType);
+        const jobTypeVal = Array.isArray(response.data.data.jobType)
+          ? response.data.data.jobType
+          : [response.data.data.jobType];
+        formik.setFieldValue("jobType", jobTypeVal);
       }
       const date = response?.data?.data?.startDate?.split("T")[0];
       const industryValue = response.data.data.industryName;
@@ -287,10 +305,12 @@ const AddComponent: React.FC = () => {
       formik.setFieldValue("address", response.data.data.address);
       formik.setFieldValue("zipCode", response.data.data.zipCode);
       formik.setFieldValue("jobDescription", response.data.data.jobDescription);
-      formik.setFieldValue("industryName", {
-        id: industryValue._id,
-        label: industryValue.industryName || "",
-      });
+      if (industryValue) {
+        const industriesVal = Array.isArray(industryValue)
+          ? industryValue.map((item: any) => item._id)
+          : [industryValue._id];
+        formik.setFieldValue("industryName", industriesVal);
+      }
       if (response.data.data.region) {
         formik.setFieldValue("region", {
           id: response.data.data.region._id,
@@ -381,7 +401,11 @@ const AddComponent: React.FC = () => {
     const response = await getEmployerById(id);
     if (response.remote === "success") {
       formik.setFieldValue("email", response.data.data.email);
-      formik.setFieldValue("industryName", response.data.data.industryName);
+      if (response.data.data.industryName) {
+        const ind = response.data.data.industryName as any;
+        const indId = ind._id || ind.id;
+        formik.setFieldValue("industryName", indId ? [indId] : []);
+      }
       formik.setFieldValue("address", response.data.data.address);
       formik.setFieldValue("zipCode", response.data.data.zipCode);
     }
@@ -541,21 +565,26 @@ const AddComponent: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} lg={10}>
                   <Autocomplete
-                    disablePortal
-                    fullWidth
+                    multiple
+                    disablePortal={true}
                     disableClearable={true}
-                    id="combo-box-demo"
-                    value={formik.values.industryName}
+                    fullWidth
+                    id="industries-autocomplete"
+                    value={(formik.values.industryName || [])?.map((value: string) => {
+                      const matched = industries.find((ind) => ind.id === value);
+                      return {
+                        label: matched?.name || "",
+                        id: matched?.id || value,
+                      };
+                    })}
+                    onChange={(e, values) => {
+                      const selectedIds = values.map((item) => item.id || "");
+                      formik.setFieldValue("industryName", selectedIds);
+                    }}
                     options={industries?.map((item) => {
                       return { id: item.id, label: item.name };
                     })}
-                    onChange={(e, value: any) => {
-                      if (value) {
-                        formik.values.industryName.id = value.id;
-                        formik.values.industryName.label = value.label;
-                      }
-                    }}
-                    renderInput={(params) => <TextField {...params} label="" />}
+                    renderInput={(params) => <TextField {...params} placeholder="Select Industries" />}
                   />
                   {formik.touched.industryName &&
                     formik.errors.industryName && (
@@ -582,7 +611,7 @@ const AddComponent: React.FC = () => {
                     <div style={{ color: "red" }}>{formik.errors.jobTitle}</div>
                   )}
                 </Grid>
-                <Grid item xs={12} lg={2}>
+                {/* <Grid item xs={12} lg={2}>
                   <label>Starting Date</label>
                 </Grid>
                 <Grid item xs={12} lg={10}>
@@ -609,7 +638,7 @@ const AddComponent: React.FC = () => {
                       {formik.errors.startDate}
                     </div>
                   )}
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} lg={2}>
                   <label>Email Id</label>
                 </Grid>
@@ -677,7 +706,7 @@ const AddComponent: React.FC = () => {
                 <Grid item xs={12} lg={10}>
                   <TextField
                     placeholder=""
-                    type="number"
+                    type="text"
                     inputProps={{ maxLength: 8 }}
                     fullWidth
                     onChange={formik.handleChange}
@@ -882,23 +911,21 @@ const AddComponent: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} lg={10}>
                   <Autocomplete
-                    disablePortal
-                    fullWidth
+                    multiple
+                    disablePortal={true}
                     disableClearable={true}
-                    id="combo-box-demo"
-                    value={
-                      jobTypes.find((item) => item.id === formik.values.jobType)
-                        ? {
-                            id: formik.values.jobType,
-                            label:
-                              jobTypes.find(
-                                (item) => item.id === formik.values.jobType
-                              )?.name || "",
-                          }
-                        : { id: "", label: "" }
-                    }
-                    onChange={(event, value) => {
-                      formik.setFieldValue("jobType", value.id);
+                    fullWidth
+                    id="job-types-autocomplete"
+                    value={(formik.values.jobType || [])?.map((value: string) => {
+                      const matched = jobTypes.find((jt) => jt.id === value);
+                      return {
+                        label: matched?.name || "",
+                        id: matched?.id || value,
+                      };
+                    })}
+                    onChange={(event, values) => {
+                      const selectedIds = values.map((item) => item.id || "");
+                      formik.setFieldValue("jobType", selectedIds);
                     }}
                     options={jobTypes?.map((item) => {
                       return { id: item.id, label: item.name };
@@ -934,6 +961,7 @@ const AddComponent: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+      <ToastContainer />
     </>
   );
 };

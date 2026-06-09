@@ -51,7 +51,7 @@ const ManageEmployee = () => {
   const [isDeleteModal, setDeleteModal] = useState(false);
   const [rowData, setRowData] = useState<RowData[]>([]);
   const [pageCount, setPageCount] = useState<number>(0);
-  const [recordPerPage, setRecordPerPage] = useState<string>("5");
+  const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [pageNo, setPageNo] = useState<number>(1);
   const [loading, setIsLoading] = useState(true);
   const [deleteTableRowData, setDeleteTableRowData] = useState<RowData>();
@@ -152,7 +152,19 @@ const ManageEmployee = () => {
   const handleTableRow = (rowData: any) => {
     return {
       id: rowData.id,
-      companyName: rowData.companyName,
+      companyName: (
+        <span
+          style={{
+            cursor: "pointer",
+            color: "#0096A4",
+          }}
+          onClick={() => {
+            navigateToAdd(rowData.id);
+          }}
+        >
+          {rowData.companyName}
+        </span>
+      ),
       email: rowData.email,
       contact: rowData.contact,
       industry: rowData.industry || "",

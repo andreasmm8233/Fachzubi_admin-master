@@ -174,7 +174,7 @@ export const getCompaniesByCityIdApi = async (
 export const getAllPublicEmployers = async (
   payload: getAllEmployerType
 ): Promise<SuccessResult<any> | ErrorResult> => {
-  const { searchValue, pageNo, filter, recordPerPage, letter, selectedRegion } = payload;
+  const { searchValue, pageNo, filter, recordPerPage, letter, selectedRegion, slectedCity } = payload;
   const queryParams: any = {};
   if (searchValue) queryParams.searchValue = searchValue;
   if (pageNo) queryParams.pageNo = pageNo;
@@ -182,6 +182,7 @@ export const getAllPublicEmployers = async (
   if (recordPerPage) queryParams.recordPerPage = recordPerPage;
   if (letter) queryParams.letter = letter;
   if (selectedRegion) queryParams.selectedRegion = selectedRegion;
+  if (slectedCity) queryParams.slectedCity = slectedCity;
 
   const url = urlcat("/employer/get-all-emp-frontend", queryParams);
 

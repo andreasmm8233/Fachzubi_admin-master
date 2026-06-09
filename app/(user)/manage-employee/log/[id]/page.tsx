@@ -325,7 +325,13 @@ const EmployeeLogPage = () => {
                             
                             <Stack direction="row" alignItems="center" spacing={1} color="textSecondary" mb={2}>
                               <WorkIcon fontSize="small" sx={{ opacity: 0.6 }} />
-                              <Typography variant="body2" fontWeight="500">{job.jobType?.jobTypeName || "Not specified"}</Typography>
+                              <Typography variant="body2" fontWeight="500">
+                                {Array.isArray(job.jobTypeName)
+                                  ? job.jobTypeName.join(", ")
+                                  : (job.jobTypeName || (Array.isArray(job.jobType)
+                                      ? job.jobType.map((jt: any) => jt.jobTypeName || jt.name || (typeof jt === 'string' ? jt : "")).filter(Boolean).join(", ")
+                                      : (job.jobType?.jobTypeName || job.jobType?.name || (typeof job.jobType === "string" ? job.jobType : "Not specified"))))}
+                              </Typography>
                             </Stack>
                             
                             <Divider sx={{ my: 2, borderColor: "#f0f0f0" }} />

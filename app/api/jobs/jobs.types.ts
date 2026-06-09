@@ -23,6 +23,7 @@ export interface getAllJobsType {
   recordPerPage: string;
   letter?: string;
   region?: string;
+  slectedCity?: string;
 }
 export interface JobWithCount {
   data: Job[];
@@ -30,7 +31,7 @@ export interface JobWithCount {
 }
 export interface UpdateJob {
   city?: {id:string, label:string};
-  industryName?: { id: string; label: string }
+  industryName?: any;
   company?: { id: string; label: string };
   jobTitle?: string;
   startDate?: string;
@@ -44,4 +45,5 @@ export interface UpdateJob {
   status?: boolean;
   id: string;
   region?: { id: string; label: string };
+  jobType?: any;
 }

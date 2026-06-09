@@ -24,8 +24,10 @@ import { getAllPublicEmployers } from "@/app/api/employer/employer";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Employer } from "@/app/api/employer/employer.types";
-import { getRegions } from "@/app/api/regions/regions";
 import { TransformRegion } from "@/app/api/regions/regions.types";
+import { getRegions } from "@/app/api/regions/regions";
+import { getCity } from "@/app/api/city/city";
+import { TransformCity } from "@/app/api/city/city.types";
 
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL || "https://api.webzlab.site/";
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -41,6 +43,9 @@ export default function CompaniesPage() {
   const [regions, setRegions] = useState<TransformRegion[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<string>("");
   const [regionObj, setRegionObj] = useState<TransformRegion | null>(null);
+  const [cities, setCities] = useState<TransformCity[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [cityObj, setCityObj] = useState<TransformCity | null>(null);
   const debouncedSearchTerm = useDebounce(searchValue, 500);
 
   const fetchCompanies = async () => {
@@ -58,6 +63,10 @@ export default function CompaniesPage() {
 
     if (selectedRegion) {
       payload.selectedRegion = selectedRegion;
+    }
+
+    if (selectedCity) {
+      payload.slectedCity = selectedCity;
     }
 
     try {
@@ -98,16 +107,27 @@ export default function CompaniesPage() {
         console.error("Failed to fetch regions", error);
       }
     };
+    const fetchCities = async () => {
+      try {
+        const response = await getCity();
+        if (response.remote === "success") {
+          setCities(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch cities", error);
+      }
+    };
     fetchRegions();
+    fetchCities();
   }, []);
 
   useEffect(() => {
     setPageNo(1);
-  }, [debouncedSearchTerm, selectedLetter, selectedRegion]);
+  }, [debouncedSearchTerm, selectedLetter, selectedRegion, selectedCity]);
 
   useEffect(() => {
     fetchCompanies();
-  }, [debouncedSearchTerm, pageNo, selectedLetter, selectedRegion]);
+  }, [debouncedSearchTerm, pageNo, selectedLetter, selectedRegion, selectedCity]);
 
   const handleLetterChange = (event: React.MouseEvent<HTMLElement>, newLetter: string | null) => {
     setSelectedLetter(newLetter);
@@ -141,7 +161,7 @@ export default function CompaniesPage() {
               boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
             }}
           >
-            <Grid item xs={12} md={7}>
+            <Grid item xs={12} md={5}>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -161,10 +181,7 @@ export default function CompaniesPage() {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={1} sx={{ display: { xs: "none", md: "flex" }, justifyContent: "center" }}>
-              <Box sx={{ width: "1px", height: "40px", backgroundColor: "#e2e8f0" }} />
-            </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3.5} sx={{ borderLeft: { xs: "none", md: "1px solid #e2e8f0" } }}>
               <Autocomplete
                 id="region-filter"
                 options={regions}
@@ -179,6 +196,38 @@ export default function CompaniesPage() {
                   <TextField
                     {...params}
                     placeholder="Region auswählen"
+                    variant="outlined"
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LocationOnIcon sx={{ color: "#0096A4" }} />
+                        </InputAdornment>
+                      ),
+                      sx: {
+                        "& fieldset": { border: "none" },
+                        "& input": { fontSize: "1.1rem", py: 1.5 },
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={3.5} sx={{ borderLeft: { xs: "none", md: "1px solid #e2e8f0" } }}>
+              <Autocomplete
+                id="city-filter"
+                options={cities}
+                getOptionLabel={(option: any) => option.name || ""}
+                value={cityObj}
+                onChange={(event, newValue) => {
+                  setCityObj(newValue);
+                  setSelectedCity(newValue ? newValue.id : "");
+                }}
+                isOptionEqualToValue={(option: any, value: any) => option.id === value?.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Stadt auswählen"
                     variant="outlined"
                     InputProps={{
                       ...params.InputProps,
@@ -258,7 +307,7 @@ export default function CompaniesPage() {
             <SearchIcon sx={{ fontSize: 60, color: "#e2e8f0", mb: 2 }} />
             <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>No companies found</Typography>
             <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you&apos;re looking for.</Typography>
-            {(searchValue || selectedLetter || selectedRegion) && (
+            {(searchValue || selectedLetter || selectedRegion || selectedCity) && (
               <Button 
                 variant="outlined" 
                 onClick={() => {
@@ -266,6 +315,8 @@ export default function CompaniesPage() {
                   setSelectedLetter(null);
                   setSelectedRegion("");
                   setRegionObj(null);
+                  setSelectedCity("");
+                  setCityObj(null);
                 }} 
                 sx={{ mt: 3, borderColor: "#0096A4", color: "#0096A4" }}
               >

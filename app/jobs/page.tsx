@@ -26,8 +26,10 @@ import BusinessIcon from "@mui/icons-material/Business";
 import { useDebounce } from "@uidotdev/usehooks";
 import { getAllJobs } from "@/app/api/jobs/jobs";
 import { useRouter } from "next/navigation";
-import { getRegions } from "@/app/api/regions/regions";
 import { TransformRegion } from "@/app/api/regions/regions.types";
+import { getRegions } from "@/app/api/regions/regions";
+import { getCity } from "@/app/api/city/city";
+import { TransformCity } from "@/app/api/city/city.types";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -42,6 +44,9 @@ export default function JobsPage() {
   const [regions, setRegions] = useState<TransformRegion[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<string>("");
   const [regionObj, setRegionObj] = useState<TransformRegion | null>(null);
+  const [cities, setCities] = useState<TransformCity[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [cityObj, setCityObj] = useState<TransformCity | null>(null);
 
   const debouncedSearchTerm = useDebounce(searchValue, 500);
 
@@ -59,6 +64,10 @@ export default function JobsPage() {
 
     if (selectedRegion) {
       payload.region = selectedRegion;
+    }
+
+    if (selectedCity) {
+      payload.slectedCity = selectedCity;
     }
 
     try {
@@ -93,16 +102,27 @@ export default function JobsPage() {
         console.error("Failed to fetch regions", error);
       }
     };
+    const fetchCities = async () => {
+      try {
+        const response = await getCity();
+        if (response.remote === "success") {
+          setCities(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch cities", error);
+      }
+    };
     fetchRegions();
+    fetchCities();
   }, []);
 
   useEffect(() => {
     setPageNo(1);
-  }, [debouncedSearchTerm, selectedLetter, selectedRegion]);
+  }, [debouncedSearchTerm, selectedLetter, selectedRegion, selectedCity]);
 
   useEffect(() => {
     fetchJobs();
-  }, [debouncedSearchTerm, pageNo, selectedLetter, selectedRegion]);
+  }, [debouncedSearchTerm, pageNo, selectedLetter, selectedRegion, selectedCity]);
 
   const handleLetterChange = (event: React.MouseEvent<HTMLElement>, newLetter: string | null) => {
     setSelectedLetter(newLetter);
@@ -136,7 +156,7 @@ export default function JobsPage() {
               boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
             }}
           >
-            <Grid item xs={12} md={7}>
+            <Grid item xs={12} md={5}>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -156,10 +176,7 @@ export default function JobsPage() {
                 }}
               />
             </Grid>
-            <Grid item xs={12} md={1} sx={{ display: { xs: "none", md: "flex" }, justifyContent: "center" }}>
-              <Box sx={{ width: "1px", height: "40px", backgroundColor: "#e2e8f0" }} />
-            </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3.5} sx={{ borderLeft: { xs: "none", md: "1px solid #e2e8f0" } }}>
               <Autocomplete
                 id="region-filter"
                 options={regions}
@@ -174,6 +191,38 @@ export default function JobsPage() {
                   <TextField
                     {...params}
                     placeholder="Region auswählen"
+                    variant="outlined"
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LocationOnIcon sx={{ color: "#0096A4" }} />
+                        </InputAdornment>
+                      ),
+                      sx: {
+                        "& fieldset": { border: "none" },
+                        "& input": { fontSize: "1.1rem", py: 1.5 },
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={3.5} sx={{ borderLeft: { xs: "none", md: "1px solid #e2e8f0" } }}>
+              <Autocomplete
+                id="city-filter"
+                options={cities}
+                getOptionLabel={(option: any) => option.name || ""}
+                value={cityObj}
+                onChange={(event, newValue) => {
+                  setCityObj(newValue);
+                  setSelectedCity(newValue ? newValue.id : "");
+                }}
+                isOptionEqualToValue={(option: any, value: any) => option.id === value?.id}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Stadt auswählen"
                     variant="outlined"
                     InputProps={{
                       ...params.InputProps,
@@ -249,7 +298,7 @@ export default function JobsPage() {
             <SearchIcon sx={{ fontSize: 60, color: "#e2e8f0", mb: 2 }} />
             <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>No jobs found</Typography>
             <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you&apos;re looking for.</Typography>
-            {(searchValue || selectedLetter || selectedRegion) && (
+            {(searchValue || selectedLetter || selectedRegion || selectedCity) && (
               <Button
                 variant="outlined"
                 onClick={() => {
@@ -257,6 +306,8 @@ export default function JobsPage() {
                   setSelectedLetter(null);
                   setSelectedRegion("");
                   setRegionObj(null);
+                  setSelectedCity("");
+                  setCityObj(null);
                 }}
                 sx={{ mt: 3, borderColor: "#0096A4", color: "#0096A4" }}
               >
@@ -274,7 +325,7 @@ export default function JobsPage() {
               } else if (job.company?.companyName || job.company?.name) {
                 companyName = job.company.companyName || job.company.name;
               }
-              const jobType = job.jobTypeName || job.jobType?.name || (typeof job.jobType === "string" ? null : null);
+              const jobType = Array.isArray(job.jobTypeName) ? job.jobTypeName.join(", ") : (job.jobTypeName || job.jobType?.name || (typeof job.jobType === "string" ? null : null));
               const jobCity = Array.isArray(job.city) ? job.city.map((c: any) => Array.isArray(c) ? c.join(', ') : c?.name || c).join(', ') : (job.city?.name || job.location || "Various Locations");
               const startDate = job.startDate ? new Date(job.startDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : "";
 

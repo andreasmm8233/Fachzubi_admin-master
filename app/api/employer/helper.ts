@@ -7,6 +7,7 @@ export interface getAllEmployerType {
   letter?: string;
   region?: string;
   selectedRegion?: string;
+  slectedCity?: string;
 }
 export interface TransformedRowData {
   id: string;

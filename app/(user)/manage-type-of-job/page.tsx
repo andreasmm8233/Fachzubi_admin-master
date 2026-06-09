@@ -37,7 +37,7 @@ const ManageJobTypes = () => {
   const [isDeleteModal, setDeleteModal] = useState(false);
   const [isJobTypes, setIsJobTypes] = useState(false);
   const [pageCount, setPageCount] = useState<number>(0);
-  const [recordPerPage, setRecordPerPage] = useState<string>("5");
+  const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [name, setName] = useState("");
   const [pageNo, setPageNo] = useState<number>(1);
   const [rowData, setRowData] = useState<TransformJobType[]>([]);
