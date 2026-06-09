@@ -72,8 +72,8 @@ const ManageTrash = () => {
         recordPerPage: jobsRecordPerPage,
       });
       if (response.remote === "success") {
-        setJobsData(response.data.data.data || response.data.data.jobs || []);
-        setJobsPageCount(response.data.data.count || response.data.data.total || 0);
+        setJobsData(response.data.data.data || []);
+        setJobsPageCount(response.data.data.count || 0);
       } else {
         toast.error("Error loading deleted jobs");
       }
