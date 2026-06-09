@@ -260,68 +260,80 @@ const AddComponent: React.FC = () => {
   };
   const getJobByIdHandler = async (id: string) => {
     setIsLoading(true);
-    const response = await getJobDetailById(id);
-    if (response.remote === "success") {
-      const newImage = response?.data?.data?.jobImages?.map(
-        (item: { _id: string; filepath: string }, index: number) => {
-          return {
-            name: item.filepath,
-            uid: item._id,
-            url: process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL + item.filepath,
-          };
+    try {
+      const response = await getJobDetailById(id);
+      if (response.remote === "success" && response.data?.data) {
+        const jobData = response.data.data;
+        const newImage = (jobData.jobImages || []).map(
+          (item: { _id: string; filepath: string }) => {
+            return {
+              name: item.filepath,
+              uid: item._id,
+              url: process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL + item.filepath,
+            };
+          }
+        );
+        setFileList(newImage);
+        if (jobData.jobType) {
+          const jobTypeVal = Array.isArray(jobData.jobType)
+            ? jobData.jobType
+            : [jobData.jobType];
+          formik.setFieldValue("jobType", jobTypeVal);
         }
-      );
-      setFileList(newImage);
-      if (response?.data?.data?.jobType) {
-        const jobTypeVal = Array.isArray(response.data.data.jobType)
-          ? response.data.data.jobType
-          : [response.data.data.jobType];
-        formik.setFieldValue("jobType", jobTypeVal);
-      }
-      const date = response?.data?.data?.startDate?.split("T")[0];
-      const industryValue = response.data.data.industryName;
+        const date = jobData.startDate?.split("T")[0] || "";
+        const industryValue = jobData.industryName;
 
-      if (response.data.data.videoLink) {
-        formik.setFieldValue("videoLink", response.data.data.videoLink);
-      }
-      formik.setFieldValue(
-        "newCity",
-        response.data.data.cityDetail?.map((item) => {
-          return item?._id;
-        })
-      );
+        if (jobData.videoLink) {
+          formik.setFieldValue("videoLink", jobData.videoLink);
+        }
+        const cityIds = (jobData.cityDetail || [])
+          .map((item: any) => item?._id)
+          .filter(Boolean);
+        formik.setFieldValue("newCity", cityIds);
 
-      formik.setFieldValue("company", {
-        id: response.data.data.company._id,
-        label: response.data.data.company.companyName || "",
-      });
-      formik.setFieldValue("jobTitle", response.data.data.jobTitle);
-      formik.setFieldValue("startDate", date);
-      formik.setFieldValue(
-        "additionalEmail",
-        response.data.data.additionalEmail
-      );
-      formik.setFieldValue("email", response.data.data.email);
-      formik.setFieldValue("address", response.data.data.address);
-      formik.setFieldValue("zipCode", response.data.data.zipCode);
-      formik.setFieldValue("jobDescription", response.data.data.jobDescription);
-      if (industryValue) {
-        const industriesVal = Array.isArray(industryValue)
-          ? industryValue.map((item: any) => item._id)
-          : [industryValue._id];
-        formik.setFieldValue("industryName", industriesVal);
+        // Populate options in Autocomplete for company selection
+        if (cityIds.length) {
+          await getCompaniesByCityId(cityIds);
+        }
+
+        if (jobData.company) {
+          formik.setFieldValue("company", {
+            id: jobData.company._id,
+            label: jobData.company.companyName || "",
+          });
+        }
+        formik.setFieldValue("jobTitle", jobData.jobTitle || "");
+        formik.setFieldValue("startDate", date);
+        formik.setFieldValue(
+          "additionalEmail",
+          jobData.additionalEmail || ""
+        );
+        formik.setFieldValue("email", jobData.email || "");
+        formik.setFieldValue("address", jobData.address || "");
+        formik.setFieldValue("zipCode", jobData.zipCode || "");
+        formik.setFieldValue("jobDescription", jobData.jobDescription || "");
+        if (industryValue) {
+          const industriesVal = Array.isArray(industryValue)
+            ? industryValue.map((item: any) => item._id || item)
+            : [industryValue._id || industryValue];
+          formik.setFieldValue("industryName", industriesVal);
+        }
+        if (jobData.region) {
+          formik.setFieldValue("region", {
+            id: jobData.region._id,
+            label: jobData.region.regionName || "",
+          });
+        } else {
+          formik.setFieldValue("region", { id: "", label: "Select Region" });
+        }
+        setDocuments(jobData.attachments || []);
       }
-      if (response.data.data.region) {
-        formik.setFieldValue("region", {
-          id: response.data.data.region._id,
-          label: response.data.data.region.regionName || "",
-        });
-      } else {
-        formik.setFieldValue("region", { id: "", label: "Select Region" });
-      }
-      setDocuments(response.data.data.attachments);
+    } catch (error) {
+      console.error("Error in getJobByIdHandler:", error);
+      toast.error("Error loading job details");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   const handleSkillChange = (
     index: number,
@@ -397,6 +409,7 @@ const AddComponent: React.FC = () => {
   };
 
   const getCompaniesDetailed = async (id: string) => {
+    if (!id) return;
     setIsLoading(true);
     const response = await getEmployerById(id);
     if (response.remote === "success") {

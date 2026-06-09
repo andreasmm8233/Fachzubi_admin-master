@@ -40,6 +40,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
 
 const ManageCities = () => {
   const role = useSelector((state: RootState) => state.auth.role);
@@ -61,11 +62,13 @@ const ManageCities = () => {
   const [qrDownloadLoadingId, setQrDownloadLoadingId] = useState("");
   const [saveModelLoading, setSaveModelLoading] = useState(false);
   const [dataForEdit, setDataForEdit] = useState<City>();
+  const [duplicateFromCityId, setDuplicateFromCityId] = useState<string>("");
   const clearAllState = () => {
     setIsAddCity(false);
     setDeleteModal(false);
     setId("");
     setName("");
+    setDuplicateFromCityId("");
     setDataForEdit(undefined);
     setSaveModelLoading(false);
   };
@@ -82,7 +85,10 @@ const ManageCities = () => {
     if (id) {
       await handleEditCity(data);
     } else {
-      await handleAddCity(data);
+      const payload = duplicateFromCityId
+        ? { ...data, duplicateFromCityId }
+        : data;
+      await handleAddCity(payload);
     }
     clearAllState();
   };
@@ -108,6 +114,25 @@ const ManageCities = () => {
     setId(rowData.id);
     setName(rowData.name);
     setDataForEdit({ ...rowData, _id: "" });
+  };
+
+  const handleDuplicateButton = (rowData: TransformCity) => {
+    handleAddCityModel();
+    setId("");
+    setDuplicateFromCityId(rowData.id);
+    const newName = rowData.name + " (Copy)";
+    setName(newName);
+
+    // Prefill QR Target URL with a unique valid name to avoid Formik validation failure
+    const formattedName = rowData.name.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+    const suffix = Math.floor(10000000 + Math.random() * 90000000);
+    const duplicateQrTargetUrl = `https://fachzubi-app.de/jobs/${formattedName}-copy-${suffix}`;
+
+    setDataForEdit({
+      ...rowData,
+      _id: "",
+      qrTargetUrl: duplicateQrTargetUrl,
+    });
   };
 
   const handleStatusToggle = async (currentRawId: string) => {
@@ -224,6 +249,29 @@ const ManageCities = () => {
             }`.trim()
           : SingleRowData.createdBy.username || "N/A"
         : "N/A",
+      duplicate: (
+        <Button
+          onClick={() => {
+            handleDuplicateButton(SingleRowData);
+          }}
+          disableRipple={true}
+          startIcon={<FileCopyIcon sx={{ fontSize: "18px !important" }} />}
+          sx={{
+            fontSize: "14px",
+            fontWeight: "600",
+            color: "#0096A4",
+            textTransform: "none",
+            padding: 0,
+            minWidth: 0,
+            "&:hover": {
+              color: "#F1841D",
+              backgroundColor: "transparent",
+            },
+          }}
+        >
+          Duplicate
+        </Button>
+      ),
       action: (
         <Stack
           direction="row"
@@ -240,6 +288,7 @@ const ManageCities = () => {
           }}
         >
           <IconButton
+            title="Edit"
             disableRipple={true}
             onClick={() => {
               handleEditButton(SingleRowData);
@@ -249,6 +298,7 @@ const ManageCities = () => {
           </IconButton>
 
           <IconButton
+            title="Download QR"
             onClick={() => {
               handleDownloadQr(SingleRowData);
             }}

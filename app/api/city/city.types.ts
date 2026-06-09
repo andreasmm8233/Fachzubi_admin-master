@@ -10,6 +10,7 @@ export interface City {
   qrCode?: string;
   qrTargetUrl?: string;
   createdBy?: any;
+  duplicateFromCityId?: string;
 }
 
 export interface TransformCity {
