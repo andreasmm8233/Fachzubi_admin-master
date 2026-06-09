@@ -72,8 +72,13 @@ const ManageTrash = () => {
         recordPerPage: jobsRecordPerPage,
       });
       if (response.remote === "success") {
+        const totalRecords = response.data.data.total || response.data.data.count || 0;
+        const totalPages =
+          response.data.data.totalPages ||
+          Math.ceil(totalRecords / Number(jobsRecordPerPage));
+
         setJobsData(response.data.data.data || []);
-        setJobsPageCount(response.data.data.count || 0);
+        setJobsPageCount(totalPages);
       } else {
         toast.error("Error loading deleted jobs");
       }
@@ -96,8 +101,13 @@ const ManageTrash = () => {
         recordPerPage: companiesRecordPerPage,
       });
       if (response.remote === "success") {
+        const totalRecords = response.data.data.total || response.data.data.count || 0;
+        const totalPages =
+          response.data.data.totalPages ||
+          Math.ceil(totalRecords / Number(companiesRecordPerPage));
+
         setCompaniesData(response.data.data.data || response.data.data.employers || []);
-        setCompaniesPageCount(response.data.data.count || response.data.data.total || 0);
+        setCompaniesPageCount(totalPages);
       } else {
         toast.error("Error loading deleted companies");
       }

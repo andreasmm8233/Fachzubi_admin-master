@@ -28,6 +28,10 @@ export interface getAllJobsType {
 export interface JobWithCount {
   data: Job[];
   count: number;
+  total?: number;
+  totalPages?: number;
+  pageNo?: number;
+  recordPerPage?: number;
 }
 export interface UpdateJob {
   city?: {id:string, label:string};
