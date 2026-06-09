@@ -12,14 +12,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [title, setTitle] = useState("fachzubi");
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
     const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
-    if (typeof window !== "undefined" && hideLogoDomain) {
-      if (window.location.hostname === hideLogoDomain) {
+    if (typeof window !== "undefined") {
+      if (hideLogoDomain && window.location.hostname === hideLogoDomain) {
         const domainName = hideLogoDomain.split(".")[0];
         setTitle(domainName || "stellenapp");
+      } else {
+        setTitle("fachzubi");
       }
     }
   }, []);
@@ -27,7 +29,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>{title}</title>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var hideLogoDomain = "${process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN || ""}";
+                if (hideLogoDomain && window.location.hostname === hideLogoDomain) {
+                  var domainName = hideLogoDomain.split(".")[0];
+                  document.title = domainName || "stellenapp";
+                } else {
+                  document.title = "fachzubi";
+                }
+              })();
+            `,
+          }}
+        />
+        {title && <title>{title}</title>}
       </head>
       <Provider store={store}>
         <ThemeCustomization>
