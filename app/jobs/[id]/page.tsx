@@ -22,6 +22,8 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import EmailIcon from "@mui/icons-material/Email";
+import WebIcon from "@mui/icons-material/Web";
+import PhoneIcon from "@mui/icons-material/Phone";
 import { useRouter } from "next/navigation";
 import { getJobDetailById } from "@/app/api/jobs/jobs";
 
@@ -394,6 +396,33 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                           <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Additional Email</Typography>
                           <MuiLink href={`mailto:${job.additionalEmail}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
                             {job.additionalEmail}
+                          </MuiLink>
+                        </Box>
+                      </Box>
+                    )}
+                    {job.company.website && (
+                      <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                        <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
+                          <WebIcon fontSize="small" />
+                        </Box>
+                        <Box sx={{ overflow: "hidden" }}>
+                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Website</Typography>
+                          <MuiLink href={job.company.website.startsWith("http") ? job.company.website : `https://${job.company.website}`} target="_blank" underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
+                            {job.company.website}
+                          </MuiLink>
+                        </Box>
+                      </Box>
+                    )}
+
+                    {job.company.phoneNo && (
+                      <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                        <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
+                          <PhoneIcon />
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Phone</Typography>
+                          <MuiLink href={`tel:${job.company.phoneNo}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
+                            {job.company.phoneNo}
                           </MuiLink>
                         </Box>
                       </Box>
