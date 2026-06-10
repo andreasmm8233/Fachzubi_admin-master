@@ -349,7 +349,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                                   router.push(`/jobs/${id}`);
                                 }
                               }}
-                              sx={{ backgroundColor: "#0096A4", "&:hover": { backgroundColor: "#007a86" }, borderRadius: "8px", textTransform: "none", fontWeight: 600, px: 3 }}
+                              sx={{ backgroundColor: "#0096A4", "&:hover": { backgroundColor: "#007a86" }, borderRadius: "8px", textTransform: "none !important", fontWeight: 600, px: 3 }}
                             >
                               {/* View Details */}
                               Details ansehen
