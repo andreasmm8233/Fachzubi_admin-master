@@ -37,9 +37,11 @@ const ManageJobs = () => {
   };
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
+    setPageNo(1);
   };
   const handleSearchChange = (newValue: string) => {
     setSearchValue(newValue);
+    setPageNo(1);
   };
   const handleDelete = async (oldRowData: Job) => {
     setIsDeleteLoading(true);
@@ -103,7 +105,7 @@ const ManageJobs = () => {
     const response = await getAllJobs(payload);
     if (response.remote === "success") {
       setRowData(response.data.data.data);
-      setPageCount(response.data.data.count);
+      setPageCount(response.data.data.totalPages || 1);
     }
     setLoading(false);
   };
