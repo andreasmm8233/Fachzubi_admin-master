@@ -352,7 +352,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                               sx={{ backgroundColor: "#0096A4", "&:hover": { backgroundColor: "#007a86" }, borderRadius: "8px", textTransform: "none", fontWeight: 600, px: 3 }}
                             >
                               {/* View Details */}
-                              Details Ansehen
+                              Details ansehen
                             </Button>
                           </Box>
                         </CardContent>
