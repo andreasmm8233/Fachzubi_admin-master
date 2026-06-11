@@ -40,6 +40,7 @@ const ManageIndustries = () => {
   const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [name, setName] = useState("");
   const [pageNo, setPageNo] = useState<number>(1);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [rowData, setRowData] = useState<TransformIndustry[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchValue, 300);
@@ -71,6 +72,7 @@ const ManageIndustries = () => {
     clearAllState();
   };
   const handleGetAll = async (isLoadingShow?: boolean) => {
+    if (!isInitialized) return;
     if (isLoadingShow) {
       setLoading(true);
     }
@@ -177,7 +179,21 @@ const ManageIndustries = () => {
   };
   useEffect(() => {
     handleGetAll(true);
-  }, [pageNo, recordPerPage]);
+  }, [pageNo, recordPerPage, isInitialized]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("manage-industries-page");
+    if (saved) {
+      setPageNo(Number(saved));
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      sessionStorage.setItem("manage-industries-page", String(pageNo));
+    }
+  }, [pageNo, isInitialized]);
   useEffect(() => {
     if (debouncedSearchTerm) {
       handleGetAll(true);

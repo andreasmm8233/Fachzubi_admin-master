@@ -24,6 +24,7 @@ const ManageJobs = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchValue, 300);
   const [pageNo, setPageNo] = useState<number>(1);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [filter, setFilter] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [deleteTableRowData, setDeleteTableRowData] = useState<Job>();
@@ -95,6 +96,7 @@ const ManageJobs = () => {
     setStatusToggleId("");
   };
   const handleGetAllJobs = async () => {
+    if (!isInitialized) return;
     setLoading(true);
     const payload: getAllJobsType = {
       pageNo,
@@ -212,7 +214,21 @@ const ManageJobs = () => {
 
   useEffect(() => {
     handleGetAllJobs();
-  }, [pageNo, filter, recordPerPage]);
+  }, [pageNo, filter, recordPerPage, isInitialized]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("manage-jobs-page");
+    if (saved) {
+      setPageNo(Number(saved));
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      sessionStorage.setItem("manage-jobs-page", String(pageNo));
+    }
+  }, [pageNo, isInitialized]);
 
   useEffect(() => {
     if (debouncedSearchTerm) {

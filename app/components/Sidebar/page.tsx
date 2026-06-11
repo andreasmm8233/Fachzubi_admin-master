@@ -105,12 +105,15 @@ const SidebarMenu_Component = () => {
                     const remEmail = localStorage.getItem("rememberedEmail");
                     const remPass = localStorage.getItem("rememberedPassword");
                     localStorage.clear();
+                    sessionStorage.clear();
                     if (remEmail) localStorage.setItem("rememberedEmail", remEmail);
                     if (remPass) localStorage.setItem("rememberedPassword", remPass);
 
                     dispatch(setIsLogin(false));
                     dispatch(setRole(null));
                     dispatch(setPermissions(null));
+                  } else if (item.url) {
+                    sessionStorage.clear();
                   }
                   if (item.children) {
                     handleMenu(item.id);
@@ -167,6 +170,9 @@ const SidebarMenu_Component = () => {
                           }}
                           component={Link}
                           href={`/manage-content/${child.url}`}
+                          onClick={() => {
+                            sessionStorage.clear();
+                          }}
                         >
                           <ListItemIcon
                             sx={{ minWidth: "auto", color: "inherit" }}

@@ -42,6 +42,7 @@ const ManageEmployeePage = () => {
   const [pageCount, setPageCount] = useState<number>(0);
   const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [pageNo, setPageNo] = useState<number>(1);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [loading, setIsLoading] = useState(true);
   const [deleteTableRowData, setDeleteTableRowData] = useState<RowData>();
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -55,6 +56,7 @@ const ManageEmployeePage = () => {
   };
 
   const handleGetAllEmployees = async () => {
+    if (!isInitialized) return;
     setIsLoading(true);
     const data = await getAllEmployees();
     if (data.remote === "success") {
@@ -193,7 +195,21 @@ const ManageEmployeePage = () => {
 
   useEffect(() => {
     handleGetAllEmployees();
+  }, [isInitialized]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("manage-employees-page");
+    if (saved) {
+      setPageNo(Number(saved));
+    }
+    setIsInitialized(true);
   }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      sessionStorage.setItem("manage-employees-page", String(pageNo));
+    }
+  }, [pageNo, isInitialized]);
 
   return (
     <>

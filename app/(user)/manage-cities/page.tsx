@@ -49,6 +49,7 @@ const ManageCities = () => {
   const [pageCount, setPageCount] = useState<number>(0);
   const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [pageNo, setPageNo] = useState<number>(1);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [name, setName] = useState("");
   const [rowData, setRowData] = useState<TransformCity[]>([]);
   const [id, setId] = useState<string>("");
@@ -94,6 +95,7 @@ const ManageCities = () => {
   };
 
   const handleGetAll = async (isLoadingShow?: boolean) => {
+    if (!isInitialized) return;
     if (isLoadingShow) {
       setLoading(true);
     }
@@ -375,7 +377,21 @@ const ManageCities = () => {
 
   useEffect(() => {
     handleGetAll(true);
-  }, [pageNo, recordPerPage]);
+  }, [pageNo, recordPerPage, isInitialized]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("manage-cities-page");
+    if (saved) {
+      setPageNo(Number(saved));
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      sessionStorage.setItem("manage-cities-page", String(pageNo));
+    }
+  }, [pageNo, isInitialized]);
 
   useEffect(() => {
     if (debouncedSearchTerm) {

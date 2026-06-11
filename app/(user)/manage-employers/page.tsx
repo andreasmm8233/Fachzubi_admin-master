@@ -53,6 +53,7 @@ const ManageEmployee = () => {
   const [pageCount, setPageCount] = useState<number>(0);
   const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [pageNo, setPageNo] = useState<number>(1);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [loading, setIsLoading] = useState(true);
   const [deleteTableRowData, setDeleteTableRowData] = useState<RowData>();
   const [mount, setMount] = useState(false);
@@ -73,6 +74,7 @@ const ManageEmployee = () => {
     setDeleteModal(false);
   };
   const handleGetAllEmployer = async () => {
+    if (!isInitialized) return;
     setIsLoading(true);
     const payload: getAllEmployerType = {
       pageNo,
@@ -227,7 +229,21 @@ const ManageEmployee = () => {
 
   useEffect(() => {
     handleGetAllEmployer();
-  }, [pageNo, filter, recordPerPage]);
+  }, [pageNo, filter, recordPerPage, isInitialized]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("manage-employers-page");
+    if (saved) {
+      setPageNo(Number(saved));
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      sessionStorage.setItem("manage-employers-page", String(pageNo));
+    }
+  }, [pageNo, isInitialized]);
   useEffect(() => {
     if (debouncedSearchTerm) {
       handleGetAllEmployer();

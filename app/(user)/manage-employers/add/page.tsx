@@ -10,9 +10,8 @@ import {
   Grid,
   IconButton,
   TextField,
+  InputAdornment,
 } from "@mui/material";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
 import { SVG } from "@/app/components/icon";
 import Title from "@/app/components/title.components";
 import { useRouter } from "next/navigation";
@@ -37,6 +36,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getRegions } from "@/app/api/regions/regions";
 import { TransformRegion } from "@/app/api/regions/regions.types";
+const GermanyFlag = () => (
+  <svg width="20" height="12" viewBox="0 0 5 3" style={{ border: "1px solid #e0e0e0", borderRadius: "2px", marginRight: "6px" }}>
+    <rect width="5" height="1" y="0" fill="#000000" />
+    <rect width="5" height="1" y="1" fill="#DD0000" />
+    <rect width="5" height="1" y="2" fill="#FFCC00" />
+  </svg>
+);
 const AddComponent = () => {
   const re = /^((ftp|http|https):\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
   const route = useRouter();
@@ -107,7 +113,7 @@ const AddComponent = () => {
       companyName: "",
       email: "",
       website: "",
-      phoneNo: "+49",
+      phoneNo: "",
       address: "",
       zipCode: "",
       city: { id: "", label: "Select City" },
@@ -119,9 +125,6 @@ const AddComponent = () => {
     validationSchema: validationSchema,
 
     onSubmit: async (values) => {
-      if (values.phoneNo === "+49") {
-        values.phoneNo = "";
-      }
       setIsDisable(true);
       values.companyImages = fileList.map((item: any) => {
         return item.originFileObj;
@@ -480,24 +483,23 @@ const AddComponent = () => {
                 <label>Phone No.</label>
               </Grid>
               <Grid item xs={12} lg={10}>
-                <PhoneInput
-                  regions={"europe"}
-                  disabled={disable}
-                  showDropdown={false}
+                <TextField
                   placeholder="Enter phone number"
-                  onChange={(value, countrydata, event) => {
-                    console.log({ value });
-                    const temp = value.slice(2);
-                    formik.setFieldValue("phoneNo", temp);
-                    event.target.value = "+49" + temp;
+                  disabled={disable}
+                  type="text"
+                  fullWidth
+                  name="phoneNo"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.phoneNo}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <GermanyFlag />
+                        <span style={{ fontWeight: 600, color: "#646464" }}>+49</span>
+                      </InputAdornment>
+                    ),
                   }}
-                  countryCodeEditable={false}
-                  onBlur={(e) => {
-                    e.target.name = "phoneNo";
-                    formik.handleBlur(e);
-                  }}
-                  value={id ? "+49" + formik.values.phoneNo : "+49"}
-                  onlyCountries={["de"]} // Allow only Germany
                 />
                 {formik.touched.phoneNo && formik.errors.phoneNo && (
                   <div style={{ color: "red" }}>{formik.errors.phoneNo}</div>

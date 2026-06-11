@@ -38,6 +38,7 @@ export default function CompaniesPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string>("");
   const [pageNo, setPageNo] = useState<number>(1);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [regions, setRegions] = useState<TransformRegion[]>([]);
@@ -49,6 +50,7 @@ export default function CompaniesPage() {
   const debouncedSearchTerm = useDebounce(searchValue, 500);
 
   const fetchCompanies = async () => {
+    if (!isInitialized) return;
     setLoading(true);
     const payload: any = {
       searchValue: debouncedSearchTerm,
@@ -127,7 +129,21 @@ export default function CompaniesPage() {
 
   useEffect(() => {
     fetchCompanies();
-  }, [debouncedSearchTerm, pageNo, selectedLetter, selectedRegion, selectedCity]);
+  }, [debouncedSearchTerm, pageNo, selectedLetter, selectedRegion, selectedCity, isInitialized]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("public-companies-page");
+    if (saved) {
+      setPageNo(Number(saved));
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      sessionStorage.setItem("public-companies-page", String(pageNo));
+    }
+  }, [pageNo, isInitialized]);
 
   const handleLetterChange = (event: React.MouseEvent<HTMLElement>, newLetter: string | null) => {
     setSelectedLetter(newLetter);

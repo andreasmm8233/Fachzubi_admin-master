@@ -40,6 +40,7 @@ export default function ThemeCustomization({
         const token = localStorage.getItem("x-refresh");
         if (!token) {
           localStorage.clear();
+          sessionStorage.clear();
           console.error("Access token not found in local storage");
           return;
         }
@@ -49,6 +50,7 @@ export default function ThemeCustomization({
         } else {
           dispatch(setIsLogin(false));
           localStorage.clear();
+          sessionStorage.clear();
           console.error("Error refreshing access token:", result);
         }
       } catch (error) {

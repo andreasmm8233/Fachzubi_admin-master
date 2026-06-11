@@ -27,6 +27,7 @@ export default function UsePagination({
 }) {
   const { items } = usePagination({
     count: pageCount,
+    page: pageNo,
   });
 
   const handleChange = (event: SelectChangeEvent) => {

@@ -40,6 +40,7 @@ const ManageRegions = () => {
   const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [name, setName] = useState("");
   const [pageNo, setPageNo] = useState<number>(1);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [rowData, setRowData] = useState<TransformRegion[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchValue, 300);
@@ -75,6 +76,7 @@ const ManageRegions = () => {
   };
 
   const handleGetAll = async (isLoadingShow?: boolean) => {
+    if (!isInitialized) return;
     if (isLoadingShow) {
       setLoading(true);
     }
@@ -180,7 +182,21 @@ const ManageRegions = () => {
 
   useEffect(() => {
     handleGetAll(true);
-  }, [pageNo, recordPerPage]);
+  }, [pageNo, recordPerPage, isInitialized]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("manage-regions-page");
+    if (saved) {
+      setPageNo(Number(saved));
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      sessionStorage.setItem("manage-regions-page", String(pageNo));
+    }
+  }, [pageNo, isInitialized]);
 
   useEffect(() => {
     if (debouncedSearchTerm) {
