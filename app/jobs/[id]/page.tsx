@@ -110,6 +110,14 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   }
   const logoUrl = logoPath ? `${IMAGE_BASE_URL}${logoPath}`.replace(/([^:]\/)\/+/g, "$1") : "/placeholder-logo.png";
 
+
+  const companyPhoneNo = job.company?.phoneNo || "";
+  const formattedPhoneNo = companyPhoneNo
+    ? (companyPhoneNo.startsWith("+") || companyPhoneNo.startsWith("00")
+      ? companyPhoneNo
+      : `+49 ${companyPhoneNo}`)
+    : "";
+
   // Media Extractions
   const jobImagesList = Array.isArray(job.jobImages) ? job.jobImages.map((img: any) => img.filepath).filter(Boolean) : [];
 
@@ -414,15 +422,15 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                       </Box>
                     )}
 
-                    {job.company.phoneNo && (
+                    {formattedPhoneNo && (
                       <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
                         <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
                           <PhoneIcon />
                         </Box>
                         <Box>
                           <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Phone</Typography>
-                          <MuiLink href={`tel:${job.company.phoneNo}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
-                            {job.company.phoneNo}
+                          <MuiLink href={`tel:${formattedPhoneNo.replace(/\s+/g, "")}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
+                            {formattedPhoneNo}
                           </MuiLink>
                         </Box>
                       </Box>

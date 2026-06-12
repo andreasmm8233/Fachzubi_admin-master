@@ -103,6 +103,11 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
   const website = company.website || "";
   const email = company.email || "";
   const phoneNo = company.phoneNo || "";
+  const formattedPhoneNo = phoneNo
+    ? (phoneNo.startsWith("+") || phoneNo.startsWith("00")
+      ? phoneNo
+      : `+49 ${phoneNo}`)
+    : "";
   const contactPerson = company.contactPerson || "";
   const companyImages = Array.isArray(company.companyImages) ? company.companyImages.filter((img: string) => img) : [];
   const videoLinks = Array.isArray(company.videoLink) ? company.videoLink.filter((v: string) => v) : [];
@@ -399,15 +404,15 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                     </Box>
                   )}
 
-                  {phoneNo && (
+                  {formattedPhoneNo && (
                     <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
                       <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
                         <PhoneIcon />
                       </Box>
                       <Box>
                         <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Phone</Typography>
-                        <MuiLink href={`tel:${phoneNo}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
-                          {phoneNo}
+                        <MuiLink href={`tel:${formattedPhoneNo.replace(/\s+/g, "")}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
+                          {formattedPhoneNo}
                         </MuiLink>
                       </Box>
                     </Box>

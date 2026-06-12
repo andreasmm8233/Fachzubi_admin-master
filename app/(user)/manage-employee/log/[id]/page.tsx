@@ -123,6 +123,12 @@ const EmployeeLogPage = () => {
         companies.map((company, index) => {
           const industryName = typeof company.industryName === 'object' ? company.industryName?.industryName : company.industryName;
           const cityName = typeof company.city === 'object' ? company.city?.name : company.city;
+          const phoneNo = company.phoneNo || "";
+          const formattedPhoneNo = phoneNo
+            ? (phoneNo.startsWith("+") || phoneNo.startsWith("00")
+              ? phoneNo
+              : `+49 ${phoneNo}`)
+            : "";
 
           return (
           <Paper 
@@ -193,10 +199,10 @@ const EmployeeLogPage = () => {
                                   <Typography variant="body2">{company.email}</Typography>
                                 </Stack>
                               )}
-                              {company.phoneNo && (
+                              {formattedPhoneNo && (
                                 <Stack direction="row" spacing={1} alignItems="center" color="textSecondary">
                                   <PhoneIcon fontSize="small" sx={{ color: "#0096A4" }} />
-                                  <Typography variant="body2">{company.phoneNo}</Typography>
+                                  <Typography variant="body2">{formattedPhoneNo}</Typography>
                                 </Stack>
                               )}
                             </Stack>
