@@ -126,9 +126,11 @@ const AddComponent = () => {
 
     onSubmit: async (values) => {
       setIsDisable(true);
-      values.companyImages = fileList.map((item: any) => {
-        return item.originFileObj;
-      });
+      // Only send newly added files (existing images have no originFileObj and
+      // must NOT be re-sent as "undefined").
+      values.companyImages = fileList
+        .map((item: any) => item.originFileObj)
+        .filter(Boolean);
       values.removedFile = oldFile.filter((item) => {
         if (item !== "undefined" || item !== undefined) {
           return item;

@@ -1,5 +1,4 @@
 import React from "react";
-import { useState } from "react";
 import ImgCrop from "antd-img-crop";
 import { Upload } from "antd";
 export interface FileState {
@@ -20,15 +19,21 @@ export interface Cropper {
   setOldFile: (data: any) => void;
   disabled: boolean;
 }
+const isObjectId = (value: unknown): value is string =>
+  typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
+
 const Cropper = ({ setFileList, fileList, setOldFile, disabled }: Cropper) => {
   const onChange = ({ fileList: newFileList }: any) => {
-    const data = fileList.find((item: any) => {
-      if (item.status === "removed") {
-        return item.uid;
-      }
-    });
-    setOldFile((pre: any) => [...pre, data?.uid]);
     setFileList(newFileList);
+  };
+
+  // Track only already-saved images (uid is a real Mongo ObjectId) so the
+  // backend can delete them. Newly added, not-yet-saved files have a temporary
+  // "rc-upload-…" uid and are skipped — they never existed on the server.
+  const onRemove = (file: any) => {
+    if (isObjectId(file?.uid)) {
+      setOldFile((pre: any) => [...pre, file.uid]);
+    }
   };
 
   const onPreview = async (file: any) => {
@@ -47,10 +52,14 @@ const Cropper = ({ setFileList, fileList, setOldFile, disabled }: Cropper) => {
     <div>
       <ImgCrop showGrid showReset>
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          // Do NOT auto-upload to a remote URL — keep the file locally and let
+          // the form submit send it to our backend. Returning false from
+          // beforeUpload prevents the request that was causing "upload error".
+          beforeUpload={() => false}
           listType="picture-card"
           fileList={fileList}
           onChange={onChange}
+          onRemove={onRemove}
           onPreview={onPreview}
           disabled={disabled}
         >
