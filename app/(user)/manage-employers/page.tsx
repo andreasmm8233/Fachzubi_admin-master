@@ -271,8 +271,8 @@ const ManageEmployee = () => {
           searchValue={searchValue}
           onSearchChange={handleSearchChange}
           filterOptions={[
-            { name: "Create Date", value: "Date" },
-            { name: "Company Name", value: "companyName" },
+            { name: "A to Z", value: "companyName" },
+            { name: "Old to New", value: "Date" },
           ]}
         />
         <Link href="/manage-employers/add?action=false">

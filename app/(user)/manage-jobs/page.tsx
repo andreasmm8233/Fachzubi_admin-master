@@ -145,7 +145,21 @@ const ManageJobs = () => {
           {rowData.company}
         </span>
       ),
-      jobTitle: rowData.jobTitle,
+      jobTitle: (
+        <span
+          style={{
+            cursor: "pointer",
+            color: "#0096A4",
+          }}
+          onClick={() => {
+            if (rowData.id) {
+              handleEdit(rowData.id);
+            }
+          }}
+        >
+          {rowData.jobTitle}
+        </span>
+      ),
       startDate: rowData.startDate,
       industry: Array.isArray(rowData.industryName) ? rowData.industryName.join(", ") : rowData.industryName,
       city: `${rowData.city[0][0]}` + `  ${length ? length + "more" : ""}`,
