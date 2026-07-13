@@ -9,6 +9,7 @@ import {
   Stack,
   TableContainer,
   IconButton,
+  Typography,
   // Link
 } from "@mui/material";
 
@@ -51,6 +52,7 @@ const ManageEmployee = () => {
   const [isDeleteModal, setDeleteModal] = useState(false);
   const [rowData, setRowData] = useState<RowData[]>([]);
   const [pageCount, setPageCount] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [pageNo, setPageNo] = useState<number>(1);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -86,6 +88,7 @@ const ManageEmployee = () => {
     if (data.remote === "success") {
       setRowData(data.data.data.data);
       setPageCount(data.data.data.count);
+      setTotalCount((data.data.data as any).total ?? 0);
     }
     setIsLoading(false);
   };
@@ -257,7 +260,10 @@ const ManageEmployee = () => {
   }, [searchValue]);
   return (
     <>
-      <Title heading="Manage Employers" />
+      <Title heading="Manage Companies" />
+      <Typography sx={{ mb: 2, fontSize: "16px", color: "#646464", fontWeight: 600 }}>
+        Total Companies: {totalCount}
+      </Typography>
       <Stack
         direction={"row"}
         spacing={1}

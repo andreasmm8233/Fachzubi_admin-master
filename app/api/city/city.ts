@@ -87,6 +87,43 @@ export const deleteCity = async (
   return response;
 };
 
+export const getAllDeletedCities = async (
+  payload: getAllCitiesType
+): Promise<SuccessResult<any> | ErrorResult> => {
+  const { searchValue, pageNo, recordPerPage } = payload;
+  const queryParams: any = {};
+  if (searchValue) queryParams.searchValue = searchValue;
+  if (pageNo) queryParams.pageNo = pageNo;
+  if (recordPerPage) queryParams.recordPerPage = recordPerPage;
+
+  const url = urlcat("/cities/deleted/all", queryParams);
+  const response = await request({
+    url,
+    method: "get",
+  });
+  return response;
+};
+
+export const restoreCity = async (
+  id: string
+): Promise<SuccessResult<TransformCity> | ErrorResult> => {
+  const response = await request({
+    url: `/cities/restore/${id}`,
+    method: "post",
+  });
+  return response;
+};
+
+export const hardDeleteCity = async (
+  id: string
+): Promise<SuccessResult<TransformCity> | ErrorResult> => {
+  const response = await request({
+    url: `/cities/hard-delete/${id}`,
+    method: "delete",
+  });
+  return response;
+};
+
 export const downloadCityQr = async (
   id: string
 ): Promise<SuccessResult<Blob> | ErrorResult> => {

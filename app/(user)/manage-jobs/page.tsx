@@ -1,6 +1,6 @@
 "use client";
 import { SVG } from "@/app/components/icon";
-import { Box, Button, IconButton, Stack } from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import Title from "@/app/components/title.components";
 import Filter from "@/app/components/filter";
 import CustomTable from "@/app/components/table";
@@ -21,6 +21,7 @@ const ManageJobs = () => {
   const [isDeleteModal, setDeleteModal] = useState(false);
   const [recordPerPage, setRecordPerPage] = useState<string>("10");
   const [pageCount, setPageCount] = useState<number>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [searchValue, setSearchValue] = useState<string>("");
   const debouncedSearchTerm = useDebounce(searchValue, 300);
   const [pageNo, setPageNo] = useState<number>(1);
@@ -108,6 +109,11 @@ const ManageJobs = () => {
     if (response.remote === "success") {
       setRowData(response.data.data.data);
       setPageCount(response.data.data.totalPages || 1);
+      setTotalCount(
+        (response.data.data as any).total ??
+          (response.data.data.data as any)?.count ??
+          0
+      );
     }
     setLoading(false);
   };
@@ -259,6 +265,9 @@ const ManageJobs = () => {
     <>
       <Title heading="Manage Jobs" />
       {/* {loading && <CustomLoader />} */}
+      <Typography sx={{ mb: 2, fontSize: "16px", color: "#646464", fontWeight: 600 }}>
+        Total Jobs: {totalCount}
+      </Typography>
       <Stack
         direction={"row"}
         spacing={1}

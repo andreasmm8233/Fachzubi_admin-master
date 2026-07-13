@@ -31,6 +31,11 @@ import {
   restoreEmployer,
   hardDeleteEmployer,
 } from "@/app/api/employer/employer";
+import {
+  getAllDeletedCities,
+  restoreCity,
+  hardDeleteCity,
+} from "@/app/api/city/city";
 
 const ManageTrash = () => {
   const router = useRouter();
@@ -56,9 +61,18 @@ const ManageTrash = () => {
   const debouncedCompaniesSearchValue = useDebounce(companiesSearchValue, 300);
   const [companiesLoading, setCompaniesLoading] = useState<boolean>(true);
 
+  // Cities States
+  const [citiesData, setCitiesData] = useState<any[]>([]);
+  const [citiesPageCount, setCitiesPageCount] = useState<number>(0);
+  const [citiesPageNo, setCitiesPageNo] = useState<number>(1);
+  const [citiesRecordPerPage, setCitiesRecordPerPage] = useState<string>("10");
+  const [citiesSearchValue, setCitiesSearchValue] = useState<string>("");
+  const debouncedCitiesSearchValue = useDebounce(citiesSearchValue, 300);
+  const [citiesLoading, setCitiesLoading] = useState<boolean>(true);
+
   // Dialog State
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<{ id: string; type: "job" | "company" } | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string; type: "job" | "company" | "city" } | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Fetch Jobs
@@ -119,6 +133,50 @@ const ManageTrash = () => {
     }
   };
 
+  // Fetch Cities
+  const handleGetDeletedCities = async () => {
+    setCitiesLoading(true);
+    try {
+      const response = await getAllDeletedCities({
+        pageNo: citiesPageNo,
+        searchValue: citiesSearchValue,
+        recordPerPage: citiesRecordPerPage,
+      });
+      if (response.remote === "success") {
+        const totalRecords = response.data.data.total || response.data.data.count || 0;
+        const totalPages =
+          response.data.data.totalPages ||
+          Math.ceil(totalRecords / Number(citiesRecordPerPage));
+
+        setCitiesData(response.data.data.data || []);
+        setCitiesPageCount(totalPages);
+      } else {
+        toast.error("Error loading deleted cities");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error loading deleted cities");
+    } finally {
+      setCitiesLoading(false);
+    }
+  };
+
+  // Restore City (also restores the jobs linked to it)
+  const handleRestoreCity = async (id: string) => {
+    try {
+      const response = await restoreCity(id);
+      if (response.remote === "success") {
+        toast.success("City and its jobs & companies successfully restored!");
+        handleGetDeletedCities();
+      } else {
+        toast.error("Error restoring city");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error restoring city");
+    }
+  };
+
   // Restore Job
   const handleRestoreJob = async (id: string) => {
     try {
@@ -164,6 +222,14 @@ const ManageTrash = () => {
         } else {
           toast.error("Error permanently deleting job");
         }
+      } else if (itemToDelete.type === "city") {
+        const response = await hardDeleteCity(itemToDelete.id);
+        if (response.remote === "success") {
+          toast.success("City permanently deleted!");
+          handleGetDeletedCities();
+        } else {
+          toast.error("Error permanently deleting city");
+        }
       } else {
         const response = await hardDeleteEmployer(itemToDelete.id);
         if (response.remote === "success") {
@@ -184,7 +250,7 @@ const ManageTrash = () => {
   };
 
   // Open Confirm Dialog
-  const triggerHardDelete = (id: string, type: "job" | "company") => {
+  const triggerHardDelete = (id: string, type: "job" | "company" | "city") => {
     setItemToDelete({ id, type });
     setIsConfirmOpen(true);
   };
@@ -215,6 +281,19 @@ const ManageTrash = () => {
     }
   }, [debouncedCompaniesSearchValue]);
 
+  // Effects for Cities
+  useEffect(() => {
+    if (tabValue === 2) {
+      handleGetDeletedCities();
+    }
+  }, [citiesPageNo, citiesRecordPerPage, tabValue]);
+
+  useEffect(() => {
+    if (tabValue === 2) {
+      handleGetDeletedCities();
+    }
+  }, [debouncedCitiesSearchValue]);
+
   // Handle Tab Switch
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -235,6 +314,16 @@ const ManageTrash = () => {
     { name: "Email", key: "email" },
     { name: "Contact Person", key: "contact" },
     { name: "City", key: "city" },
+    { name: "Action", key: "action" },
+  ];
+
+  // Cities Column mapping
+  const CITY_COLUMNS = [
+    { name: "Deleted On", key: "date" },
+    { name: "City Name", key: "name" },
+    { name: "Zip Code", key: "zipCode" },
+    { name: "Linked Jobs", key: "linkedJobs" },
+    { name: "Linked Companies", key: "linkedCompanies" },
     { name: "Action", key: "action" },
   ];
 
@@ -314,6 +403,49 @@ const ManageTrash = () => {
     };
   };
 
+  // Build City Table Row Data
+  const renderCityRow = (row: any) => {
+    return {
+      date: row.updatedAt
+        ? new Date(row.updatedAt).toLocaleDateString()
+        : row.createdAt
+          ? new Date(row.createdAt).toLocaleDateString()
+          : "",
+      name: row.name || "",
+      zipCode: row.zipCode || "",
+      linkedJobs: row.linkedJobsCount ?? 0,
+      linkedCompanies: row.linkedCompaniesCount ?? 0,
+      action: (
+        <Stack direction="row" spacing={1} alignItems="center">
+          <IconButton
+            title="Restore (also restores linked jobs & companies)"
+            onClick={() => handleRestoreCity(row._id || row.id)}
+            sx={{
+              color: "#0096A4",
+              "&:hover": {
+                color: "#F1841D",
+              },
+            }}
+          >
+            <RestoreFromTrashIcon />
+          </IconButton>
+          <IconButton
+            title="Delete Permanently"
+            onClick={() => triggerHardDelete(row._id || row.id, "city")}
+            sx={{
+              color: "#d32f2f",
+              "&:hover": {
+                color: "#f44336",
+              },
+            }}
+          >
+            <DeleteForeverIcon />
+          </IconButton>
+        </Stack>
+      ),
+    };
+  };
+
   return (
     <>
       <Title heading="Manage Trash" />
@@ -343,6 +475,7 @@ const ManageTrash = () => {
       >
         <Tab label="Deleted Jobs" />
         <Tab label="Deleted Companies" />
+        <Tab label="Deleted Cities" />
       </Tabs>
 
       {/* Content for Tab 0: Jobs */}
@@ -413,6 +546,40 @@ const ManageTrash = () => {
         </>
       )}
 
+      {/* Content for Tab 2: Cities */}
+      {tabValue === 2 && (
+        <>
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ mb: 2 }}
+          >
+            <Filter
+              filter=""
+              onFilterChange={() => {}}
+              searchValue={citiesSearchValue}
+              onSearchChange={setCitiesSearchValue}
+              filterOptions={[]}
+            />
+          </Stack>
+
+          <Box sx={{ overflow: "hidden", position: "relative" }}>
+            <CustomTable
+              columns={CITY_COLUMNS}
+              rows={citiesData.map(renderCityRow)}
+              pageCount={citiesPageCount}
+              setRecordPerPage={setCitiesRecordPerPage}
+              recordPerPage={citiesRecordPerPage}
+              setPageNo={setCitiesPageNo}
+              pageNo={citiesPageNo}
+              loading={citiesLoading}
+            />
+          </Box>
+        </>
+      )}
+
       {/* Premium Confirmation Dialog */}
       <Dialog
         open={isConfirmOpen}
@@ -448,7 +615,11 @@ const ManageTrash = () => {
               Delete Permanently?
             </Typography>
             <Typography variant="body1" sx={{ color: "#646464", fontSize: "14px", lineHeight: "1.5" }}>
-              Warning: Are you sure you want to permanently delete this job/company? This action cannot be undone.
+              Warning: Are you sure you want to permanently delete this record?
+              {itemToDelete?.type === "city"
+                ? " Any jobs and companies still trashed with this city will also be permanently removed."
+                : ""}{" "}
+              This action cannot be undone.
             </Typography>
 
             <Stack direction="row" spacing={2} sx={{ width: "100%", pt: 2 }}>
