@@ -24,8 +24,9 @@ import { getAllPublicEmployers } from "@/app/api/employer/employer";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Employer } from "@/app/api/employer/employer.types";
-import { TransformRegion } from "@/app/api/regions/regions.types";
-import { getRegions } from "@/app/api/regions/regions";
+// REGION FEATURE DISABLED
+// import { TransformRegion } from "@/app/api/regions/regions.types";
+// import { getRegions } from "@/app/api/regions/regions";
 import { getCity } from "@/app/api/city/city";
 import { TransformCity } from "@/app/api/city/city.types";
 
@@ -41,9 +42,10 @@ export default function CompaniesPage() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
-  const [regions, setRegions] = useState<TransformRegion[]>([]);
-  const [selectedRegion, setSelectedRegion] = useState<string>("");
-  const [regionObj, setRegionObj] = useState<TransformRegion | null>(null);
+  // REGION FEATURE DISABLED
+  // const [regions, setRegions] = useState<TransformRegion[]>([]);
+  // const [selectedRegion, setSelectedRegion] = useState<string>("");
+  // const [regionObj, setRegionObj] = useState<TransformRegion | null>(null);
   const [cities, setCities] = useState<TransformCity[]>([]);
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [cityObj, setCityObj] = useState<TransformCity | null>(null);
@@ -63,9 +65,10 @@ export default function CompaniesPage() {
       payload.letter = selectedLetter;
     }
 
-    if (selectedRegion) {
-      payload.selectedRegion = selectedRegion;
-    }
+    // REGION FEATURE DISABLED
+    // if (selectedRegion) {
+    //   payload.selectedRegion = selectedRegion;
+    // }
 
     if (selectedCity) {
       payload.slectedCity = selectedCity;
@@ -99,16 +102,17 @@ export default function CompaniesPage() {
   };
 
   useEffect(() => {
-    const fetchRegions = async () => {
-      try {
-        const response = await getRegions();
-        if (response.remote === "success") {
-          setRegions(response.data.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch regions", error);
-      }
-    };
+    // REGION FEATURE DISABLED
+    // const fetchRegions = async () => {
+    //   try {
+    //     const response = await getRegions();
+    //     if (response.remote === "success") {
+    //       setRegions(response.data.data);
+    //     }
+    //   } catch (error) {
+    //     console.error("Failed to fetch regions", error);
+    //   }
+    // };
     const fetchCities = async () => {
       try {
         const response = await getCity();
@@ -119,17 +123,17 @@ export default function CompaniesPage() {
         console.error("Failed to fetch cities", error);
       }
     };
-    fetchRegions();
+    // fetchRegions(); // REGION FEATURE DISABLED
     fetchCities();
   }, []);
 
   useEffect(() => {
     setPageNo(1);
-  }, [debouncedSearchTerm, selectedLetter, selectedRegion, selectedCity]);
+  }, [debouncedSearchTerm, selectedLetter, /* selectedRegion, */ selectedCity]);
 
   useEffect(() => {
     fetchCompanies();
-  }, [debouncedSearchTerm, pageNo, selectedLetter, selectedRegion, selectedCity, isInitialized]);
+  }, [debouncedSearchTerm, pageNo, selectedLetter, /* selectedRegion, */ selectedCity, isInitialized]);
 
   useEffect(() => {
     const saved = sessionStorage.getItem("public-companies-page");
@@ -197,6 +201,7 @@ export default function CompaniesPage() {
                 }}
               />
             </Grid>
+            {/* REGION FEATURE DISABLED — region filter hidden from the companies list.
             <Grid item xs={12} md={3.5} sx={{ borderLeft: { xs: "none", md: "1px solid #e2e8f0" } }}>
               <Autocomplete
                 id="region-filter"
@@ -229,6 +234,7 @@ export default function CompaniesPage() {
                 )}
               />
             </Grid>
+            */}
             <Grid item xs={12} md={3.5} sx={{ borderLeft: { xs: "none", md: "1px solid #e2e8f0" } }}>
               <Autocomplete
                 id="city-filter"
@@ -323,14 +329,15 @@ export default function CompaniesPage() {
             <SearchIcon sx={{ fontSize: 60, color: "#e2e8f0", mb: 2 }} />
             <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>No companies found</Typography>
             <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you&apos;re looking for.</Typography>
-            {(searchValue || selectedLetter || selectedRegion || selectedCity) && (
-              <Button 
-                variant="outlined" 
+            {(searchValue || selectedLetter || /* selectedRegion || */ selectedCity) && (
+              <Button
+                variant="outlined"
                 onClick={() => {
                   setSearchValue("");
                   setSelectedLetter(null);
-                  setSelectedRegion("");
-                  setRegionObj(null);
+                  // REGION FEATURE DISABLED
+                  // setSelectedRegion("");
+                  // setRegionObj(null);
                   setSelectedCity("");
                   setCityObj(null);
                 }} 

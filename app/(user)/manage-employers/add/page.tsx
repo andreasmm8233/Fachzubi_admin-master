@@ -34,8 +34,9 @@ import TextEditor from "../../manage-content/textEditor/textEditor";
 import Cropper, { FileState } from "@/app/ulits/cropper";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getRegions } from "@/app/api/regions/regions";
-import { TransformRegion } from "@/app/api/regions/regions.types";
+// REGION FEATURE DISABLED
+// import { getRegions } from "@/app/api/regions/regions";
+// import { TransformRegion } from "@/app/api/regions/regions.types";
 const GermanyFlag = () => (
   <svg width="20" height="12" viewBox="0 0 5 3" style={{ border: "1px solid #e0e0e0", borderRadius: "2px", marginRight: "6px" }}>
     <rect width="5" height="1" y="0" fill="#000000" />
@@ -120,7 +121,7 @@ const AddComponent = () => {
       companyLogo: null,
       companyDescription: "",
       videoLink: [""],
-      region: { id: "", label: "Select Region" },
+      // region: { id: "", label: "Select Region" }, // REGION FEATURE DISABLED
     },
     validationSchema: validationSchema,
 
@@ -177,7 +178,8 @@ const AddComponent = () => {
   });
   const [city, setCity] = useState<TransformCity[]>([]);
   const [industries, setIndustries] = useState<TransformIndustry[]>([]);
-  const [regions, setRegions] = useState<TransformRegion[]>([]);
+  // REGION FEATURE DISABLED
+  // const [regions, setRegions] = useState<TransformRegion[]>([]);
   const [loading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   function extractErrorMessage(errorArray: any) {
@@ -253,20 +255,21 @@ const AddComponent = () => {
         response.data.data.companyDescription
       );
       formik.setFieldValue("videoLink", response.data.data.videoLink);
-      formik.setFieldValue("region", response.data.data.region || { id: "", label: "Select Region" });
+      // formik.setFieldValue("region", response.data.data.region || { id: "", label: "Select Region" }); // REGION FEATURE DISABLED
     }
     setIsLoading(false);
   };
-  const getAllRegions = async () => {
-    const data = await getRegions();
-    if (data.remote === "success") {
-      setRegions(data.data.data);
-    }
-  };
+  // REGION FEATURE DISABLED
+  // const getAllRegions = async () => {
+  //   const data = await getRegions();
+  //   if (data.remote === "success") {
+  //     setRegions(data.data.data);
+  //   }
+  // };
   useEffect(() => {
     getAllCity();
     getAllIndustries();
-    getAllRegions();
+    // getAllRegions(); // REGION FEATURE DISABLED
   }, []);
   useEffect(() => {
     // Get query parameters from the URL
@@ -582,6 +585,7 @@ const AddComponent = () => {
                 )}
               </Grid>
 
+              {/* REGION FEATURE DISABLED — region selector hidden from the add/edit company form.
               <Grid item xs={12} lg={2}>
                 <label>Region</label>
               </Grid>
@@ -614,6 +618,7 @@ const AddComponent = () => {
                   renderInput={(params) => <TextField {...params} label="" />}
                 />
               </Grid>
+              */}
 
               <Grid item xs={12} lg={2}>
                 <label>Company Logo</label>

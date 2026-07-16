@@ -38,8 +38,9 @@ import {
 import Cropper, { FileState } from "@/app/ulits/cropper";
 import { getJobTypes } from "@/app/api/jobTypes/jobType";
 import { TransformJobType } from "@/app/api/jobTypes/jobTypes.types";
-import { getRegions } from "@/app/api/regions/regions";
-import { TransformRegion } from "@/app/api/regions/regions.types";
+// REGION FEATURE DISABLED
+// import { getRegions } from "@/app/api/regions/regions";
+// import { TransformRegion } from "@/app/api/regions/regions.types";
 export interface NewJob {
   city?: { id: string; label: string };
   company: { id: string; label: string };
@@ -59,7 +60,7 @@ export interface NewJob {
   jobsImages?: any;
   removedFile?: any;
   jobType?: any;
-  region?: { id: string; label: string };
+  // region?: { id: string; label: string }; // REGION FEATURE DISABLED
 }
 
 export interface NewJobResponse {
@@ -80,7 +81,7 @@ export interface NewJobResponse {
   videoLink?: string[];
   jobImages?: any;
   jobType?: string | any;
-  region?: { _id: string; regionName: string } | null;
+  // region?: { _id: string; regionName: string } | null; // REGION FEATURE DISABLED
 }
 
 export interface Companies {
@@ -115,7 +116,8 @@ const AddComponent: React.FC = () => {
   const [fileList, setFileList] = useState<FileState[]>([]);
   const [oldFile, setOldFile] = useState<string[]>([]);
   const [jobTypes, setJobTypes] = useState<TransformJobType[]>([]);
-  const [regions, setRegions] = useState<TransformRegion[]>([]);
+  // REGION FEATURE DISABLED
+  // const [regions, setRegions] = useState<TransformRegion[]>([]);
 
   const getYouTubeEmbedUrl = (url: string) => {
     if (!url) return url;
@@ -188,7 +190,7 @@ const AddComponent: React.FC = () => {
       industryName: [],
       videoLink: [],
       jobType: [],
-      region: { id: "", label: "Select Region" },
+      // region: { id: "", label: "Select Region" }, // REGION FEATURE DISABLED
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -319,14 +321,15 @@ const AddComponent: React.FC = () => {
             : [industryValue._id || industryValue];
           formik.setFieldValue("industryName", industriesVal);
         }
-        if (jobData.region) {
-          formik.setFieldValue("region", {
-            id: jobData.region._id,
-            label: jobData.region.regionName || "",
-          });
-        } else {
-          formik.setFieldValue("region", { id: "", label: "Select Region" });
-        }
+        // REGION FEATURE DISABLED — region no longer prefilled on job edit.
+        // if (jobData.region) {
+        //   formik.setFieldValue("region", {
+        //     id: jobData.region._id,
+        //     label: jobData.region.regionName || "",
+        //   });
+        // } else {
+        //   formik.setFieldValue("region", { id: "", label: "Select Region" });
+        // }
         setDocuments(jobData.attachments || []);
       }
     } catch (error) {
@@ -367,17 +370,18 @@ const AddComponent: React.FC = () => {
       setJobTypes(data.data.data);
     }
   };
-  const getAllRegions = async () => {
-    const data = await getRegions();
-    if (data.remote === "success") {
-      setRegions(data.data.data);
-    }
-  };
+  // REGION FEATURE DISABLED
+  // const getAllRegions = async () => {
+  //   const data = await getRegions();
+  //   if (data.remote === "success") {
+  //     setRegions(data.data.data);
+  //   }
+  // };
   useEffect(() => {
     getAllIndustries();
     getAllCity();
     getAllJobTypes();
-    getAllRegions();
+    // getAllRegions(); // REGION FEATURE DISABLED
   }, []);
 
   useEffect(() => {
@@ -519,6 +523,7 @@ const AddComponent: React.FC = () => {
                   )}
                   {/* end------ */}
                 </Grid>
+                {/* REGION FEATURE DISABLED — region selector hidden from the add/edit job form.
                 <Grid item xs={12} lg={2}>
                   <label>Region</label>
                 </Grid>
@@ -547,6 +552,7 @@ const AddComponent: React.FC = () => {
                     </div>
                   )}
                 </Grid>
+                */}
                 <Grid item xs={12} lg={2}>
                   <label>Company</label>
                 </Grid>

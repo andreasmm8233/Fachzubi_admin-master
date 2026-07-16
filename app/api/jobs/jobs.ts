@@ -12,14 +12,14 @@ import urlcat from "urlcat";
 export const getAllJobs = async (
   payload: getAllJobsType
 ): Promise<SuccessResult<JobWithCount> | ErrorResult> => {
-  const { searchValue, pageNo, filter, recordPerPage, letter, region, slectedCity } = payload;
+  const { searchValue, pageNo, filter, recordPerPage, letter, /* region, */ slectedCity } = payload;
   const queryParams: any = {};
   if (searchValue) queryParams.searchValue = searchValue;
   if (pageNo) queryParams.pageNo = pageNo;
   if (filter) queryParams.filter = filter;
   if (recordPerPage) queryParams.recordPerPage = recordPerPage;
   if (letter) queryParams.letter = letter;
-  if (region) queryParams.region = region;
+  // if (region) queryParams.region = region; // REGION FEATURE DISABLED
   if (slectedCity) queryParams.slectedCity = slectedCity;
 
   const url = urlcat("/job/", queryParams);
@@ -47,7 +47,7 @@ export const updateJob = async (payload: UpdateJob | NewJob) => {
     company: payload.company?.id,
     industryName: Array.isArray(payload.industryName) ? payload.industryName : (payload.industryName?.id || payload.industryName),
     city: payload.city?.id,
-    region: payload.region?.id || "",
+    // region: payload.region?.id || "", // REGION FEATURE DISABLED
   }).forEach(([key, value]) => {
     if (!value && value !== false && key !== "startDate") {
       return;
@@ -85,7 +85,7 @@ export const addJob = async (payload: NewJob) => {
     company: payload.company.id,
     industryName: Array.isArray(payload.industryName) ? payload.industryName : (payload.industryName?.id || payload.industryName),
     city: payload?.city?.id,
-    region: payload.region?.id || "",
+    // region: payload.region?.id || "", // REGION FEATURE DISABLED
   }).forEach(([key, value]) => {
     if (!value && key !== "startDate") {
       return;

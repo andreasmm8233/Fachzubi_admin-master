@@ -18,13 +18,13 @@ import { Companies } from "@/app/(user)/manage-jobs/add/page";
 export const getAllEmployers = async (
   payload: getAllEmployerType
 ): Promise<SuccessResult<TransformedRowDataWithCount> | ErrorResult> => {
-  const { searchValue, pageNo, filter, recordPerPage, region } = payload;
+  const { searchValue, pageNo, filter, recordPerPage /*, region */ } = payload;
   const url = urlcat("/employer/", {
     searchValue,
     pageNo,
     filter,
     recordPerPage,
-    region,
+    // region, // REGION FEATURE DISABLED
   });
 
   const response = await request({
@@ -100,7 +100,7 @@ export const addEmployer = async (
       videoLink: JSON.stringify(payload.videoLink),
       industryName: payload?.industryName?.id,
       city: payload.city.id,
-      region: payload.region?.id || undefined,
+      // region: payload.region?.id || undefined, // REGION FEATURE DISABLED
     },
     headers: {
       "Content-Type": "multipart/form-data",
@@ -135,7 +135,7 @@ export const updateEmployerById = async (
     ...updatedData,
     industryName: updatedData.industryName.id,
     city: updatedData.city.id,
-    region: updatedData.region?.id || "",
+    // region: updatedData.region?.id || "", // REGION FEATURE DISABLED
   }).forEach(([key, value]) => {
     if (!value) {
       return;
@@ -174,14 +174,14 @@ export const getCompaniesByCityIdApi = async (
 export const getAllPublicEmployers = async (
   payload: getAllEmployerType
 ): Promise<SuccessResult<any> | ErrorResult> => {
-  const { searchValue, pageNo, filter, recordPerPage, letter, selectedRegion, slectedCity } = payload;
+  const { searchValue, pageNo, filter, recordPerPage, letter, /* selectedRegion, */ slectedCity } = payload;
   const queryParams: any = {};
   if (searchValue) queryParams.searchValue = searchValue;
   if (pageNo) queryParams.pageNo = pageNo;
   if (filter) queryParams.filter = filter;
   if (recordPerPage) queryParams.recordPerPage = recordPerPage;
   if (letter) queryParams.letter = letter;
-  if (selectedRegion) queryParams.selectedRegion = selectedRegion;
+  // if (selectedRegion) queryParams.selectedRegion = selectedRegion; // REGION FEATURE DISABLED
   if (slectedCity) queryParams.slectedCity = slectedCity;
 
   const url = urlcat("/employer/get-all-emp-frontend", queryParams);

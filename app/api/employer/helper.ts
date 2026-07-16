@@ -5,8 +5,8 @@ export interface getAllEmployerType {
   filter: string;
   recordPerPage: string;
   letter?: string;
-  region?: string;
-  selectedRegion?: string;
+  // region?: string; // REGION FEATURE DISABLED
+  // selectedRegion?: string; // REGION FEATURE DISABLED
   slectedCity?: string;
 }
 export interface TransformedRowData {
@@ -78,7 +78,7 @@ export type EmployerWithIndustriesResponse = {
   companyLogo: { _id: string } | any;
   companyImages?: any;
   removedFile?: any;
-  region?: { _id: string; regionName: string } | null;
+  // region?: { _id: string; regionName: string } | null; // REGION FEATURE DISABLED
 };
 export function transFormSignalApiData(
   apiData: EmployerWithIndustriesResponse
@@ -104,8 +104,9 @@ export function transFormSignalApiData(
     companyDescription: apiData.companyDescription || "",
     phoneNo: apiData.phoneNo,
     companyLogo: apiData.companyLogo || "",
-    region: apiData.region
-      ? { id: apiData.region._id, label: apiData.region.regionName }
-      : { id: "", label: "Select Region" },
+    // REGION FEATURE DISABLED
+    // region: apiData.region
+    //   ? { id: apiData.region._id, label: apiData.region.regionName }
+    //   : { id: "", label: "Select Region" },
   };
 }

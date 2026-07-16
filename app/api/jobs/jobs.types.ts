@@ -14,7 +14,7 @@ export interface Job {
   id?: string;
   createdAt: string;
   industryName: string;
-  region?: string;
+  // region?: string; // REGION FEATURE DISABLED
 }
 export interface getAllJobsType {
   searchValue: string;
@@ -22,7 +22,7 @@ export interface getAllJobsType {
   filter: string;
   recordPerPage: string;
   letter?: string;
-  region?: string;
+  // region?: string; // REGION FEATURE DISABLED
   slectedCity?: string;
 }
 export interface JobWithCount {
@@ -48,6 +48,6 @@ export interface UpdateJob {
   jobDescription?: string;
   status?: boolean;
   id: string;
-  region?: { id: string; label: string };
+  // region?: { id: string; label: string }; // REGION FEATURE DISABLED
   jobType?: any;
 }

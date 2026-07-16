@@ -50,13 +50,14 @@ export const MENU_DATA: SidebarMenu[] = [
     url: "/manage-industries",
     permissionKey: "manage_industries",
   },
-  {
-    id: 11,
-    icon: SVG.Industries,
-    label: "Manage Regions",
-    url: "/manage-regions",
-    adminOnly: true,
-  },
+  // REGION FEATURE DISABLED — "Manage Regions" hidden from the sidebar.
+  // {
+  //   id: 11,
+  //   icon: SVG.Industries,
+  //   label: "Manage Regions",
+  //   url: "/manage-regions",
+  //   adminOnly: true,
+  // },
   {
     id: 5,
     icon: SVG.Industries,
