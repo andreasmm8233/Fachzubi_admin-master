@@ -183,7 +183,7 @@ export default function JobsPage() {
               boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
             }}
           >
-            <Grid item xs={12} md={5}>
+            <Grid item xs={12} md={7}>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -237,7 +237,7 @@ export default function JobsPage() {
               />
             </Grid>
             */}
-            <Grid item xs={12} md={3.5} sx={{ borderLeft: { xs: "none", md: "1px solid #e2e8f0" } }}>
+            <Grid item xs={12} md={5} sx={{ borderLeft: { xs: "none", md: "1px solid #e2e8f0" } }}>
               <Autocomplete
                 id="city-filter"
                 options={cities}
