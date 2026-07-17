@@ -91,8 +91,9 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
 
   const industry = company.industryName || "Various Industries";
   const address = company.address || "";
-  const zipCode = company.zipCode || "";
-  const city = company.city?.name || company.cityName || "";
+  // zipCode and city are intentionally not shown on the company detail page
+  // const zipCode = company.zipCode || "";
+  // const city = company.city?.name || company.cityName || "";
 
   // Clean up description and remove the "What Clients Say" section heading
   const description = (company.companyDescription || "")
@@ -183,10 +184,11 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                     </Typography>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, justifyContent: { xs: "center", sm: "flex-start" }, mb: 2 }}>
                       <Chip icon={<WorkIcon fontSize="small" />} label={industry} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 600 }} />
-                      {(address || zipCode || city) && (
+                      {/* zipCode and city intentionally omitted from the company detail location */}
+                      {address && (
                         <Chip
                           icon={<LocationOnIcon fontSize="small" />}
-                          label={`${address ? `${address}, ` : ""}${zipCode ? `${zipCode}, ` : ""}${city}`.replace(/,\s*$/, "")}
+                          label={address}
                           size="small"
                           variant="outlined"
                           sx={{ borderColor: "#e2e8f0" }}

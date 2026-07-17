@@ -31,11 +31,15 @@ import { useRouter } from "next/navigation";
 // import { getRegions } from "@/app/api/regions/regions";
 import { getCity } from "@/app/api/city/city";
 import { TransformCity } from "@/app/api/city/city.types";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export default function JobsPage() {
   const router = useRouter();
+  // Logged-in users go back to the dashboard, logged-out users go back to login.
+  const isLogin = useSelector((state: RootState) => state.auth.isLogin);
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string>("");
@@ -153,6 +157,9 @@ export default function JobsPage() {
       <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: { xs: 2, md: 3 }, position: "absolute", top: 0, right: 0, width: "100%", zIndex: 10 }}>
         <Button component="a" href="/companies" target="_blank" rel="noopener noreferrer" sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>Companies</Button>
         <Button component="a" href="/jobs" target="_blank" rel="noopener noreferrer" sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>Jobs</Button>
+        <Button onClick={() => router.push(isLogin ? "/dashboard" : "/")} sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>
+          {isLogin ? "Back to Dashboard" : "Back to Login"}
+        </Button>
       </Box>
 
       {/* Header Section */}
