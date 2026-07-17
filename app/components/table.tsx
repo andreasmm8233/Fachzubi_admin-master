@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Checkbox,
   Paper,
   Table,
   TableBody,
@@ -58,8 +59,22 @@ interface Props {
   setPageNo: (payload: number) => void;
   pageNo: number;
   rows: Record<string, string | number | ReactElement | boolean | undefined>[];
+  // Optional multi-select support. When `selectable` is true a checkbox column is
+  // rendered. `rowIds` must be parallel to `rows` (same order) so each checkbox
+  // maps to a record id. Left undefined everywhere else, so existing tables are unaffected.
+  selectable?: boolean;
+  rowIds?: string[];
+  selectedIds?: string[];
+  onToggleSelect?: (id: string) => void;
+  onToggleSelectAll?: (checked: boolean) => void;
 }
 const CustomTable = (props: Props) => {
+  const rowIds = props.rowIds ?? [];
+  const selectedIds = props.selectedIds ?? [];
+  const allSelected =
+    rowIds.length > 0 && rowIds.every((id) => selectedIds.includes(id));
+  const someSelected =
+    rowIds.some((id) => selectedIds.includes(id)) && !allSelected;
   return (
     <>
       <TableContainer
@@ -77,6 +92,17 @@ const CustomTable = (props: Props) => {
         >
           <TableHead>
             <TableRow>
+              {props.selectable && (
+                <StyledTableCell padding="checkbox">
+                  <Checkbox
+                    sx={{ color: "#0096A4", "&.Mui-checked": { color: "#0096A4" }, "&.MuiCheckbox-indeterminate": { color: "#0096A4" } }}
+                    checked={allSelected}
+                    indeterminate={someSelected}
+                    onChange={(e) => props.onToggleSelectAll?.(e.target.checked)}
+                    disabled={rowIds.length === 0}
+                  />
+                </StyledTableCell>
+              )}
               {props.columns.map((data) => (
                 <StyledTableCell width={data.width} key={data.key}>
                   {data.name}
@@ -88,6 +114,15 @@ const CustomTable = (props: Props) => {
             {!props.loading &&
               props.rows.map((row, index) => (
                 <StyledTableRow key={index}>
+                  {props.selectable && (
+                    <StyledTableCell padding="checkbox">
+                      <Checkbox
+                        sx={{ color: "#0096A4", "&.Mui-checked": { color: "#0096A4" } }}
+                        checked={selectedIds.includes(rowIds[index])}
+                        onChange={() => props.onToggleSelect?.(rowIds[index])}
+                      />
+                    </StyledTableCell>
+                  )}
                   {props.columns.map((column) => {
                     return (
                       <StyledTableCell key={column.key}>
@@ -101,7 +136,7 @@ const CustomTable = (props: Props) => {
             {props.loading && (
               <StyledTableRow>
                 <StyledTableCell
-                  colSpan={props.columns.length}
+                  colSpan={props.columns.length + (props.selectable ? 1 : 0)}
                   style={{
                     height: "calc(100vh - 293px)",
                     background: "#fff",

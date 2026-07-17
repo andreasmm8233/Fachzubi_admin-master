@@ -75,9 +75,37 @@ const ManageTrash = () => {
   const [itemToDelete, setItemToDelete] = useState<{ id: string; type: "job" | "company" | "city" } | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
+  // Multi-select State (one selection list per tab)
+  const [selectedJobIds, setSelectedJobIds] = useState<string[]>([]);
+  const [selectedCompanyIds, setSelectedCompanyIds] = useState<string[]>([]);
+  const [selectedCityIds, setSelectedCityIds] = useState<string[]>([]);
+  // When set, the confirm dialog performs a bulk permanent delete instead of a single one.
+  const [bulkDelete, setBulkDelete] = useState<{ type: "job" | "company" | "city"; ids: string[] } | null>(null);
+
+  // Row id helper (records use either _id or id)
+  const getRowId = (row: any): string => row._id || row.id;
+
+  // Generic selection toggles
+  const toggleSelect = (
+    setSelected: React.Dispatch<React.SetStateAction<string[]>>,
+    id: string,
+  ) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  };
+  const toggleSelectAll = (
+    setSelected: React.Dispatch<React.SetStateAction<string[]>>,
+    ids: string[],
+    checked: boolean,
+  ) => {
+    setSelected(checked ? ids : []);
+  };
+
   // Fetch Jobs
   const handleGetDeletedJobs = async () => {
     setJobsLoading(true);
+    setSelectedJobIds([]);
     try {
       const response = await getAllDeletedJobs({
         pageNo: jobsPageNo,
@@ -107,6 +135,7 @@ const ManageTrash = () => {
   // Fetch Companies
   const handleGetDeletedCompanies = async () => {
     setCompaniesLoading(true);
+    setSelectedCompanyIds([]);
     try {
       const response = await getAllDeletedEmployers({
         pageNo: companiesPageNo,
@@ -136,6 +165,7 @@ const ManageTrash = () => {
   // Fetch Cities
   const handleGetDeletedCities = async () => {
     setCitiesLoading(true);
+    setSelectedCityIds([]);
     try {
       const response = await getAllDeletedCities({
         pageNo: citiesPageNo,
@@ -249,10 +279,70 @@ const ManageTrash = () => {
     }
   };
 
-  // Open Confirm Dialog
+  // Open Confirm Dialog (single record)
   const triggerHardDelete = (id: string, type: "job" | "company" | "city") => {
+    setBulkDelete(null);
     setItemToDelete({ id, type });
     setIsConfirmOpen(true);
+  };
+
+  // Open Confirm Dialog (bulk / multi-select)
+  const triggerBulkDelete = (type: "job" | "company" | "city", ids: string[]) => {
+    if (!ids.length) return;
+    setItemToDelete(null);
+    setBulkDelete({ type, ids });
+    setIsConfirmOpen(true);
+  };
+
+  // Permanently delete every selected record for the given type.
+  const onConfirmBulkDelete = async () => {
+    if (!bulkDelete) return;
+    setDeleteLoading(true);
+    const { type, ids } = bulkDelete;
+    const deleteApi =
+      type === "job"
+        ? hardDeleteJob
+        : type === "city"
+          ? hardDeleteCity
+          : hardDeleteEmployer;
+    try {
+      const results = await Promise.allSettled(ids.map((id) => deleteApi(id)));
+      const failed = results.filter(
+        (r) =>
+          r.status === "rejected" ||
+          (r.status === "fulfilled" && r.value.remote !== "success"),
+      ).length;
+      const succeeded = ids.length - failed;
+      if (succeeded > 0) {
+        toast.success(`${succeeded} record(s) permanently deleted!`);
+      }
+      if (failed > 0) {
+        toast.error(`${failed} record(s) could not be deleted`);
+      }
+      if (type === "job") {
+        handleGetDeletedJobs();
+      } else if (type === "city") {
+        handleGetDeletedCities();
+      } else {
+        handleGetDeletedCompanies();
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error deleting records");
+    } finally {
+      setDeleteLoading(false);
+      setIsConfirmOpen(false);
+      setBulkDelete(null);
+    }
+  };
+
+  // Confirm handler shared by the dialog — routes to single or bulk delete.
+  const handleConfirmDelete = () => {
+    if (bulkDelete) {
+      onConfirmBulkDelete();
+    } else {
+      onConfirmHardDelete();
+    }
   };
 
   // Effects for Jobs
@@ -495,6 +585,16 @@ const ManageTrash = () => {
               onSearchChange={setJobsSearchValue}
               filterOptions={[]}
             />
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteForeverIcon />}
+              disabled={selectedJobIds.length === 0}
+              onClick={() => triggerBulkDelete("job", selectedJobIds)}
+              sx={{ textTransform: "none", fontWeight: 600, borderRadius: "8px", whiteSpace: "nowrap" }}
+            >
+              Delete Selected ({selectedJobIds.length})
+            </Button>
           </Stack>
 
           <Box sx={{ overflow: "hidden", position: "relative" }}>
@@ -507,6 +607,13 @@ const ManageTrash = () => {
               setPageNo={setJobsPageNo}
               pageNo={jobsPageNo}
               loading={jobsLoading}
+              selectable
+              rowIds={jobsData.map(getRowId)}
+              selectedIds={selectedJobIds}
+              onToggleSelect={(id) => toggleSelect(setSelectedJobIds, id)}
+              onToggleSelectAll={(checked) =>
+                toggleSelectAll(setSelectedJobIds, jobsData.map(getRowId), checked)
+              }
             />
           </Box>
         </>
@@ -529,6 +636,16 @@ const ManageTrash = () => {
               onSearchChange={setCompaniesSearchValue}
               filterOptions={[]}
             />
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteForeverIcon />}
+              disabled={selectedCompanyIds.length === 0}
+              onClick={() => triggerBulkDelete("company", selectedCompanyIds)}
+              sx={{ textTransform: "none", fontWeight: 600, borderRadius: "8px", whiteSpace: "nowrap" }}
+            >
+              Delete Selected ({selectedCompanyIds.length})
+            </Button>
           </Stack>
 
           <Box sx={{ overflow: "hidden", position: "relative" }}>
@@ -541,6 +658,13 @@ const ManageTrash = () => {
               setPageNo={setCompaniesPageNo}
               pageNo={companiesPageNo}
               loading={companiesLoading}
+              selectable
+              rowIds={companiesData.map(getRowId)}
+              selectedIds={selectedCompanyIds}
+              onToggleSelect={(id) => toggleSelect(setSelectedCompanyIds, id)}
+              onToggleSelectAll={(checked) =>
+                toggleSelectAll(setSelectedCompanyIds, companiesData.map(getRowId), checked)
+              }
             />
           </Box>
         </>
@@ -563,6 +687,16 @@ const ManageTrash = () => {
               onSearchChange={setCitiesSearchValue}
               filterOptions={[]}
             />
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteForeverIcon />}
+              disabled={selectedCityIds.length === 0}
+              onClick={() => triggerBulkDelete("city", selectedCityIds)}
+              sx={{ textTransform: "none", fontWeight: 600, borderRadius: "8px", whiteSpace: "nowrap" }}
+            >
+              Delete Selected ({selectedCityIds.length})
+            </Button>
           </Stack>
 
           <Box sx={{ overflow: "hidden", position: "relative" }}>
@@ -575,6 +709,13 @@ const ManageTrash = () => {
               setPageNo={setCitiesPageNo}
               pageNo={citiesPageNo}
               loading={citiesLoading}
+              selectable
+              rowIds={citiesData.map(getRowId)}
+              selectedIds={selectedCityIds}
+              onToggleSelect={(id) => toggleSelect(setSelectedCityIds, id)}
+              onToggleSelectAll={(checked) =>
+                toggleSelectAll(setSelectedCityIds, citiesData.map(getRowId), checked)
+              }
             />
           </Box>
         </>
@@ -615,9 +756,12 @@ const ManageTrash = () => {
               Delete Permanently?
             </Typography>
             <Typography variant="body1" sx={{ color: "#646464", fontSize: "14px", lineHeight: "1.5" }}>
-              Warning: Are you sure you want to permanently delete this record?
-              {itemToDelete?.type === "city"
-                ? " Any jobs and companies still trashed with this city will also be permanently removed."
+              Warning: Are you sure you want to permanently delete{" "}
+              {bulkDelete
+                ? `${bulkDelete.ids.length} selected record(s)?`
+                : "this record?"}
+              {(itemToDelete?.type === "city" || bulkDelete?.type === "city")
+                ? " Any jobs and companies still trashed with the selected cities will also be permanently removed."
                 : ""}{" "}
               This action cannot be undone.
             </Typography>
@@ -645,7 +789,7 @@ const ManageTrash = () => {
               <Button
                 fullWidth
                 variant="contained"
-                onClick={onConfirmHardDelete}
+                onClick={handleConfirmDelete}
                 disabled={deleteLoading}
                 sx={{
                   borderRadius: "8px",
