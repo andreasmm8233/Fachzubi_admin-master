@@ -97,6 +97,7 @@ export default function AdminLayout({
             )}
           </Typography>
           <Box sx={{ flexGrow: 1 }}>
+            {/* Sidebar toggle icon hidden from the header
             <IconButton
               size="large"
               edge="start"
@@ -107,6 +108,7 @@ export default function AdminLayout({
             >
               <SVG.Menu />
             </IconButton>
+            */}
           </Box>
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <Button
