@@ -36,6 +36,8 @@ export interface UpdateEmployeePayload {
   last_name?: string;
   email?: string;
   isActive?: boolean;
+  password?: string;
+  confirm_password?: string;
   permissions?: EmployeePermissions;
 }
 

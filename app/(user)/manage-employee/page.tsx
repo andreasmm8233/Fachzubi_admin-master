@@ -24,6 +24,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 import InfoIcon from '@mui/icons-material/Info';
+import LockResetIcon from "@mui/icons-material/LockReset";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 interface RowData {
   id: string;
@@ -47,6 +49,8 @@ const ManageEmployeePage = () => {
   const [deleteTableRowData, setDeleteTableRowData] = useState<RowData>();
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [statusToggleId, setStatusToggleId] = useState("");
+  const [passwordRowData, setPasswordRowData] = useState<RowData>();
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
 
   const handleDeleteModal = () => {
     setDeleteModal(true);
@@ -104,6 +108,31 @@ const ManageEmployeePage = () => {
     }
     handleClose();
     setIsDeleteLoading(false);
+  };
+
+  const handleChangePassword = async (
+    password: string,
+    confirmPassword: string
+  ) => {
+    if (!passwordRowData) return;
+    setIsPasswordLoading(true);
+    const response = await updateEmployee({
+      id: passwordRowData.id,
+      password,
+      confirm_password: confirmPassword,
+    });
+    if (response.remote === "success") {
+      toast.info("Password updated successfully!");
+      setRowData((rows) =>
+        rows.map((row) =>
+          row.id === passwordRowData.id ? { ...row, password } : row
+        )
+      );
+      setPasswordRowData(undefined);
+    } else {
+      toast.error("Error updating password!");
+    }
+    setIsPasswordLoading(false);
   };
 
   const handleDeleteTableRowData = (rowData: RowData) => {
@@ -181,6 +210,12 @@ const ManageEmployeePage = () => {
             <SVG.Edit />
           </IconButton>
           <IconButton
+            title="Change Password"
+            onClick={() => setPasswordRowData(rowData)}
+          >
+            <LockResetIcon />
+          </IconButton>
+          <IconButton
             onClick={() => {
               handleDeleteModal();
               handleDeleteTableRowData(rowData);
@@ -251,6 +286,13 @@ const ManageEmployeePage = () => {
         handleClose={handleClose}
         onConfirm={onConfirm}
         loading={isDeleteLoading}
+      />
+      <ChangePasswordModal
+        open={!!passwordRowData}
+        employeeName={passwordRowData?.name}
+        handleClose={() => setPasswordRowData(undefined)}
+        onConfirm={handleChangePassword}
+        loading={isPasswordLoading}
       />
       <ToastContainer />
     </>
