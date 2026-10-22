@@ -355,7 +355,7 @@ export default function JobsPage() {
               } else if (job.company?.companyName || job.company?.name) {
                 companyName = job.company.companyName || job.company.name;
               }
-              const jobType = Array.isArray(job.jobTypeName) ? job.jobTypeName.join(", ") : (job.jobTypeName || job.jobType?.name || (typeof job.jobType === "string" ? null : null));
+              const jobTypes: string[] = (Array.isArray(job.jobTypeName) ? job.jobTypeName : [job.jobTypeName || job.jobType?.name]).filter(Boolean);
               const jobCity = Array.isArray(job.city) ? job.city.map((c: any) => Array.isArray(c) ? c.join(', ') : c?.name || c).join(', ') : (job.city?.name || job.location || "Various Locations");
               const startDate = job.startDate ? new Date(job.startDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : "";
 
@@ -386,9 +386,9 @@ export default function JobsPage() {
                   >
                     <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", flexGrow: 1 }}>
                       <Box sx={{ mb: "auto" }}>
-                        {jobType && (
-                          <Chip label={jobType} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, mb: 2, borderRadius: "6px" }} />
-                        )}
+                        {jobTypes.map((type) => (
+                          <Chip key={type} label={type} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, mb: 2, mr: 1, borderRadius: "6px" }} />
+                        ))}
 
                         <Typography variant="h6" sx={{ fontWeight: 800, color: "#1a202c", mb: 1.5, lineHeight: 1.3 }}>
                           {jobTitle}

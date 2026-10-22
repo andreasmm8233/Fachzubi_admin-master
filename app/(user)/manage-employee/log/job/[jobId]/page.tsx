@@ -86,9 +86,10 @@ const JobLogDetailsPage = () => {
   const industryName = Array.isArray(job.industryName)
     ? job.industryName.map((ind: any) => ind.industryName || ind.name).filter(Boolean).join(", ")
     : (typeof job.industryName === 'object' ? job.industryName?.industryName : job.industryName);
-  const jobTypeName = Array.isArray(job.jobTypeName)
-    ? job.jobTypeName.join(", ")
-    : (job.jobTypeName || (typeof job.jobType === 'object' ? job.jobType?.jobTypeName : job.jobType));
+  const jobTypeNames: string[] = (Array.isArray(job.jobTypeName)
+    ? job.jobTypeName
+    : [job.jobTypeName || (typeof job.jobType === 'object' ? job.jobType?.jobTypeName : job.jobType)]
+  ).filter(Boolean);
   
   // Extract files gracefully
   const parsedJobImages = Array.isArray(job.jobImages) 
@@ -140,9 +141,9 @@ const JobLogDetailsPage = () => {
             </Stack>
 
             <Stack direction="row" spacing={1.5} flexWrap="wrap" mb={4}>
-              {jobTypeName && (
-                <Chip icon={<WorkIcon fontSize="small"/>} label={jobTypeName} sx={{ bgcolor: "#f5f5f5", fontWeight: 600, mb: 1, color: "#333" }} />
-              )}
+              {jobTypeNames.map((type) => (
+                <Chip key={type} icon={<WorkIcon fontSize="small"/>} label={type} sx={{ bgcolor: "#f5f5f5", fontWeight: 600, mb: 1, color: "#333" }} />
+              ))}
               {industryName && (
                 <Chip label={industryName} variant="outlined" sx={{ fontWeight: 600, borderColor: "#e0e0e0", mb: 1 }} />
               )}

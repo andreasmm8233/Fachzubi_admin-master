@@ -80,7 +80,8 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   } else if (job.company?.companyName || job.company?.name) {
     companyName = job.company.companyName || job.company.name;
   }
-  const jobType = Array.isArray(job.jobTypeName) ? job.jobTypeName.join(", ") : (job.jobTypeName || job.jobType?.name || (typeof job.jobType === "string" ? null : null));
+  const jobTypes: string[] = (Array.isArray(job.jobTypeName) ? job.jobTypeName : [job.jobTypeName || job.jobType?.name]).filter(Boolean);
+  const jobType = jobTypes.join(", ");
   const industry = Array.isArray(job.industryName)
     ? job.industryName.map((ind: any) => ind.industryName || ind.name).filter(Boolean).join(", ")
     : (job.industryName?.industryName || job.industryName?.name || (typeof job.industryName === "string" ? job.industryName : "Various Industries"));
@@ -209,9 +210,9 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                   </Box>
 
                   <Box sx={{ flex: 1, textAlign: { xs: "center", sm: "left" }, pb: 1 }}>
-                    {jobType && (
-                      <Chip label={jobType} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, mb: 1.5, borderRadius: "6px" }} />
-                    )}
+                    {jobTypes.map((type) => (
+                      <Chip key={type} label={type} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, mb: 1.5, mr: 1, borderRadius: "6px" }} />
+                    ))}
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 800, color: "#1a202c", mb: 1 }}>
                       {jobTitle}
                     </Typography>
