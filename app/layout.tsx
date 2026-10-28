@@ -6,6 +6,7 @@ import store from "./redux/store";
 import ThemeCustomization from "@/themes";
 import LocalStorageEvent from "./localStorageEvent";
 import "./globals.css";
+import { getHideLogoDomain, getHideLogoDomains } from "./ulits/hideLogo";
 
 export default function RootLayout({
   children,
@@ -15,15 +16,8 @@ export default function RootLayout({
   const [title, setTitle] = useState("");
 
   useEffect(() => {
-    const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
-    if (typeof window !== "undefined") {
-      if (hideLogoDomain && window.location.hostname === hideLogoDomain) {
-        const domainName = hideLogoDomain.split(".")[0];
-        setTitle(domainName || "stellenapp");
-      } else {
-        setTitle("fachzubi");
-      }
-    }
+    const hideLogoDomain = getHideLogoDomain();
+    setTitle(hideLogoDomain ? hideLogoDomain.split(".")[0] : "fachzubi");
   }, []);
 
   return (
@@ -33,13 +27,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                var hideLogoDomain = "${process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN || ""}";
-                if (hideLogoDomain && window.location.hostname === hideLogoDomain) {
-                  var domainName = hideLogoDomain.split(".")[0];
-                  document.title = domainName || "stellenapp";
-                } else {
-                  document.title = "fachzubi";
-                }
+                var domains = ${JSON.stringify(getHideLogoDomains())};
+                var host = window.location.hostname.toLowerCase().replace(/^www\\./, "");
+                var match = domains.find(function (d) {
+                  return host === d || host.slice(-(d.length + 1)) === "." + d;
+                });
+                document.title = match ? match.split(".")[0] : "fachzubi";
               })();
             `,
           }}

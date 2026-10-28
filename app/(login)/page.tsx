@@ -28,6 +28,7 @@ import * as Yup from "yup";
 import { RotatingLines } from "react-loader-spinner";
 import { useDispatch } from "react-redux";
 import { setIsLoading, setIsLogin, setRole, setPermissions } from "../redux/auth/authSlice";
+import { shouldHideLogo } from "@/app/ulits/hideLogo";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -41,15 +42,11 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
-  const [hideLogo, setHideLogo] = useState(!!process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN);
+  // Hidden by default so the logo never flashes on white-label domains
+  const [hideLogo, setHideLogo] = useState(true);
 
   useEffect(() => {
-    const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
-    if (typeof window !== "undefined" && hideLogoDomain) {
-      setHideLogo(window.location.hostname === hideLogoDomain);
-    } else {
-      setHideLogo(false);
-    }
+    setHideLogo(shouldHideLogo());
   }, []);
 
   const validationSchema = Yup.object({
@@ -160,7 +157,8 @@ const Login = () => {
         </div>
       )}
 
-      {/* Public Navigation */}
+      {/* Public Navigation (hidden on white-label domains until login) */}
+      {!hideLogo && (
       <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: { xs: 2, md: 4 }, position: "absolute", top: 0, right: 0, width: "100%", zIndex: 10 }}>
         <Button 
           component="a"
@@ -181,6 +179,7 @@ const Login = () => {
           Jobs
         </Button>
       </Box>
+      )}
 
       <Box
         sx={{

@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setIsLogin } from "@/app/redux/auth/authSlice";
 import { setCurrentRoute } from "@/app/redux/protectRoute/previousRouteSlice";
+import { shouldHideLogo } from "@/app/ulits/hideLogo";
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -35,15 +36,11 @@ const ResetPassword = () => {
   const handleClickConfirmShowPassword = () => {
     setConfirmPassword((show) => !show);
   };
-  const [hideLogo, setHideLogo] = useState(!!process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN);
+  // Hidden by default so the logo never flashes on white-label domains
+  const [hideLogo, setHideLogo] = useState(true);
 
   useEffect(() => {
-    const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
-    if (typeof window !== "undefined" && hideLogoDomain) {
-      setHideLogo(window.location.hostname === hideLogoDomain);
-    } else {
-      setHideLogo(false);
-    }
+    setHideLogo(shouldHideLogo());
   }, []);
   const notifyError = (message: string) => {
     return toast.error(message);

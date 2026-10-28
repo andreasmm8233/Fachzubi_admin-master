@@ -20,6 +20,7 @@ import SidebarMenu from "../components/Sidebar/page";
 import AuthChecker from "./authChecker";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { shouldHideLogo } from "@/app/ulits/hideLogo";
 
 export default function AdminLayout({
   children,
@@ -31,15 +32,11 @@ export default function AdminLayout({
   const loading = useSelector((state: RootState) => state.auth.loading);
   const pathname = usePathname();
   const isLogPage = pathname?.includes("/manage-employee/log/");
-  const [hideLogo, setHideLogo] = useState(!!process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN);
+  // Hidden by default so the logo never flashes on white-label domains
+  const [hideLogo, setHideLogo] = useState(true);
 
   useEffect(() => {
-    const hideLogoDomain = process.env.NEXT_PUBLIC_HIDE_LOGO_DOMAIN;
-    if (typeof window !== "undefined" && hideLogoDomain) {
-      setHideLogo(window.location.hostname === hideLogoDomain);
-    } else {
-      setHideLogo(false);
-    }
+    setHideLogo(shouldHideLogo());
   }, []);
 
   const handleToggle = () => {
