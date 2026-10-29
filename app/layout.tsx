@@ -1,52 +1,40 @@
 // RootLayout.tsx
-"use client";
-import React, { useEffect, useState } from "react";
-import { Provider } from "react-redux";
-import store from "./redux/store";
-import ThemeCustomization from "@/themes";
-import LocalStorageEvent from "./localStorageEvent";
+import React from "react";
+import type { Metadata } from "next";
+import { headers } from "next/headers";
+import Providers from "./providers";
 import "./globals.css";
-import { getHideLogoDomain, getHideLogoDomains } from "./ulits/hideLogo";
+import { getBrand } from "./ulits/hideLogo";
+
+// Title/description are rendered on the server per request domain, so search
+// engines see "Stellenapp" on stellenapp.de and "Fachzubi" everywhere else.
+export async function generateMetadata(): Promise<Metadata> {
+  const brand = getBrand(headers().get("host"));
+  const description = `${brand.name} – Dein Tor zum Traumjob!`;
+  return {
+    title: brand.name,
+    description,
+    applicationName: brand.name,
+    openGraph: {
+      title: brand.name,
+      description,
+      siteName: brand.name,
+      url: `https://${brand.domain}`,
+      type: "website",
+    },
+  };
+}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [title, setTitle] = useState("");
-
-  useEffect(() => {
-    const hideLogoDomain = getHideLogoDomain();
-    setTitle(hideLogoDomain ? hideLogoDomain.split(".")[0] : "fachzubi");
-  }, []);
-
   return (
-    <html lang="en">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var domains = ${JSON.stringify(getHideLogoDomains())};
-                var host = window.location.hostname.toLowerCase().replace(/^www\\./, "");
-                var match = domains.find(function (d) {
-                  return host === d || host.slice(-(d.length + 1)) === "." + d;
-                });
-                document.title = match ? match.split(".")[0] : "fachzubi";
-              })();
-            `,
-          }}
-        />
-        {title && <title>{title}</title>}
-      </head>
-      <Provider store={store}>
-        <ThemeCustomization>
-          <body suppressHydrationWarning={true}>
-            <LocalStorageEvent />
-            {children}
-          </body>
-        </ThemeCustomization>
-      </Provider>
+    <html lang="de">
+      <body suppressHydrationWarning={true}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

@@ -34,7 +34,12 @@ import { RootState } from "@/app/redux/store";
 import { UpdateProfileRequestDto } from "@/app/api/user/user.type";
 import { updateProfile } from "@/app/api/user/user";
 import CustomLoader from "@/app/components/SpinLoader";
+import { getBrand } from "@/app/ulits/hideLogo";
 const AdminSetting = () => {
+  const [brand, setBrand] = useState({ name: "Fachzubi", domain: "fachzubi.de" });
+  useEffect(() => {
+    setBrand(getBrand());
+  }, []);
   const [loading, setIsLoading] = useState(true);
   const [loadingUserUpdate, setLoadingUserUpdate] = useState(false);
   const [loadingKeyUpdate, setLoadingKeyUpdate] = useState(false);
@@ -445,7 +450,7 @@ const AdminSetting = () => {
                   </Grid>
                   <Grid item xs={12} lg={10}>
                     <TextField
-                      placeholder="Fachzubi.de"
+                      placeholder={`${brand.name}.de`}
                       type="text"
                       fullWidth
                       {...formicForKey.getFieldProps("hostKey")}
@@ -464,7 +469,7 @@ const AdminSetting = () => {
                   </Grid>
                   <Grid item xs={12} lg={10}>
                     <TextField
-                      placeholder="Fachzubi.de"
+                      placeholder={`${brand.name}.de`}
                       type="text"
                       fullWidth
                       {...formicForKey.getFieldProps("portKey")}
@@ -490,7 +495,7 @@ const AdminSetting = () => {
                   </Grid>
                   <Grid item xs={12} lg={10}>
                     <TextField
-                      placeholder="Fachzubi.de"
+                      placeholder={`${brand.name}.de`}
                       type="text"
                       fullWidth
                       {...formicForKey.getFieldProps("pushNotificationKey")}
@@ -563,7 +568,7 @@ const AdminSetting = () => {
                     <Grid item xs={12} lg={6}>
                       <label>SMTP Host</label>
                       <TextField
-                        placeholder="fachzubi.de"
+                        placeholder={brand.domain}
                         type="text"
                         fullWidth
                         {...formicSMTP.getFieldProps("smtpHost")}
@@ -595,7 +600,7 @@ const AdminSetting = () => {
                     <Grid item xs={12} lg={6}>
                       <label>SMTP Username</label>
                       <TextField
-                        placeholder="contact@Fachzubi.de"
+                        placeholder={`contact@${brand.domain}`}
                         type="email"
                         fullWidth
                         {...formicSMTP.getFieldProps("smtpUsername")}
@@ -667,7 +672,7 @@ const AdminSetting = () => {
                     <Grid item xs={12} lg={6}>
                       <label>Form Address</label>
                       <TextField
-                        placeholder="contact@Fachzubi.de"
+                        placeholder={`contact@${brand.domain}`}
                         type="email"
                         fullWidth
                         {...formicSMTP.getFieldProps("formAddress")}
