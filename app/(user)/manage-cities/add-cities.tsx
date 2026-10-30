@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 
-const DEFAULT_QR_TARGET_BASE = process.env.DEFAULT_QR_TARGET_BASE || "https://fachzubi-app.de/jobs/";
+const DEFAULT_QR_TARGET_BASE = process.env.NEXT_PUBLIC_DEFAULT_QR_TARGET_BASE || "https://fachzubi-app.de/jobs/";
 
 const splitQrTargetUrl = (url?: string, fallbackName?: string) => {
   if (!url) {
