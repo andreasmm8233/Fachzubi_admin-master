@@ -157,30 +157,6 @@ const Login = () => {
         </div>
       )}
 
-      {/* Public Navigation (hidden on white-label domains until login) */}
-      {!hideLogo && (
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: { xs: 2, md: 4 }, position: "absolute", top: 0, right: 0, width: "100%", zIndex: 10 }}>
-        <Button 
-          component="a"
-          href="/companies"
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{ color: "#0096A4", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(0,150,164,0.1)" } }}
-        >
-          Companies
-        </Button>
-        <Button 
-          component="a"
-          href="/jobs"
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{ color: "#0096A4", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(0,150,164,0.1)" } }}
-        >
-          Jobs
-        </Button>
-      </Box>
-      )}
-
       <Box
         sx={{
           minHeight: "100vh",
