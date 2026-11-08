@@ -29,8 +29,6 @@ import { Employer } from "@/app/api/employer/employer.types";
 // import { getRegions } from "@/app/api/regions/regions";
 import { getCity } from "@/app/api/city/city";
 import { TransformCity } from "@/app/api/city/city.types";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/redux/store";
 
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL || "https://api.webzlab.site/";
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -38,7 +36,6 @@ const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export default function CompaniesPage() {
   const router = useRouter();
   // Logged-in users go back to the dashboard, logged-out users go back to login.
-  const isLogin = useSelector((state: RootState) => state.auth.isLogin);
   const [companies, setCompanies] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string>("");
@@ -158,23 +155,15 @@ export default function CompaniesPage() {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f7fa", pb: 10, position: "relative" }}>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: { xs: 2, md: 3 }, position: "absolute", top: 0, right: 0, width: "100%", zIndex: 10 }}>
-        <Button component="a" href="/companies" target="_blank" rel="noopener noreferrer" sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>Companies</Button>
-        <Button component="a" href="/jobs" target="_blank" rel="noopener noreferrer" sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>Jobs</Button>
-        <Button onClick={() => router.push(isLogin ? "/dashboard" : "/")} sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>
-          {isLogin ? "Back to Dashboard" : "Back to Login"}
-        </Button>
-      </Box>
-
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f7fa", pb: 10 }}>
       {/* Header Section */}
-      <Box sx={{ backgroundColor: "#0096A4", py: { xs: 6, md: 8 }, mb: 6, pt: { xs: 10, md: 10 } }}>
+      <Box sx={{ background: "linear-gradient(135deg, #0096A4 0%, #005c66 100%)", py: { xs: 6, md: 8 }, mb: 6 }}>
         <Container maxWidth="md">
           <Typography variant="h3" component="h1" align="center" sx={{ color: "#fff", fontWeight: 800, mb: 2 }}>
-            Discover Top Companies
+            Entdecke TOP-Unternehmen
           </Typography>
           <Typography variant="h6" align="center" sx={{ color: "rgba(255,255,255,0.9)", mb: 4, fontWeight: 400 }}>
-            Search and explore a wide variety of employers offering great opportunities.
+            Lerne interessante Unternehmen kennen, erhalte spannende Einblicke und entdecke vielfältige Karriere- und Jobmöglichkeiten.
           </Typography>
           
           <Grid
@@ -192,7 +181,7 @@ export default function CompaniesPage() {
               <TextField
                 fullWidth
                 variant="outlined"
-                placeholder="Search companies by name..."
+                placeholder="Unternehmen hier eingeben oder freilassen …"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 InputProps={{
@@ -282,7 +271,7 @@ export default function CompaniesPage() {
         {/* Alphabet Filter */}
         <Box sx={{ mb: 6 }}>
           <Typography variant="subtitle2" sx={{ color: "#718096", mb: 2, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
-            Filter by Company Name
+            Unternehmen von A bis Z
           </Typography>
           <ToggleButtonGroup
             value={selectedLetter}

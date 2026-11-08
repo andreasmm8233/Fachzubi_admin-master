@@ -67,7 +67,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
       <Box sx={{ minHeight: "100vh", textAlign: "center", pt: 10, backgroundColor: "#f5f7fa" }}>
         <Typography variant="h5" color="textSecondary">Job not found.</Typography>
         <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/jobs")} sx={{ mt: 3, color: "#0096A4" }}>
-          Back to Jobs
+          Zurück zu „Jobs“
         </Button>
       </Box>
     );
@@ -160,7 +160,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
               "&:hover": { backgroundColor: "rgba(255,255,255,0.2)" }
             }}
           >
-            Back to Jobs
+            Zurück zu „Jobs“
           </Button>
         </Container>
       </Box>
@@ -183,7 +183,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                       width: 100,
                       height: 100,
                       backgroundColor: "#fff",
-                      borderRadius: "16px",
+                      borderRadius: "6px",
                       boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
                       display: "flex",
                       justifyContent: "center",
@@ -201,13 +201,13 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                       src={logoUrl}
                       alt={`${companyName} Logo`}
                       onError={(e: any) => { e.target.src = "/fevicon.png"; }}
-                      sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "8px" }}
+                      sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "4px" }}
                     />
                   </Box>
 
                   <Box sx={{ flex: 1, textAlign: { xs: "center", sm: "left" }, pb: 1 }}>
                     {jobTypes.map((type) => (
-                      <Chip key={type} label={type} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, mb: 1.5, mr: 1, borderRadius: "6px" }} />
+                      <Chip key={type} label={type} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, mb: 1.5, mr: 1, borderRadius: "4px" }} />
                     ))}
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 800, color: "#1a202c", mb: 1 }}>
                       {jobTitle}
@@ -243,7 +243,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                       <LocationOnIcon fontSize="small" />
                     </Box>
                     <Box>
-                      <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, display: "block" }}>Location</Typography>
+                      <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, display: "block" }}>Adresse:</Typography>
                       <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600 }}>
                         {/* {address ? `${address}, ` : ""}{zipCode ? `${zipCode}, ` : ""}{city} */}
                         {address ? `${address} ` : ""}
@@ -348,90 +348,93 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 
           {/* Sidebar Column */}
           <Grid item xs={12} md={4}>
-            <Card sx={{ borderRadius: "16px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)", position: "sticky", top: "20px" }}>
+            <Card sx={{ borderRadius: "16px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)", position: "sticky", top: { xs: "84px", md: "96px" } }}>
               <CardContent sx={{ p: 4, display: "flex", flexDirection: "column", gap: 3 }}>
 
-                <Box sx={{ p: 3, backgroundColor: "#f7fafc", borderRadius: "12px", border: "1px solid #edf2f7" }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#2d3748", mb: 2 }}>
-                    Job Overview
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 800, color: "#1a202c", mb: 3, borderBottom: "1px solid #edf2f7", pb: 1.5 }}>
+                    Job Überblick
                   </Typography>
 
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     {jobType && (
                       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                        <Typography variant="body2" sx={{ color: "#718096" }}>Employment Type</Typography>
+                        <Typography variant="body2" sx={{ color: "#718096" }}>Jobart</Typography>
                         <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600 }}>{jobType}</Typography>
                       </Box>
                     )}
                     {jobType && <Divider sx={{ borderStyle: "dashed" }} />}
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                      <Typography variant="body2" sx={{ color: "#718096" }}>Industry</Typography>
+                      <Typography variant="body2" sx={{ color: "#718096" }}>Branche</Typography>
                       <Typography variant="body2" sx={{ color: "#2d3748", fontWeight: 600, textAlign: "right", maxWidth: "60%" }}>{industry}</Typography>
                     </Box>
                   </Box>
                 </Box>
 
-                {/* Contact Information */}
-                {(job.email || job.additionalEmail) && (
-                  <Box sx={{ p: 3, backgroundColor: "#f7fafc", borderRadius: "12px", border: "1px solid #edf2f7", display: "flex", flexDirection: "column", gap: 2.5 }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#2d3748" }}>
-                      Contact Information
+                {/* Contact Information — same layout as the company page */}
+                {(job.email || job.additionalEmail || formattedPhoneNo || job.company?.website) && (
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: "#1a202c", mb: 3, borderBottom: "1px solid #edf2f7", pb: 1.5 }}>
+                      Kontakt
                     </Typography>
 
-                    {job.email && (
-                      <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
-                        <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
-                          <EmailIcon fontSize="small" />
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                      {job.email && (
+                        <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                          <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
+                            <EmailIcon />
+                          </Box>
+                          <Box sx={{ overflow: "hidden" }}>
+                            <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>E-Mail</Typography>
+                            <MuiLink href={`mailto:${job.email}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
+                              {job.email}
+                            </MuiLink>
+                          </Box>
                         </Box>
-                        <Box sx={{ overflow: "hidden" }}>
-                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>E-Mail</Typography>
-                          <MuiLink href={`mailto:${job.email}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
-                            {job.email}
-                          </MuiLink>
-                        </Box>
-                      </Box>
-                    )}
+                      )}
 
-                    {job.additionalEmail && (
-                      <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
-                        <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
-                          <EmailIcon fontSize="small" />
+                      {job.additionalEmail && (
+                        <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                          <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
+                            <EmailIcon />
+                          </Box>
+                          <Box sx={{ overflow: "hidden" }}>
+                            <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Additional E-Mail</Typography>
+                            <MuiLink href={`mailto:${job.additionalEmail}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
+                              {job.additionalEmail}
+                            </MuiLink>
+                          </Box>
                         </Box>
-                        <Box sx={{ overflow: "hidden" }}>
-                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Additional E-Mail</Typography>
-                          <MuiLink href={`mailto:${job.additionalEmail}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
-                            {job.additionalEmail}
-                          </MuiLink>
-                        </Box>
-                      </Box>
-                    )}
-                    {job.company.website && (
-                      <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
-                        <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
-                          <WebIcon fontSize="small" />
-                        </Box>
-                        <Box sx={{ overflow: "hidden" }}>
-                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Website</Typography>
-                          <MuiLink href={job.company.website.startsWith("http") ? job.company.website : `https://${job.company.website}`} target="_blank" underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
-                            {job.company.website}
-                          </MuiLink>
-                        </Box>
-                      </Box>
-                    )}
+                      )}
 
-                    {formattedPhoneNo && (
-                      <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
-                        <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
-                          <PhoneIcon />
+                      {formattedPhoneNo && (
+                        <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                          <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
+                            <PhoneIcon />
+                          </Box>
+                          <Box>
+                            <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Telefon</Typography>
+                            <MuiLink href={`tel:${formattedPhoneNo.replace(/\s+/g, "")}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
+                              {formattedPhoneNo}
+                            </MuiLink>
+                          </Box>
                         </Box>
-                        <Box>
-                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Telefon</Typography>
-                          <MuiLink href={`tel:${formattedPhoneNo.replace(/\s+/g, "")}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
-                            {formattedPhoneNo}
-                          </MuiLink>
+                      )}
+
+                      {job.company?.website && (
+                        <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                          <Box sx={{ p: 1, borderRadius: "8px", backgroundColor: "#e6fffa", color: "#0096A4", display: "flex" }}>
+                            <WebIcon />
+                          </Box>
+                          <Box sx={{ overflow: "hidden" }}>
+                            <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Website</Typography>
+                            <MuiLink href={job.company.website.startsWith("http") ? job.company.website : `https://${job.company.website}`} target="_blank" rel="noopener noreferrer" underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
+                              {job.company.website}
+                            </MuiLink>
+                          </Box>
                         </Box>
-                      </Box>
-                    )}
+                      )}
+                    </Box>
                   </Box>
                 )}
 

@@ -15,6 +15,7 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import WorkIcon from "@mui/icons-material/Work";
 import LanguageIcon from "@mui/icons-material/Language";
@@ -73,7 +74,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
       <Box sx={{ minHeight: "100vh", textAlign: "center", pt: 10, backgroundColor: "#f5f7fa" }}>
         <Typography variant="h5" color="textSecondary">Company not found.</Typography>
         <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/companies")} sx={{ mt: 3, color: "#0096A4" }}>
-          Back to Companies
+          Zurück zu „Unternehmen“
         </Button>
       </Box>
     );
@@ -138,7 +139,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
               "&:hover": { backgroundColor: "rgba(255,255,255,0.2)" }
             }}
           >
-            Back to Companies
+            Zurück zu „Unternehmen“
           </Button>
         </Container>
       </Box>
@@ -155,7 +156,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                       width: 120,
                       height: 120,
                       backgroundColor: "#fff",
-                      borderRadius: "16px",
+                      borderRadius: "6px",
                       boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
                       display: "flex",
                       justifyContent: "center",
@@ -170,7 +171,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                       src={logoUrl}
                       alt={`${companyName} Logo`}
                       onError={(e: any) => { e.target.src = "/fevicon.png"; }}
-                      sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "8px" }}
+                      sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "4px" }}
                     />
                   </Box>
 
@@ -179,7 +180,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                       {companyName}
                     </Typography>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, justifyContent: { xs: "center", sm: "flex-start" }, mb: 2 }}>
-                      <Chip icon={<WorkIcon fontSize="small" />} label={industry} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 600 }} />
+                      <Chip icon={<WorkIcon fontSize="small" />} label={industry} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 600, borderRadius: "4px" }} />
                       {/* zipCode and city intentionally omitted from the company detail location */}
                       {address && (
                         <Chip
@@ -187,7 +188,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                           label={address}
                           size="small"
                           variant="outlined"
-                          sx={{ borderColor: "#e2e8f0" }}
+                          sx={{ borderColor: "#e2e8f0", borderRadius: "4px" }}
                         />
                       )}
                     </Box>
@@ -345,6 +346,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                             <Button
                               variant="contained"
                               size="small"
+                              endIcon={<ArrowForwardIcon />}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 const id = job._id || job.id;
@@ -354,8 +356,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                               }}
                               sx={{ backgroundColor: "#0096A4", "&:hover": { backgroundColor: "#007a86" }, borderRadius: "8px", textTransform: "none !important", fontWeight: 600, px: 3 }}
                             >
-                              {/* View Details */}
-                              Details ansehen
+                              Mehr erfahren
                             </Button>
                           </Box>
                         </CardContent>
@@ -369,10 +370,10 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
 
           {/* Sidebar Column */}
           <Grid item xs={12} md={4}>
-            <Card sx={{ borderRadius: "16px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)", position: "sticky", top: "20px" }}>
+            <Card sx={{ borderRadius: "16px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)", position: "sticky", top: { xs: "84px", md: "96px" } }}>
               <CardContent sx={{ p: 3 }}>
                 <Typography variant="h6" sx={{ fontWeight: 800, color: "#1a202c", mb: 3, borderBottom: "1px solid #edf2f7", pb: 1.5 }}>
-                  Contact Information
+                  Kontakt
                 </Typography>
 
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>

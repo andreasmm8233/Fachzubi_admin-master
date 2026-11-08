@@ -19,6 +19,7 @@ import {
   Autocomplete,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import WorkIcon from "@mui/icons-material/Work";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -31,15 +32,13 @@ import { useRouter } from "next/navigation";
 // import { getRegions } from "@/app/api/regions/regions";
 import { getCity } from "@/app/api/city/city";
 import { TransformCity } from "@/app/api/city/city.types";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/redux/store";
 
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL || "https://api.webzlab.site/";
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export default function JobsPage() {
   const router = useRouter();
   // Logged-in users go back to the dashboard, logged-out users go back to login.
-  const isLogin = useSelector((state: RootState) => state.auth.isLogin);
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string>("");
@@ -153,23 +152,15 @@ export default function JobsPage() {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f7fa", pb: 10, position: "relative" }}>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, p: { xs: 2, md: 3 }, position: "absolute", top: 0, right: 0, width: "100%", zIndex: 10 }}>
-        <Button component="a" href="/companies" target="_blank" rel="noopener noreferrer" sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>Companies</Button>
-        <Button component="a" href="/jobs" target="_blank" rel="noopener noreferrer" sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>Jobs</Button>
-        <Button onClick={() => router.push(isLogin ? "/dashboard" : "/")} sx={{ color: "#fff", fontWeight: 700, fontSize: "1rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}>
-          {isLogin ? "Back to Dashboard" : "Back to Login"}
-        </Button>
-      </Box>
-
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f5f7fa", pb: 10 }}>
       {/* Header Section */}
-      <Box sx={{ backgroundColor: "#0096A4", py: { xs: 6, md: 8 }, mb: 6, pt: { xs: 10, md: 10 } }}>
+      <Box sx={{ background: "linear-gradient(135deg, #0096A4 0%, #005c66 100%)", py: { xs: 6, md: 8 }, mb: 6 }}>
         <Container maxWidth="md">
           <Typography variant="h3" component="h1" align="center" sx={{ color: "#fff", fontWeight: 800, mb: 2 }}>
-            Find Your Dream Job
+            Finde deinen Traumjob!
           </Typography>
           <Typography variant="h6" align="center" sx={{ color: "rgba(255,255,255,0.9)", mb: 4, fontWeight: 400 }}>
-            Browse through thousands of open positions
+            Entdecke attraktive Stellenangebote und vielfältige Karrieremöglichkeiten.
           </Typography>
 
           <Grid
@@ -187,7 +178,7 @@ export default function JobsPage() {
               <TextField
                 fullWidth
                 variant="outlined"
-                placeholder="Search jobs by title, keyword..."
+                placeholder="Jobtitel oder Stichwort eingeben oder freilassen …"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 InputProps={{
@@ -277,7 +268,7 @@ export default function JobsPage() {
         {/* Alphabet Filter */}
         <Box sx={{ mb: 6 }}>
           <Typography variant="subtitle2" sx={{ color: "#718096", mb: 2, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
-            Filter by Job Title
+            Jobs von A bis Z
           </Typography>
           <ToggleButtonGroup
             value={selectedLetter}
@@ -361,6 +352,8 @@ export default function JobsPage() {
               const jobTypes: string[] = (Array.isArray(job.jobTypeName) ? job.jobTypeName : [job.jobTypeName || job.jobType?.name]).filter(Boolean);
               const jobCity = Array.isArray(job.city) ? job.city.map((c: any) => Array.isArray(c) ? c.join(', ') : c?.name || c).join(', ') : (job.city?.name || job.location || "Various Locations");
               const startDate = job.startDate ? new Date(job.startDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : "";
+              const logoPath = typeof job.companyLogo === "object" ? job.companyLogo?.filepath : job.companyLogo;
+              const logoUrl = logoPath ? `${IMAGE_BASE_URL}${logoPath}`.replace(/([^:]\/)\/+/g, "$1") : "/fevicon.png";
 
               return (
                 <Grid item xs={12} md={6} lg={4} key={job._id || job.id || index}>
@@ -389,9 +382,13 @@ export default function JobsPage() {
                   >
                     <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", flexGrow: 1 }}>
                       <Box sx={{ mb: "auto" }}>
-                        {jobTypes.map((type) => (
-                          <Chip key={type} label={type} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, mb: 2, mr: 1, borderRadius: "6px" }} />
-                        ))}
+                        {jobTypes.length > 0 && (
+                          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+                            {jobTypes.map((type) => (
+                              <Chip key={type} label={type} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, borderRadius: "4px" }} />
+                            ))}
+                          </Box>
+                        )}
 
                         <Typography variant="h6" sx={{ fontWeight: 800, color: "#1a202c", mb: 1.5, lineHeight: 1.3 }}>
                           {jobTitle}
@@ -412,14 +409,41 @@ export default function JobsPage() {
                         </Box>
                       </Box>
 
-                      <Box sx={{ mt: 3, pt: 2, borderTop: "1px solid #edf2f7", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        {job.salary && (
-                          <Typography variant="subtitle2" sx={{ color: "#2d3748", fontWeight: 700 }}>
-                            {job.salary}
-                          </Typography>
-                        )}
-                        <Button variant="text" size="small" sx={{ color: "#0096A4", fontWeight: 700, p: 0, minWidth: "auto", marginLeft: job.salary ? 0 : "auto", "&:hover": { backgroundColor: "transparent", textDecoration: "underline" } }}>
-                          View Details &rarr;
+                      <Box sx={{ mt: 3, pt: 2, borderTop: "1px solid #edf2f7", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
+                          <Box
+                            sx={{
+                              width: 56,
+                              height: 56,
+                              flexShrink: 0,
+                              backgroundColor: "#fff",
+                              border: "1px solid #edf2f7",
+                              borderRadius: "6px",
+                              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              p: 0.75,
+                            }}
+                          >
+                            <Box
+                              component="img"
+                              src={logoUrl}
+                              alt={`${companyName} Logo`}
+                              onError={(e: any) => {
+                                e.target.src = "/fevicon.png";
+                              }}
+                              sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                            />
+                          </Box>
+                          {job.salary && (
+                            <Typography variant="subtitle2" sx={{ color: "#2d3748", fontWeight: 700 }}>
+                              {job.salary}
+                            </Typography>
+                          )}
+                        </Box>
+                        <Button variant="text" size="small" endIcon={<ArrowForwardIcon />} sx={{ color: "#0096A4", fontWeight: 700, p: 0, minWidth: "auto", flexShrink: 0, "&:hover": { backgroundColor: "transparent", textDecoration: "underline" } }}>
+                          Mehr erfahren
                         </Button>
                       </Box>
                     </CardContent>
