@@ -9,9 +9,11 @@ import {
   Stack,
   TableContainer,
   IconButton,
+  Tooltip,
   Typography,
   // Link
 } from "@mui/material";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 import Title from "@/app/components/title.components";
 import Filter from "@/app/components/filter";
@@ -21,6 +23,7 @@ import { useEffect, useState } from "react";
 import DeleteModal from "@/app/components/delete.modal.components";
 import {
   deleteEmployer,
+  downloadEmployerQr,
   editEmployer,
   getAllEmployers,
 } from "@/app/api/employer/employer";
@@ -43,6 +46,8 @@ interface RowData {
   industry: string;
   city: string;
   status: string;
+  qrCode: string;
+  qrTargetUrl: string;
 }
 const ManageEmployee = () => {
   const router = useRouter();
@@ -61,6 +66,7 @@ const ManageEmployee = () => {
   const [mount, setMount] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [statusToggleId, setStatusToggleId] = useState("");
+  const [qrDownloadLoadingId, setQrDownloadLoadingId] = useState("");
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
   };
@@ -147,6 +153,32 @@ const ManageEmployee = () => {
     }
   };
 
+  const handleDownloadQr = async (company: RowData) => {
+    if (!company.id || qrDownloadLoadingId) {
+      return;
+    }
+
+    setQrDownloadLoadingId(company.id);
+    const response = await downloadEmployerQr(company.id);
+    if (response.remote === "success") {
+      const qrBlob =
+        response.data.data instanceof Blob
+          ? response.data.data
+          : new Blob([response.data.data]);
+      const url = window.URL.createObjectURL(qrBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${company.companyName || "company"}-qr.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.info("QR downloaded successfully!");
+    } else {
+      toast.error(response.error.errors.message || "Error downloading QR");
+    }
+    setQrDownloadLoadingId("");
+  };
   const navigateToAdd = (rowDataId: string) => {
     router.push(`/manage-employers/add?id=${rowDataId}`);
   };
@@ -174,6 +206,38 @@ const ManageEmployee = () => {
       contact: rowData.contact,
       industry: rowData.industry || "",
       city: rowData.city || "",
+      qrCode: rowData.qrCode ? (
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          <Tooltip title={rowData.qrTargetUrl || ""}>
+            <Link href={rowData.qrTargetUrl || rowData.qrCode} target="blank">
+              <Box
+                component="img"
+                src={rowData.qrCode}
+                alt={`${rowData.companyName} QR code`}
+                sx={{
+                  width: "52px",
+                  height: "52px",
+                  display: "block",
+                  objectFit: "contain",
+                }}
+              />
+            </Link>
+          </Tooltip>
+          <IconButton
+            title="Download QR"
+            onClick={() => {
+              handleDownloadQr(rowData);
+            }}
+            disableRipple={true}
+            disabled={qrDownloadLoadingId === rowData.id}
+            sx={{ color: "#0096A4" }}
+          >
+            <FileDownloadIcon />
+          </IconButton>
+        </Stack>
+      ) : (
+        ""
+      ),
       status: (
         <div
           style={{

@@ -113,11 +113,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
 
 
   const companyPhoneNo = job.company?.phoneNo || "";
-  const formattedPhoneNo = companyPhoneNo
-    ? (companyPhoneNo.startsWith("+") || companyPhoneNo.startsWith("00")
-      ? companyPhoneNo
-      : `+49 ${companyPhoneNo}`)
-    : "";
+  const formattedPhoneNo = companyPhoneNo;
 
   // Media Extractions
   const jobImagesList = Array.isArray(job.jobImages) ? job.jobImages.map((img: any) => img.filepath).filter(Boolean) : [];
@@ -388,7 +384,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                           <EmailIcon fontSize="small" />
                         </Box>
                         <Box sx={{ overflow: "hidden" }}>
-                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Email</Typography>
+                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>E-Mail</Typography>
                           <MuiLink href={`mailto:${job.email}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
                             {job.email}
                           </MuiLink>
@@ -402,7 +398,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                           <EmailIcon fontSize="small" />
                         </Box>
                         <Box sx={{ overflow: "hidden" }}>
-                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Additional Email</Typography>
+                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Additional E-Mail</Typography>
                           <MuiLink href={`mailto:${job.additionalEmail}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
                             {job.additionalEmail}
                           </MuiLink>
@@ -429,7 +425,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                           <PhoneIcon />
                         </Box>
                         <Box>
-                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Phone</Typography>
+                          <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Telefon</Typography>
                           <MuiLink href={`tel:${formattedPhoneNo.replace(/\s+/g, "")}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
                             {formattedPhoneNo}
                           </MuiLink>

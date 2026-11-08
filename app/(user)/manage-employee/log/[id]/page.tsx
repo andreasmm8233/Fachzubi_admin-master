@@ -124,11 +124,7 @@ const EmployeeLogPage = () => {
           const industryName = typeof company.industryName === 'object' ? company.industryName?.industryName : company.industryName;
           const cityName = typeof company.city === 'object' ? company.city?.name : company.city;
           const phoneNo = company.phoneNo || "";
-          const formattedPhoneNo = phoneNo
-            ? (phoneNo.startsWith("+") || phoneNo.startsWith("00")
-              ? phoneNo
-              : `+49 ${phoneNo}`)
-            : "";
+          const formattedPhoneNo = phoneNo;
 
           return (
           <Paper 

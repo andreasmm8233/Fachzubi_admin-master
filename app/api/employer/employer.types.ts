@@ -13,6 +13,8 @@ export interface Employer {
   city: string;
   status: boolean;
   isDeleted: boolean;
+  qrCode?: string;
+  qrTargetUrl?: string;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;

@@ -18,6 +18,8 @@ export interface TransformedRowData {
   industry: string;
   city: string;
   status: string;
+  qrCode: string;
+  qrTargetUrl: string;
 }
 export interface TransformedRowDataWithCount {
   data: TransformedRowData[];
@@ -55,6 +57,8 @@ export function transformApiData(apiData: Employer): TransformedRowData {
     industry: apiData.industryName,
     city: apiData.city,
     status: apiData.status ? "Active" : "Inactive",
+    qrCode: apiData.qrCode ?? "",
+    qrTargetUrl: apiData.qrTargetUrl ?? "",
   };
 }
 

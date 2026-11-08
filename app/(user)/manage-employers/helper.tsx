@@ -38,6 +38,11 @@ export const COLUMS_DATA = [
     key: "city",
   },
   {
+    id: 10,
+    name: "QR Code",
+    key: "qrCode",
+  },
+  {
     id: 8,
     name: "Status",
     key: "status",

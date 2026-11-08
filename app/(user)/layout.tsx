@@ -87,9 +87,9 @@ export default function AdminLayout({
             {!hideLogo && (
               <Image
                 src={isToggle ? "/logo.png" : "/fevicon.png"}
-                alt=""
-                width={isToggle ? 210 : 28}
-                height={isToggle ? 28 : 30.7}
+                alt="UniBonus"
+                width={isToggle ? 174 : 30}
+                height={isToggle ? 48 : 30}
               />
             )}
           </Typography>

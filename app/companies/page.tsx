@@ -291,13 +291,16 @@ export default function CompaniesPage() {
             aria-label="letter filter"
             sx={{ 
               display: "flex", 
-              flexWrap: "wrap", 
-              gap: 1, 
+              flexWrap: "nowrap", 
+              overflowX: "auto", 
+              gap: 0.5, 
               "& .MuiToggleButtonGroup-grouped": {
                 border: "1px solid #e2e8f0 !important",
                 borderRadius: "8px !important",
                 m: "0 !important",
-                px: 2,
+                flex: "1 0 auto",
+                minWidth: "34px",
+                px: 1,
                 py: 1,
                 color: "#4a5568",
                 fontWeight: 600,

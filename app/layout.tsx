@@ -7,10 +7,10 @@ import "./globals.css";
 import { getBrand } from "./ulits/hideLogo";
 
 // Title/description are rendered on the server per request domain, so search
-// engines see "Stellenapp" on stellenapp.de and "Fachzubi" everywhere else.
+// engines see "Stellenapp" on stellenapp.de and "UniBonus" everywhere else.
 export async function generateMetadata(): Promise<Metadata> {
   const brand = getBrand(headers().get("host"));
-  const description = `${brand.name} – Dein Tor zum Traumjob!`;
+  const description = `${brand.name} – Clever informieren in deiner UniStadt!`;
   return {
     title: brand.name,
     description,

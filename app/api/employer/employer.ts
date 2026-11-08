@@ -236,3 +236,24 @@ export const hardDeleteEmployer = async (id: string) => {
   });
   return response;
 };
+
+export const downloadEmployerQr = async (
+  id: string
+): Promise<SuccessResult<Blob> | ErrorResult> => {
+  const response = await request({
+    url: `/employer/${id}/download-qr`,
+    method: "get",
+    responseType: "blob",
+  });
+  if (response.remote === "success") {
+    return {
+      remote: "success",
+      data: {
+        data: response.data as unknown as Blob,
+        message: "",
+        status: 200,
+      },
+    };
+  }
+  return response;
+};

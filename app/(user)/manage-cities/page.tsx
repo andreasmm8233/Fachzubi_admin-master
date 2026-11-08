@@ -128,7 +128,7 @@ const ManageCities = () => {
     // Prefill QR Target URL with a unique valid name to avoid Formik validation failure
     const formattedName = rowData.name.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
     const suffix = Math.floor(10000000 + Math.random() * 90000000);
-    const duplicateQrTargetUrl = `https://fachzubi-app.de/jobs/${formattedName}-copy-${suffix}`;
+    const duplicateQrTargetUrl = `https://unibonus.app/jobs/${formattedName}-copy-${suffix}`;
 
     setDataForEdit({
       ...rowData,

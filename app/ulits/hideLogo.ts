@@ -1,8 +1,8 @@
-// Domains on which the Fachzubi logo/branding must be hidden.
+// Domains on which the UniBonus logo/branding must be hidden.
 // Falls back to stellenapp.de if NEXT_PUBLIC_HIDE_LOGO_DOMAIN was not set at build time.
 const DEFAULT_HIDE_LOGO_DOMAINS = "stellenapp.de";
 
-const DEFAULT_BRAND = { name: "Fachzubi", domain: "fachzubi-app.de" };
+const DEFAULT_BRAND = { name: "UniBonus", domain: "unibonus.app" };
 
 const normalize = (host: string) =>
   host.trim().toLowerCase().split(":")[0].replace(/^www\./, "");
@@ -31,7 +31,7 @@ export const getHideLogoDomain = (host?: string | null): string | null => {
 export const shouldHideLogo = (host?: string | null): boolean =>
   getHideLogoDomain(host) !== null;
 
-// Brand shown wherever "Fachzubi" would appear: on a hide-logo domain this is
+// Brand shown wherever "UniBonus" would appear: on a hide-logo domain this is
 // the domain itself (e.g. name "Stellenapp", domain "stellenapp.de").
 export const getBrand = (host?: string | null) => {
   const domain = getHideLogoDomain(host);

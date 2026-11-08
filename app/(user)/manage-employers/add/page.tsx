@@ -10,7 +10,6 @@ import {
   Grid,
   IconButton,
   TextField,
-  InputAdornment,
 } from "@mui/material";
 import { SVG } from "@/app/components/icon";
 import Title from "@/app/components/title.components";
@@ -37,13 +36,6 @@ import "react-toastify/dist/ReactToastify.css";
 // REGION FEATURE DISABLED
 // import { getRegions } from "@/app/api/regions/regions";
 // import { TransformRegion } from "@/app/api/regions/regions.types";
-const GermanyFlag = () => (
-  <svg width="20" height="12" viewBox="0 0 5 3" style={{ border: "1px solid #e0e0e0", borderRadius: "2px", marginRight: "6px" }}>
-    <rect width="5" height="1" y="0" fill="#000000" />
-    <rect width="5" height="1" y="1" fill="#DD0000" />
-    <rect width="5" height="1" y="2" fill="#FFCC00" />
-  </svg>
-);
 const AddComponent = () => {
   const re = /^((ftp|http|https):\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
   const route = useRouter();
@@ -497,14 +489,6 @@ const AddComponent = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.phoneNo}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <GermanyFlag />
-                        <span style={{ fontWeight: 600, color: "#646464" }}>+49</span>
-                      </InputAdornment>
-                    ),
-                  }}
                 />
                 {formik.touched.phoneNo && formik.errors.phoneNo && (
                   <div style={{ color: "red" }}>{formik.errors.phoneNo}</div>
