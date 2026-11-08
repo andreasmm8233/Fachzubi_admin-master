@@ -137,12 +137,24 @@ export default function CompaniesPage() {
   }, [debouncedSearchTerm, pageNo, selectedLetter, /* selectedRegion, */ selectedCity, isInitialized]);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem("public-companies-page");
-    if (saved) {
-      setPageNo(Number(saved));
+    // ?city=<cityId> (from the website's city search) preselects the city filter.
+    const cityFromUrl = new URLSearchParams(window.location.search).get("city");
+    if (cityFromUrl) {
+      setSelectedCity(cityFromUrl);
+    } else {
+      const saved = sessionStorage.getItem("public-companies-page");
+      if (saved) {
+        setPageNo(Number(saved));
+      }
     }
     setIsInitialized(true);
   }, []);
+
+  useEffect(() => {
+    if (selectedCity && !cityObj) {
+      setCityObj(cities.find((city) => city.id === selectedCity) ?? null);
+    }
+  }, [cities, selectedCity, cityObj]);
 
   useEffect(() => {
     if (isInitialized) {
@@ -462,6 +474,15 @@ export default function CompaniesPage() {
               color="primary"
               shape="rounded"
               sx={{
+                // 30% larger than MUI's default (0.875rem text, 32px items)
+                "& .MuiPaginationItem-root": {
+                  fontSize: "1.14rem",
+                  minWidth: "42px",
+                  height: "42px",
+                },
+                "& .MuiPaginationItem-icon": {
+                  fontSize: "1.6rem",
+                },
                 "& .MuiPaginationItem-root.Mui-selected": {
                   backgroundColor: "#0096A4",
                   color: "#fff",
