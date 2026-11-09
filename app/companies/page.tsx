@@ -227,7 +227,10 @@ export default function CompaniesPage() {
                   ),
                   sx: {
                     "& fieldset": { border: "none" },
-                    "& input": { fontSize: "1.1rem", py: 1.5 },
+                    // fixed height so the search box and the city filter line up
+                    height: "56px",
+                    py: "0 !important",
+                    "& input": { fontSize: "1.1rem", py: 0 },
                   },
                 }}
               />
@@ -258,7 +261,10 @@ export default function CompaniesPage() {
                       ),
                       sx: {
                         "& fieldset": { border: "none" },
-                        "& input": { fontSize: "1.1rem", py: 1.5 },
+                        // fixed height so the search box and the city filter line up
+                        height: "56px",
+                        py: "0 !important",
+                        "& input": { fontSize: "1.1rem", py: 0 },
                       },
                     }}
                   />
@@ -291,7 +297,10 @@ export default function CompaniesPage() {
                       ),
                       sx: {
                         "& fieldset": { border: "none" },
-                        "& input": { fontSize: "1.1rem", py: 1.5 },
+                        // fixed height so the search box and the city filter line up
+                        height: "56px",
+                        py: "0 !important",
+                        "& input": { fontSize: "1.1rem", py: 0 },
                       },
                     }}
                   />

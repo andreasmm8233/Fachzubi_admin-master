@@ -393,8 +393,8 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                         <PersonIcon />
                       </Box>
                       <Box>
-                        <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Contact Person</Typography>
-                        <Typography variant="body1" sx={{ color: "#2d3748", fontWeight: 600 }}>{contactPerson}</Typography>
+                        <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Contact Person</Typography>
+                        <Typography variant="body1" sx={{ color: "#2d3748", fontWeight: 600, fontSize: "13px" }}>{contactPerson}</Typography>
                       </Box>
                     </Box>
                   )}
@@ -405,8 +405,8 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                         <EmailIcon />
                       </Box>
                       <Box sx={{ overflow: "hidden" }}>
-                        <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>E-Mail</Typography>
-                        <MuiLink href={`mailto:${email}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
+                        <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.5px" }}>E-Mail</Typography>
+                        <MuiLink href={`mailto:${email}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, fontSize: "13px", wordBreak: "break-all" }}>
                           {email}
                         </MuiLink>
                       </Box>
@@ -419,8 +419,8 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                         <PhoneIcon />
                       </Box>
                       <Box>
-                        <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Telefon</Typography>
-                        <MuiLink href={`tel:${formattedPhoneNo.replace(/\s+/g, "")}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600 }}>
+                        <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Telefon</Typography>
+                        <MuiLink href={`tel:${formattedPhoneNo.replace(/\s+/g, "")}`} underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, fontSize: "13px" }}>
                           {formattedPhoneNo}
                         </MuiLink>
                       </Box>
@@ -433,8 +433,8 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                         <LanguageIcon />
                       </Box>
                       <Box sx={{ overflow: "hidden" }}>
-                        <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Website</Typography>
-                        <MuiLink href={website.startsWith('http') ? website : `https://${website}`} target="_blank" rel="noopener noreferrer" underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, wordBreak: "break-all" }}>
+                        <Typography variant="caption" sx={{ color: "#a0aec0", fontWeight: 600, fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Website</Typography>
+                        <MuiLink href={website.startsWith('http') ? website : `https://${website}`} target="_blank" rel="noopener noreferrer" underline="hover" sx={{ display: "block", color: "#2d3748", fontWeight: 600, fontSize: "13px", wordBreak: "break-all" }}>
                           {website}
                         </MuiLink>
                       </Box>
