@@ -22,6 +22,12 @@ const LandingPage = () => {
   const [heading, setHeading] = useState("");
   const [subHeading, setSubHeading] = useState("");
   const [bottomBarText, setBottomBarText] = useState("");
+  const [searchTitle, setSearchTitle] = useState("");
+  const [searchSubtitle, setSearchSubtitle] = useState("");
+  const [companiesHeading, setCompaniesHeading] = useState("");
+  const [companiesSubHeading, setCompaniesSubHeading] = useState("");
+  const [jobsHeading, setJobsHeading] = useState("");
+  const [jobsSubHeading, setJobsSubHeading] = useState("");
   const [editLoading, setEditLoading] = useState(false);
   const handleGetAllContent = async () => {
     setIsLoading(true);
@@ -30,6 +36,12 @@ const LandingPage = () => {
       setHeading(response.data.data.heading);
       setSubHeading(response.data.data.subHeading);
       setBottomBarText(response.data.data.bottomBarText);
+      setSearchTitle(response.data.data.searchTitle ?? "");
+      setSearchSubtitle(response.data.data.searchSubtitle ?? "");
+      setCompaniesHeading(response.data.data.companiesHeading ?? "");
+      setCompaniesSubHeading(response.data.data.companiesSubHeading ?? "");
+      setJobsHeading(response.data.data.jobsHeading ?? "");
+      setJobsSubHeading(response.data.data.jobsSubHeading ?? "");
       setId(response.data.data.id);
     }
     setIsLoading(false);
@@ -41,6 +53,12 @@ const LandingPage = () => {
       heading,
       subHeading,
       bottomBarText,
+      searchTitle,
+      searchSubtitle,
+      companiesHeading,
+      companiesSubHeading,
+      jobsHeading,
+      jobsSubHeading,
     };
     const response = await EditContents(payload);
     if (response.remote === "success") {
@@ -69,6 +87,32 @@ const LandingPage = () => {
       <Title heading="Bottom Bar Text" />
       <Card elevation={0} sx={{ borderRadius: "10px", mt:2 }}>
         <TextEditor content={bottomBarText} setContent={setBottomBarText} />
+      </Card>
+      <Box sx={{ mt: 2 }}>
+        <Title heading="Search Box Heading" />
+      </Box>
+      <Card elevation={0} sx={{ borderRadius: "10px", mb:2 }}>
+        <TextEditor content={searchTitle} setContent={setSearchTitle} />
+      </Card>
+      <Title heading="Search Box Text" />
+      <Card elevation={0} sx={{ borderRadius: "10px", mb:2 }}>
+        <TextEditor content={searchSubtitle} setContent={setSearchSubtitle} />
+      </Card>
+      <Title heading="Companies Page Heading" />
+      <Card elevation={0} sx={{ borderRadius: "10px", mb:2 }}>
+        <TextEditor content={companiesHeading} setContent={setCompaniesHeading} />
+      </Card>
+      <Title heading="Companies Page Sub Heading" />
+      <Card elevation={0} sx={{ borderRadius: "10px", mb:2 }}>
+        <TextEditor content={companiesSubHeading} setContent={setCompaniesSubHeading} />
+      </Card>
+      <Title heading="Jobs Page Heading" />
+      <Card elevation={0} sx={{ borderRadius: "10px", mb:2 }}>
+        <TextEditor content={jobsHeading} setContent={setJobsHeading} />
+      </Card>
+      <Title heading="Jobs Page Sub Heading" />
+      <Card elevation={0} sx={{ borderRadius: "10px", mb:2 }}>
+        <TextEditor content={jobsSubHeading} setContent={setJobsSubHeading} />
       </Card>
       <Box sx={{ textAlign: "right", mt: 3 }}>
         <Button

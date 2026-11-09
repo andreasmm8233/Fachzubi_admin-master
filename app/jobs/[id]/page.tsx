@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import ImageLightbox from "@/app/components/imageLightbox";
 import {
   Box,
   Card,
@@ -15,6 +16,7 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
@@ -32,6 +34,7 @@ const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL || "https://api
 export default function JobDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [job, setJob] = useState<any>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -66,7 +69,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
     return (
       <Box sx={{ minHeight: "100vh", textAlign: "center", pt: 10, backgroundColor: "#f5f7fa" }}>
         <Typography variant="h5" color="textSecondary">Job not found.</Typography>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/jobs")} sx={{ mt: 3, color: "#0096A4" }}>
+        <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/jobs")} sx={{ textTransform: "none", mt: 3, color: "#0096A4" }}>
           Zurück zu „Jobs“
         </Button>
       </Box>
@@ -152,7 +155,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
           <Button
             startIcon={<ArrowBackIcon />}
             onClick={() => router.push("/jobs")}
-            sx={{
+            sx={{ textTransform: "none",
               mt: 3,
               color: "#fff",
               backgroundColor: "rgba(255,255,255,0.1)",
@@ -334,11 +337,18 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                             component="img"
                             src={`${IMAGE_BASE_URL}${imgPath}`.replace(/([^:]\/)\/+/g, "$1")}
                             alt={`Gallery image ${idx + 1}`}
-                            sx={{ width: "100%", height: "200px", objectFit: "cover", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
+                            onClick={() => setLightboxIndex(idx)}
+                            sx={{ cursor: "zoom-in", width: "100%", height: "200px", objectFit: "cover", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
                           />
                         </Grid>
                       ))}
                     </Grid>
+                    <ImageLightbox
+                      images={allGalleryImages.map((imgPath: string) => `${IMAGE_BASE_URL}${imgPath}`.replace(/([^:]\/)\/+/g, "$1"))}
+                      index={lightboxIndex}
+                      onClose={() => setLightboxIndex(null)}
+                      onChange={setLightboxIndex}
+                    />
                   </Box>
                 )}
 
@@ -438,11 +448,43 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                   </Box>
                 )}
 
+                {/* Apply by e-mail: opens the mail app with "Bewerbung: <job title>" as subject */}
+                {(job.email || job.additionalEmail) && (
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    disableElevation
+                    href={`mailto:${job.email || job.additionalEmail}?subject=${encodeURIComponent(`Bewerbung: ${jobTitle}`)}`}
+                    endIcon={<ArrowForwardIcon className="apply-arrow" />}
+                    sx={{
+                      py: 1.5,
+                      fontSize: "1.05rem",
+                      fontWeight: 700,
+                      textTransform: "none",
+                      borderRadius: "8px",
+                      color: "#fff",
+                      backgroundColor: "#F1841D",
+                      boxShadow: "0 6px 16px rgba(241,132,29,0.35)",
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
+                      "& .apply-arrow": { transition: "transform 0.2s ease" },
+                      "&:hover": {
+                        color: "#fff",
+                        backgroundColor: "#d9720f",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 10px 22px rgba(241,132,29,0.45)",
+                        "& .apply-arrow": { transform: "translateX(4px)" },
+                      },
+                    }}
+                  >
+                    Jetzt bewerben
+                  </Button>
+                )}
+
                 {/* Attachments */}
                 {attachments.length > 0 && (
                   <Box sx={{ p: 3, backgroundColor: "#e2e8f0", borderRadius: "12px", border: "1px solid #cbd5e0" }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#2d3748", mb: 2 }}>
-                      Attachments
+                      Aktuelles
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                       {attachments.map((doc: any, idx: number) => (

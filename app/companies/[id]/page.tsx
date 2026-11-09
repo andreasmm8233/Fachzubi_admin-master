@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import ImageLightbox from "@/app/components/imageLightbox";
 import {
   Box,
   Card,
@@ -31,6 +32,7 @@ const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL || "https://api
 export default function CompanyDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [company, setCompany] = useState<any>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -73,7 +75,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
     return (
       <Box sx={{ minHeight: "100vh", textAlign: "center", pt: 10, backgroundColor: "#f5f7fa" }}>
         <Typography variant="h5" color="textSecondary">Company not found.</Typography>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/companies")} sx={{ mt: 3, color: "#0096A4" }}>
+        <Button startIcon={<ArrowBackIcon />} onClick={() => router.push("/companies")} sx={{ textTransform: "none", mt: 3, color: "#0096A4" }}>
           Zurück zu „Unternehmen“
         </Button>
       </Box>
@@ -131,7 +133,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
           <Button
             startIcon={<ArrowBackIcon />}
             onClick={() => router.push("/companies")}
-            sx={{
+            sx={{ textTransform: "none",
               mt: 3,
               color: "#fff",
               backgroundColor: "rgba(255,255,255,0.1)",
@@ -250,7 +252,9 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                       {companyImages.map((img: string, idx: number) => (
                         <Grid item xs={6} sm={4} key={idx}>
                           <Box
+                            onClick={() => setLightboxIndex(idx)}
                             sx={{
+                              cursor: "zoom-in",
                               width: "100%",
                               paddingTop: "75%", // 4:3 aspect ratio
                               position: "relative",
@@ -275,6 +279,12 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                         </Grid>
                       ))}
                     </Grid>
+                    <ImageLightbox
+                      images={companyImages.map((img: string) => `${IMAGE_BASE_URL}${img}`.replace(/([^:]\/)\/+/g, "$1"))}
+                      index={lightboxIndex}
+                      onClose={() => setLightboxIndex(null)}
+                      onChange={setLightboxIndex}
+                    />
                   </Box>
                 )}
               </CardContent>
@@ -346,7 +356,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                             <Button
                               variant="contained"
                               size="small"
-                              endIcon={<ArrowForwardIcon />}
+                              endIcon={<ArrowForwardIcon sx={{ fontSize: "16px !important" }} />}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 const id = job._id || job.id;
@@ -354,7 +364,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                                   router.push(`/jobs/${id}`);
                                 }
                               }}
-                              sx={{ backgroundColor: "#0096A4", "&:hover": { backgroundColor: "#007a86" }, borderRadius: "8px", textTransform: "none !important", fontWeight: 600, px: 3 }}
+                              sx={{ backgroundColor: "#0096A4", "&:hover": { backgroundColor: "#007a86" }, borderRadius: "8px", textTransform: "none !important", fontWeight: 600, fontSize: "14px", px: 2, py: 0.5 }}
                             >
                               Mehr erfahren
                             </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { getAllContents } from "@/app/api/manageContent/manageContent";
 import {
   Box,
   Card,
@@ -35,6 +36,20 @@ const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export default function CompaniesPage() {
   const router = useRouter();
+  // Banner texts are managed in admin (Manage Content → Landing Page)
+  const [heroText, setHeroText] = useState({ heading: "", subHeading: "" });
+  const [heroLoading, setHeroLoading] = useState(true);
+  useEffect(() => {
+    getAllContents().then((response) => {
+      if (response.remote === "success") {
+        setHeroText({
+          heading: response.data.data.companiesHeading ?? "",
+          subHeading: response.data.data.companiesSubHeading ?? "",
+        });
+      }
+      setHeroLoading(false);
+    });
+  }, []);
   // Logged-in users go back to the dashboard, logged-out users go back to login.
   const [companies, setCompanies] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -171,11 +186,19 @@ export default function CompaniesPage() {
       {/* Header Section */}
       <Box sx={{ background: "linear-gradient(135deg, #0096A4 0%, #005c66 100%)", py: { xs: 6, md: 8 }, mb: 6 }}>
         <Container maxWidth="md">
-          <Typography variant="h3" component="h1" align="center" sx={{ color: "#fff", fontWeight: 800, mb: 2 }}>
-            Entdecke TOP-Unternehmen
+          <Typography variant="h3" component="h1" align="center" sx={{ color: "#fff", fontWeight: 800, mb: 2, "& p": { m: 0 } }}>
+            {heroText.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: heroText.heading }} />
+            ) : heroLoading ? null : (
+              "Entdecke TOP-Unternehmen"
+            )}
           </Typography>
-          <Typography variant="h6" align="center" sx={{ color: "rgba(255,255,255,0.9)", mb: 4, fontWeight: 400 }}>
-            Lerne interessante Unternehmen kennen, erhalte spannende Einblicke und entdecke vielfältige Karriere- und Jobmöglichkeiten.
+          <Typography variant="h6" component="div" align="center" sx={{ color: "rgba(255,255,255,0.9)", mb: 4, fontWeight: 400, "& p": { m: 0 } }}>
+            {heroText.subHeading ? (
+              <span dangerouslySetInnerHTML={{ __html: heroText.subHeading }} />
+            ) : heroLoading ? null : (
+              "Lerne interessante Unternehmen kennen, erhalte spannende Einblicke und entdecke vielfältige Karriere- und Jobmöglichkeiten."
+            )}
           </Typography>
           
           <Grid
@@ -282,9 +305,35 @@ export default function CompaniesPage() {
       <Container maxWidth="lg">
         {/* Alphabet Filter */}
         <Box sx={{ mb: 6 }}>
-          <Typography variant="subtitle2" sx={{ color: "#718096", mb: 2, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
-            Unternehmen von A bis Z
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: "#718096", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
+              Unternehmen von A bis Z
+            </Typography>
+            {!loading && companies.length > 0 && (
+              <Pagination
+                count={totalPages}
+                page={pageNo}
+                onChange={(e, value) => setPageNo(value)}
+                color="primary"
+                shape="rounded"
+                sx={{
+                  // 30% larger than MUI's default (0.875rem text, 32px items)
+                  "& .MuiPaginationItem-root": {
+                    fontSize: "1.14rem",
+                    minWidth: "42px",
+                    height: "42px",
+                  },
+                  "& .MuiPaginationItem-icon": {
+                    fontSize: "1.6rem",
+                  },
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "#0096A4",
+                    color: "#fff",
+                  },
+                }}
+              />
+            )}
+          </Box>
           <ToggleButtonGroup
             value={selectedLetter}
             exclusive
@@ -338,8 +387,8 @@ export default function CompaniesPage() {
         {!loading && companies.length === 0 && (
           <Box sx={{ textAlign: "center", py: 10, backgroundColor: "#fff", borderRadius: "16px", border: "1px dashed #cbd5e0" }}>
             <SearchIcon sx={{ fontSize: 60, color: "#e2e8f0", mb: 2 }} />
-            <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>No companies found</Typography>
-            <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you&apos;re looking for.</Typography>
+            <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>Es wurden keine Unternehmen gefunden.</Typography>
+            <Typography variant="body1" sx={{ color: "#718096" }}>Passen Sie Ihre Suche oder Filter an, um das Gewünschte zu finden.</Typography>
             {(searchValue || selectedLetter || /* selectedRegion || */ selectedCity) && (
               <Button
                 variant="outlined"
@@ -352,9 +401,9 @@ export default function CompaniesPage() {
                   setSelectedCity("");
                   setCityObj(null);
                 }} 
-                sx={{ mt: 3, borderColor: "#0096A4", color: "#0096A4" }}
+                sx={{ textTransform: "none", mt: 3, borderColor: "#0096A4", color: "#0096A4" }}
               >
-                Clear Filters
+                Filter zurücksetzen
               </Button>
             )}
           </Box>

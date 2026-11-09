@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { getAllContents } from "@/app/api/manageContent/manageContent";
 import {
   Box,
   Card,
@@ -38,6 +39,20 @@ const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export default function JobsPage() {
   const router = useRouter();
+  // Banner texts are managed in admin (Manage Content → Landing Page)
+  const [heroText, setHeroText] = useState({ heading: "", subHeading: "" });
+  const [heroLoading, setHeroLoading] = useState(true);
+  useEffect(() => {
+    getAllContents().then((response) => {
+      if (response.remote === "success") {
+        setHeroText({
+          heading: response.data.data.jobsHeading ?? "",
+          subHeading: response.data.data.jobsSubHeading ?? "",
+        });
+      }
+      setHeroLoading(false);
+    });
+  }, []);
   // Logged-in users go back to the dashboard, logged-out users go back to login.
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -156,11 +171,19 @@ export default function JobsPage() {
       {/* Header Section */}
       <Box sx={{ background: "linear-gradient(135deg, #0096A4 0%, #005c66 100%)", py: { xs: 6, md: 8 }, mb: 6 }}>
         <Container maxWidth="md">
-          <Typography variant="h3" component="h1" align="center" sx={{ color: "#fff", fontWeight: 800, mb: 2 }}>
-            Finde deinen Traumjob!
+          <Typography variant="h3" component="h1" align="center" sx={{ color: "#fff", fontWeight: 800, mb: 2, "& p": { m: 0 } }}>
+            {heroText.heading ? (
+              <span dangerouslySetInnerHTML={{ __html: heroText.heading }} />
+            ) : heroLoading ? null : (
+              "Finde deinen Traumjob!"
+            )}
           </Typography>
-          <Typography variant="h6" align="center" sx={{ color: "rgba(255,255,255,0.9)", mb: 4, fontWeight: 400 }}>
-            Entdecke attraktive Stellenangebote und vielfältige Karrieremöglichkeiten.
+          <Typography variant="h6" component="div" align="center" sx={{ color: "rgba(255,255,255,0.9)", mb: 4, fontWeight: 400, "& p": { m: 0 } }}>
+            {heroText.subHeading ? (
+              <span dangerouslySetInnerHTML={{ __html: heroText.subHeading }} />
+            ) : heroLoading ? null : (
+              "Entdecke attraktive Stellenangebote und vielfältige Karrieremöglichkeiten."
+            )}
           </Typography>
 
           <Grid
@@ -267,9 +290,27 @@ export default function JobsPage() {
       <Container maxWidth="lg">
         {/* Alphabet Filter */}
         <Box sx={{ mb: 6 }}>
-          <Typography variant="subtitle2" sx={{ color: "#718096", mb: 2, fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
-            Jobs von A bis Z
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: "#718096", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
+              Jobs von A bis Z
+            </Typography>
+            {!loading && jobs.length > 0 && (
+              <Pagination
+                count={totalPages}
+                page={pageNo}
+                onChange={(e, value) => setPageNo(value)}
+                color="primary"
+                shape="rounded"
+                size="large"
+                sx={{
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "#0096A4",
+                    color: "#fff",
+                  },
+                }}
+              />
+            )}
+          </Box>
           <ToggleButtonGroup
             value={selectedLetter}
             exclusive
@@ -319,8 +360,8 @@ export default function JobsPage() {
         ) : jobs.length === 0 ? (
           <Box sx={{ textAlign: "center", py: 10, backgroundColor: "#fff", borderRadius: "16px", border: "1px dashed #cbd5e0" }}>
             <SearchIcon sx={{ fontSize: 60, color: "#e2e8f0", mb: 2 }} />
-            <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>No jobs found</Typography>
-            <Typography variant="body1" sx={{ color: "#718096" }}>Try adjusting your search or filters to find what you&apos;re looking for.</Typography>
+            <Typography variant="h5" sx={{ color: "#4a5568", fontWeight: 600, mb: 1 }}>Es wurden keine Jobs gefunden.</Typography>
+            <Typography variant="body1" sx={{ color: "#718096" }}>Passen Sie Ihre Suche oder Filter an, um das Gewünschte zu finden.</Typography>
             {(searchValue || selectedLetter || /* selectedRegion || */ selectedCity) && (
               <Button
                 variant="outlined"
@@ -333,9 +374,9 @@ export default function JobsPage() {
                   setSelectedCity("");
                   setCityObj(null);
                 }}
-                sx={{ mt: 3, borderColor: "#0096A4", color: "#0096A4" }}
+                sx={{ textTransform: "none", mt: 3, borderColor: "#0096A4", color: "#0096A4" }}
               >
-                Clear Filters
+                Filter zurücksetzen
               </Button>
             )}
           </Box>
@@ -382,14 +423,6 @@ export default function JobsPage() {
                   >
                     <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", flexGrow: 1 }}>
                       <Box sx={{ mb: "auto" }}>
-                        {jobTypes.length > 0 && (
-                          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-                            {jobTypes.map((type) => (
-                              <Chip key={type} label={type} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, borderRadius: "4px" }} />
-                            ))}
-                          </Box>
-                        )}
-
                         <Typography variant="h6" sx={{ fontWeight: 800, color: "#1a202c", mb: 1.5, lineHeight: 1.3 }}>
                           {jobTitle}
                         </Typography>
@@ -401,6 +434,13 @@ export default function JobsPage() {
                           <Typography variant="body2" sx={{ color: "#718096", display: "flex", alignItems: "center", gap: 1 }}>
                             <LocationOnIcon fontSize="small" sx={{ color: "#a0aec0" }} /> {jobCity}
                           </Typography>
+                          {jobTypes.length > 0 && (
+                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                              {jobTypes.map((type) => (
+                                <Chip key={type} label={type} size="small" sx={{ backgroundColor: "#e6fffa", color: "#0096A4", fontWeight: 700, borderRadius: "4px" }} />
+                              ))}
+                            </Box>
+                          )}
                           {/* {startDate && (
                             <Typography variant="body2" sx={{ color: "#718096", display: "flex", alignItems: "center", gap: 1 }}>
                               <CalendarMonthIcon fontSize="small" sx={{ color: "#a0aec0" }} /> Start: {startDate}
@@ -442,7 +482,7 @@ export default function JobsPage() {
                             </Typography>
                           )}
                         </Box>
-                        <Button variant="text" size="small" endIcon={<ArrowForwardIcon />} sx={{ color: "#0096A4", fontWeight: 700, p: 0, minWidth: "auto", flexShrink: 0, "&:hover": { backgroundColor: "transparent", textDecoration: "underline" } }}>
+                        <Button variant="text" size="small" endIcon={<ArrowForwardIcon sx={{ fontSize: "16px !important" }} />} sx={{ textTransform: "none", color: "#0096A4", fontWeight: 700, fontSize: "14px", p: 0, minWidth: "auto", flexShrink: 0, "&:hover": { backgroundColor: "transparent", textDecoration: "underline" } }}>
                           Mehr erfahren
                         </Button>
                       </Box>

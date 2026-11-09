@@ -14,6 +14,7 @@ export interface Job {
   id?: string;
   createdAt: string;
   industryName: string;
+  jobTypeName?: string[];
   // region?: string; // REGION FEATURE DISABLED
 }
 export interface getAllJobsType {

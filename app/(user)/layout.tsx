@@ -86,10 +86,10 @@ export default function AdminLayout({
           >
             {!hideLogo && (
               <Image
-                src={isToggle ? "/logo.png" : "/fevicon.png"}
+                src={isToggle ? "/unibonus-logo.png" : "/fevicon.png"}
                 alt="UniBonus"
-                width={isToggle ? 174 : 30}
-                height={isToggle ? 48 : 30}
+                width={isToggle ? 165 : 30}
+                height={isToggle ? 56 : 30}
               />
             )}
           </Typography>

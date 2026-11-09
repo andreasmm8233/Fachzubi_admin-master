@@ -26,6 +26,7 @@ export const transformJobsData = (rawJobs: any): Job[] => {
       date: createdAtDate.toLocaleDateString(),
       createdAt: createdAtDate.toLocaleDateString(),
       industryName: rawJob.industryName,
+      jobTypeName: rawJob.jobTypeName,
     };
   });
 };

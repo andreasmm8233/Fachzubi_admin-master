@@ -97,7 +97,7 @@ const ResetPassword = () => {
             sx={{ marginBottom: "25px", textAlign: "center" }}
           >
             {!hideLogo && (
-              <Image src="/logo-full.png" alt="UniBonus" width={240} height={78} />
+              <Image src="/unibonus-logo.png" alt="UniBonus" width={240} height={82} />
             )}
           </Typography>
 

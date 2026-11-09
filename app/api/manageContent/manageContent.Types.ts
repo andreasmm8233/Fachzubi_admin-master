@@ -6,6 +6,12 @@ export interface ManageContentTypes {
   heading: string;
   subHeading: string;
   bottomBarText: string;
+  searchTitle?: string;
+  searchSubtitle?: string;
+  companiesHeading?: string;
+  companiesSubHeading?: string;
+  jobsHeading?: string;
+  jobsSubHeading?: string;
   id: string;
 }
 export interface ManageContentEditTypes {
@@ -16,5 +22,11 @@ export interface ManageContentEditTypes {
   heading?: string;
   subHeading?: string;
   bottomBarText?: string;
+  searchTitle?: string;
+  searchSubtitle?: string;
+  companiesHeading?: string;
+  companiesSubHeading?: string;
+  jobsHeading?: string;
+  jobsSubHeading?: string;
   id: string;
 }

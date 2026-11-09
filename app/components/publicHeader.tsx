@@ -56,15 +56,15 @@ const PublicHeader = () => {
               <Box
                 sx={{
                   position: "relative",
-                  width: { xs: 116, sm: 152, md: 174 },
-                  height: { xs: 32, sm: 42, md: 48 },
+                  width: { xs: 118, sm: 150, md: 176 },
+                  height: { xs: 40, sm: 51, md: 60 },
                 }}
               >
                 <Image
-                  src="/logo.png"
+                  src="/unibonus-logo.png"
                   alt="UniBonus"
                   fill
-                  sizes="174px"
+                  sizes="176px"
                   style={{ objectFit: "contain", objectPosition: "left center" }}
                   priority
                 />

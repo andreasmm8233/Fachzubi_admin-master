@@ -184,10 +184,10 @@ const Login = () => {
                 {!hideLogo && (
                   <Image
                     // sizes="100vw"
-                    src="/logo-full.png"
+                    src="/unibonus-logo.png"
                     alt="UniBonus"
                     width={240}
-                    height={78}
+                    height={82}
                   />
                 )}
               </Typography>
