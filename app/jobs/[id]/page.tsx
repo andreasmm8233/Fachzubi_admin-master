@@ -77,6 +77,19 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   }
 
   const jobTitle = job.jobTitle || job.title || "Position Available";
+  // Pre-filled text for the "Jetzt bewerben" e-mail
+  const applicationBody = [
+    "Sehr geehrte/r Herr/Frau ,",
+    "",
+    "ich bin auf Ihre Stellenanzeige aufmerksam geworden:",
+    jobTitle,
+    "",
+    "Hiermit bewerbe ich mich auf die von Ihnen ausgeschriebene Stelle in Ihrem Unternehmen. Nachfolgend übersende ich Ihnen im Anhang meine Bewerbungsunterlagen. Über eine positive Rückmeldung würde ich mich freuen.",
+    "",
+    "Für Rückfragen bin ich gerne für Sie erreichbar.",
+    "",
+    "Mit freundlichen Grüßen,",
+  ].join("\r\n");
   let companyName = "Unknown Company";
   if (typeof job.company === "string") {
     companyName = job.company;
@@ -448,13 +461,13 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                   </Box>
                 )}
 
-                {/* Apply by e-mail: opens the mail app with "Bewerbung: <job title>" as subject */}
+                {/* Apply by e-mail: opens the mail app with "Bewerbung: <job title>" as subject and a pre-filled letter */}
                 {(job.email || job.additionalEmail) && (
                   <Button
                     variant="contained"
                     fullWidth
                     disableElevation
-                    href={`mailto:${job.email || job.additionalEmail}?subject=${encodeURIComponent(`Bewerbung: ${jobTitle}`)}`}
+                    href={`mailto:${job.email || job.additionalEmail}?subject=${encodeURIComponent(`Bewerbung: ${jobTitle}`)}&body=${encodeURIComponent(applicationBody)}`}
                     endIcon={<ArrowForwardIcon className="apply-arrow" />}
                     sx={{
                       py: 1.5,

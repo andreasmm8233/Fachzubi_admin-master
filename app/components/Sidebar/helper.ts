@@ -103,6 +103,21 @@ export const MENU_DATA: SidebarMenu[] = [
         label: "Landing Page",
         url: "landing-page",
       },
+      {
+        id: 6,
+        label: "Contact Page",
+        url: "contact-page",
+      },
+      {
+        id: 7,
+        label: "Contact Queries",
+        url: "contact-queries",
+      },
+      {
+        id: 8,
+        label: "Pricing Page",
+        url: "pricing",
+      },
     ],
   },
   {
