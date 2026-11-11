@@ -15,7 +15,10 @@ import { SVG } from "@/app/components/icon";
 import Title from "@/app/components/title.components";
 import { useRouter } from "next/navigation";
 import { StyledManageForm } from "@/app/components/form.styled";
-import { EmployerFormType } from "@/app/api/employer/employer.types";
+import {
+  CompanyDocumentFile,
+  EmployerFormType,
+} from "@/app/api/employer/employer.types";
 import {
   addEmployer,
   getEmployerById,
@@ -33,6 +36,8 @@ import TextEditor from "../../manage-content/textEditor/textEditor";
 import Cropper, { FileState } from "@/app/ulits/cropper";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 // REGION FEATURE DISABLED
 // import { getRegions } from "@/app/api/regions/regions";
 // import { TransformRegion } from "@/app/api/regions/regions.types";
@@ -43,6 +48,10 @@ const AddComponent = () => {
   const [id, setId] = useState("");
   const [fileList, setFileList] = useState<FileState[]>([]);
   const [oldFile, setOldFile] = useState<string[]>([]);
+  // Company documents (PDF / Word): saved ones, newly picked ones, and removed ids
+  const [savedDocuments, setSavedDocuments] = useState<CompanyDocumentFile[]>([]);
+  const [newDocuments, setNewDocuments] = useState<File[]>([]);
+  const [removedDocuments, setRemovedDocuments] = useState<string[]>([]);
   const getYouTubeEmbedUrl = (url: string) => {
     if (!url) return url;
     try {
@@ -129,6 +138,8 @@ const AddComponent = () => {
           return item;
         }
       });
+      values.companyDocuments = newDocuments;
+      values.removedDocuments = removedDocuments;
       try {
         setIsLoading(true);
         if (id) {
@@ -228,6 +239,9 @@ const AddComponent = () => {
         }
       );
       setFileList(newImage);
+      setSavedDocuments((response.data.data as any).companyDocuments ?? []);
+      setNewDocuments([]);
+      setRemovedDocuments([]);
       formik.setFieldValue("industryName", response.data.data.industryName);
       formik.setFieldValue("contactPerson", response.data.data.contactPerson);
       formik.setFieldValue("jobTitle", response.data.data.jobTitle);
@@ -721,6 +735,77 @@ const AddComponent = () => {
                     setOldFile={setOldFile}
                   />
                 </Box>
+              </Grid>
+              <Grid item xs={12} lg={2}>
+                <label>Documents</label>
+              </Grid>
+              <Grid item xs={12} lg={10}>
+                <Button variant="outlined" component="label" disabled={disable} size="small">
+                  Upload PDF / Word
+                  <input
+                    hidden
+                    multiple
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => {
+                      const picked = Array.from(e.target.files ?? []);
+                      setNewDocuments((prev) => [...prev, ...picked]);
+                      e.target.value = ""; // allow picking the same file again
+                    }}
+                  />
+                </Button>
+                <Box sx={{ mt: 1, fontSize: "13px", color: "#646464" }}>
+                  Multiple PDF, DOC or DOCX files (max 50 MB each)
+                </Box>
+                {[
+                  ...savedDocuments.map((doc) => ({
+                    key: doc.documentId,
+                    name: doc.fileName,
+                    href: `${process.env.NEXT_PUBLIC_BACKEND_IMAGE_URL}${doc.path}`,
+                    onRemove: () => {
+                      setSavedDocuments((prev) =>
+                        prev.filter((d) => d.documentId !== doc.documentId)
+                      );
+                      setRemovedDocuments((prev) => [...prev, doc.documentId]);
+                    },
+                  })),
+                  ...newDocuments.map((file, index) => ({
+                    key: `new-${index}-${file.name}`,
+                    name: `${file.name} (new)`,
+                    href: "",
+                    onRemove: () =>
+                      setNewDocuments((prev) => prev.filter((_, i) => i !== index)),
+                  })),
+                ].map((doc) => (
+                  <Box
+                    key={doc.key}
+                    sx={{
+                      mt: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      px: 1.5,
+                      py: 0.5,
+                      border: "1px solid #e0e0e0",
+                      borderRadius: "6px",
+                      maxWidth: "600px",
+                    }}
+                  >
+                    <DescriptionOutlinedIcon sx={{ color: "#0096A4" }} />
+                    <Box sx={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: "14px" }}>
+                      {doc.href ? (
+                        <a href={doc.href} target="_blank" rel="noopener noreferrer">
+                          {doc.name}
+                        </a>
+                      ) : (
+                        doc.name
+                      )}
+                    </Box>
+                    <IconButton size="small" onClick={doc.onRemove} disabled={disable} aria-label="Remove document">
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                ))}
               </Grid>
               <Grid item xs={12} lg={2}>
                 <label>YouTube link</label>

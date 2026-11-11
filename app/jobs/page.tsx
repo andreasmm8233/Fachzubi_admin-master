@@ -299,7 +299,8 @@ export default function JobsPage() {
       <Container maxWidth="lg">
         {/* Alphabet Filter */}
         <Box sx={{ mb: 6 }}>
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2 }}>
+          {/* minHeight = pagination height, so the A–Z row does not jump while the pagination is hidden during loading */}
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2, minHeight: "40px" }}>
             <Typography variant="subtitle2" sx={{ color: "#718096", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>
               Jobs von A bis Z
             </Typography>
@@ -312,6 +313,14 @@ export default function JobsPage() {
                 shape="rounded"
                 size="large"
                 sx={{
+                  // keep the "…" vertically centred with the page numbers
+                  "& .MuiPaginationItem-ellipsis": {
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "40px", // same as the page buttons
+                    lineHeight: 1,
+                  },
                   "& .MuiPaginationItem-root.Mui-selected": {
                     backgroundColor: "#0096A4",
                     color: "#fff",
@@ -363,7 +372,7 @@ export default function JobsPage() {
         </Box>
 
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", my: 10 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", pt: 10, minHeight: "70vh" /* keeps page height stable while loading */ }}>
             <CircularProgress sx={{ color: "#0096A4" }} />
           </Box>
         ) : jobs.length === 0 ? (
@@ -514,6 +523,14 @@ export default function JobsPage() {
               shape="rounded"
               size="large"
               sx={{
+                // keep the "…" vertically centred with the page numbers
+                "& .MuiPaginationItem-ellipsis": {
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "40px", // same as the page buttons
+                  lineHeight: 1,
+                },
                 "& .MuiPaginationItem-root.Mui-selected": {
                   backgroundColor: "#0096A4",
                   color: "#fff",

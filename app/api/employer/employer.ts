@@ -119,6 +119,7 @@ export const getEmployerById = async (
     response.data.data = {
       ...transFormSignalApiData(response.data.data.data),
       companyImages: response?.data?.data?.images,
+      companyDocuments: response?.data?.data?.documents ?? [],
     };
     // response.data.data.companyImages = response?.data?.data?.images;
   }

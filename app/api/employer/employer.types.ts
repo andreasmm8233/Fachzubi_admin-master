@@ -46,8 +46,17 @@ export type EmployerWithIndustriesTypeAndId = {
   companyLogo: { _id: string } | any;
   companyImages?: any;
   removedFile?: any;
+  companyDocuments?: File[];
+  removedDocuments?: string[];
   // region?: { id: string; label: string }; // REGION FEATURE DISABLED
 };
+// A PDF / Word file already saved for a company
+export interface CompanyDocumentFile {
+  documentId: string;
+  fileName: string;
+  path: string;
+  type?: string;
+}
 export interface EmployerFormType {
   industryName: {id:string, label:string};
   contactPerson: string;
@@ -64,5 +73,7 @@ export interface EmployerFormType {
   companyDescription: string;
   companyImages?: any;
   removedFile?: any;
+  companyDocuments?: File[];
+  removedDocuments?: string[];
   // region?: { id: string; label: string }; // REGION FEATURE DISABLED
 }

@@ -24,6 +24,9 @@ import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import DescriptionIcon from "@mui/icons-material/Description";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { useRouter } from "next/navigation";
 import { getPublicCompanyDetail } from "@/app/api/employer/employer";
 
@@ -110,6 +113,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
   const formattedPhoneNo = phoneNo;
   const contactPerson = company.contactPerson || "";
   const companyImages = Array.isArray(company.companyImages) ? company.companyImages.filter((img: string) => img) : [];
+  const companyDocuments = Array.isArray(company.companyDocuments) ? company.companyDocuments.filter((doc: any) => doc?.path) : [];
   const videoLinks = Array.isArray(company.videoLink) ? company.videoLink.filter((v: string) => v) : [];
 
   const getYoutubeEmbedUrl = (url: string) => {
@@ -285,6 +289,55 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
                       onClose={() => setLightboxIndex(null)}
                       onChange={setLightboxIndex}
                     />
+                  </Box>
+                )}
+
+                {/* Company Documents (PDF / Word) */}
+                {companyDocuments.length > 0 && (
+                  <Box sx={{ mt: 4 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: "#2d3748", mb: 2 }}>
+                      Dokumente
+                    </Typography>
+                    <Grid container spacing={1.5}>
+                      {companyDocuments.map((doc: any) => {
+                        const isPdf = /\.pdf$/i.test(doc.fileName || doc.path || "");
+                        return (
+                          <Grid item xs={12} sm={6} key={doc.documentId}>
+                            <Box
+                              component="a"
+                              href={`${IMAGE_BASE_URL}${doc.path}`.replace(/([^:]\/)\/+/g, "$1")}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1.5,
+                                p: 1.5,
+                                border: "1px solid #e2e8f0",
+                                borderRadius: "8px",
+                                textDecoration: "none",
+                                color: "#2d3748",
+                                transition: "all 0.2s ease",
+                                "&:hover": { borderColor: "#0096A4", backgroundColor: "rgba(0,150,164,0.05)" },
+                              }}
+                            >
+                              {isPdf ? (
+                                <PictureAsPdfIcon sx={{ color: "#e53e3e", fontSize: 32 }} />
+                              ) : (
+                                <DescriptionIcon sx={{ color: "#2b6cb0", fontSize: 32 }} />
+                              )}
+                              <Typography
+                                sx={{ flex: 1, minWidth: 0, fontSize: "14px", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                                title={doc.fileName}
+                              >
+                                {doc.fileName}
+                              </Typography>
+                              <FileDownloadOutlinedIcon sx={{ color: "#0096A4" }} />
+                            </Box>
+                          </Grid>
+                        );
+                      })}
+                    </Grid>
                   </Box>
                 )}
               </CardContent>
