@@ -21,6 +21,8 @@ export interface ManageContentTypes {
   contactFormText?: string;
   pricingHeading?: string;
   pricingDescription?: string;
+  newsletterText?: string;
+  newsletterNote?: string;
   id: string;
 }
 export interface ManageContentEditTypes {
@@ -46,5 +48,7 @@ export interface ManageContentEditTypes {
   contactFormText?: string;
   pricingHeading?: string;
   pricingDescription?: string;
+  newsletterText?: string;
+  newsletterNote?: string;
   id: string;
 }

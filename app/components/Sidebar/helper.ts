@@ -118,6 +118,16 @@ export const MENU_DATA: SidebarMenu[] = [
         label: "Pricing Page",
         url: "pricing",
       },
+      {
+        id: 9,
+        label: "Newsletter Text",
+        url: "newsletter-text",
+      },
+      {
+        id: 10,
+        label: "Newsletter Subscribers",
+        url: "newsletter-subscribers",
+      },
     ],
   },
   {
