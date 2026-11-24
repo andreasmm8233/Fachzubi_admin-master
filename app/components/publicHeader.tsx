@@ -61,8 +61,8 @@ const PublicHeader = () => {
                 }}
               >
                 <Image
-                  src="/unibonus-logo.png"
-                  alt="UniBonus"
+                  src="/azubi-app-logo.png"
+                  alt="Azubi.App"
                   fill
                   sizes="176px"
                   style={{ objectFit: "contain", objectPosition: "left center" }}
