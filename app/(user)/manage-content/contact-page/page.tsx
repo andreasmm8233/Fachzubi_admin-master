@@ -43,7 +43,7 @@ const TEXT_FIELDS: { key: keyof ContactFields; label: string; placeholder: strin
   { key: "contactCardTitle", label: "Contact Box Title", placeholder: "Team kontaktieren" },
   { key: "contactPhone", label: "Phone Number", placeholder: "0761 - 55 77 55 66" },
   { key: "contactTiming", label: "Timing", placeholder: "Mo. - Fr. 9:00 bis 17:00 Uhr" },
-  { key: "contactEmail", label: "E-Mail", placeholder: "info@unibonus.app" },
+  { key: "contactEmail", label: "E-Mail", placeholder: "info@azubi.app" },
 ];
 
 // Content of the contact page on the website (/kontakt)

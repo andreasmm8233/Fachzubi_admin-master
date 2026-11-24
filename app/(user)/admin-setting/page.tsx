@@ -36,7 +36,7 @@ import { updateProfile } from "@/app/api/user/user";
 import CustomLoader from "@/app/components/SpinLoader";
 import { getBrand } from "@/app/ulits/hideLogo";
 const AdminSetting = () => {
-  const [brand, setBrand] = useState({ name: "UniBonus", domain: "unibonus.app" });
+  const [brand, setBrand] = useState({ name: "Azubi.App", domain: "azubi.app" });
   useEffect(() => {
     setBrand(getBrand());
   }, []);
